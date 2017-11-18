@@ -1,7 +1,7 @@
 {
 	"name": "blork",
 	"description": "Blork! Mini (non-static) argument checking in Javascript",
-	"version": "0.1.2",
+	"version": "1.0.0",
 	"license": "0BSD",
 	"author": "Dave Houlbrooke <dave@shax.com>",
 	"main": "lib/blork.js",
