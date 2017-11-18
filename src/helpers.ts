@@ -21,7 +21,7 @@ export function debug(value: any)
 			case 'function': return value.name ? 'function ' + value.name + '()' : 'anonymous function';
 			case 'object': switch (value.constructor)
 			{
-				case Object: const l = Object.entries(value).length; l ? 'object {} with ' + l + ' props' : 'empty object';
+				case Object: const l = Object.keys(value).length; l ? 'object {} with ' + l + ' props' : 'empty object';
 				case Array: return value.length ? 'Array with ' + value.length + ' items' : 'empty array';
 				case Map: case Set: return value.size ? 'empty ' + value.constructor.name : value.constructor.name + ' with ' + value.size + ' items';
 				default: return value.constructor.name ? 'instance of ' + value.constructor.name : 'instance of anonymous class';

@@ -180,12 +180,12 @@ Types are generally accessed via a string reference. The following list shows al
 - `'object+'` or `'obj'` — Passes if the value is an object with one or more enumerable properties (using **Object.keys()**)
 - `'iterable'` — An object with a method called **Symbol.iterator** that can be used with **for..of** loops
 - `'array'` or `'arr'` — An instance of **Array**
-- `'array+'` or `'arr+'` — An instance of **Array** with one or more entries
+- `'array+'` or `'arr+'` — An instance of **Array** with one or more items
 - `'map'` — An instance of **Map**
-- `'map+'` — An instance of **Map** with one or more entries
+- `'map+'` — An instance of **Map** with one or more items
 - `'weakmap'` — An instance of **WeakMap**
 - `'set'` — An instance of **Set**
-- `'set+'` — An instance of **Set** with one or more entries
+- `'set+'` — An instance of **Set** with one or more items
 - `'weakset'` — An instance of **WeakSet*
 - `'arguments'` or `'args'` — An **arguments** object (i.e. an object with a numeric **length** property, not an array)
 - `'promise'` — An instance of **Promise**
