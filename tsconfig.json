@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+		"strict": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+		"sourceMap": true,
+		"lib": ["es2017"],
+		"target": "es2015",
+		"declaration": true,
+		"outDir": "lib",
+		"watch": true
+    },
+	"compileOnSave": true,
+    "include": ["src/**/*"]
+}
