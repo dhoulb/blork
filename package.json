@@ -12,11 +12,11 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"pre-commit": "latest",
-		"jest": "latest",
+		"husky": "latest",
 		"typescript": "latest",
 		"@types/node": "latest",
-		"tslint": "latest"
+		"tslint": "latest",
+		"jest": "latest"
 	},
 	"scripts": {
 		"fix": "tslint -p tsconfig.json --fix",
@@ -24,9 +24,9 @@
 		"build": "rm -rf lib && mkdir lib && tsc -p tsconfig.json",
 		"pretest": "npm run build",
 		"test": "jest",
-		"watch": "jest --watchAll"
+		"watch": "jest --watchAll",
+		"precommit": "npm run build && npm run test"
 	},
-	"pre-commit": ["build", "test"],
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/dhoulb/blork.git"
