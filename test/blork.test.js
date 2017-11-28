@@ -30,21 +30,21 @@ describe('check()', () => {
 		expect(check('a', 'lowercase+')).toBe(1);
 		expect(check('A', 'uppercase')).toBe(1);
 		expect(check('A', 'uppercase+')).toBe(1);
-		expect(check(function () {}, 'function')).toBe(1);
-		expect(check({a:1}, 'object')).toBe(1);
-		expect(check({a:1}, 'object+')).toBe(1);
+		expect(check(function() {}, 'function')).toBe(1);
+		expect(check({ a: 1 }, 'object')).toBe(1);
+		expect(check({ a: 1 }, 'object+')).toBe(1);
 		expect(check({ [Symbol.iterator]: () => {} }, 'iterable')).toBe(1);
 		expect(check([], 'array')).toBe(1);
 		expect(check([1], 'array+')).toBe(1);
-		expect(check(new Map, 'map')).toBe(1);
-		expect(check(new Map([[1,1]]), 'map+')).toBe(1)
-		expect(check(new WeakMap, 'weakmap')).toBe(1)
-		expect(check(new Set, 'set')).toBe(1)
+		expect(check(new Map(), 'map')).toBe(1);
+		expect(check(new Map([[1, 1]]), 'map+')).toBe(1);
+		expect(check(new WeakMap(), 'weakmap')).toBe(1);
+		expect(check(new Set(), 'set')).toBe(1);
 		expect(check(new Set([1]), 'set+')).toBe(1);
-		expect(check(new WeakSet, 'weakset')).toBe(1);
+		expect(check(new WeakSet(), 'weakset')).toBe(1);
 		expect(check(arguments, 'arguments')).toBe(1);
 		expect(check(Promise.resolve(), 'promise')).toBe(1);
-		expect(check(new Date, 'date')).toBe(1);
+		expect(check(new Date(), 'date')).toBe(1);
 		expect(check(new Date(2080, 0, 1), 'future')).toBe(1);
 		expect(check(new Date(1980, 0, 1), 'past')).toBe(1);
 		// Checker alternates.
@@ -56,13 +56,13 @@ describe('check()', () => {
 		expect(check(1, 'int')).toBe(1);
 		expect(check('a', 'str')).toBe(1);
 		expect(check('a', 'str+')).toBe(1);
-		expect(check(function () {}, 'func')).toBe(1);
+		expect(check(function() {}, 'func')).toBe(1);
 		expect(check('a', 'lower')).toBe(1);
 		expect(check('a', 'lower+')).toBe(1);
 		expect(check('A', 'upper')).toBe(1);
 		expect(check('A', 'upper+')).toBe(1);
-		expect(check({a:1}, 'obj')).toBe(1);
-		expect(check({a:1}, 'obj+')).toBe(1);
+		expect(check({ a: 1 }, 'obj')).toBe(1);
+		expect(check({ a: 1 }, 'obj+')).toBe(1);
 		expect(check([], 'arr')).toBe(1);
 		expect(check([1], 'arr+')).toBe(1);
 		expect(check(arguments, 'args')).toBe(1);
@@ -96,10 +96,10 @@ describe('check()', () => {
 		expect(() => check({}, 'array')).toThrow(TypeError);
 		expect(() => check({}, 'array+')).toThrow(TypeError);
 		expect(() => check([], 'map')).toThrow(TypeError);
-		expect(() => check(new Map, 'map+')).toThrow(TypeError);
+		expect(() => check(new Map(), 'map+')).toThrow(TypeError);
 		expect(() => check([], 'weakmap')).toThrow(TypeError);
 		expect(() => check([], 'set')).toThrow(TypeError);
-		expect(() => check(new Set, 'set+')).toThrow(TypeError);
+		expect(() => check(new Set(), 'set+')).toThrow(TypeError);
 		expect(() => check([], 'weakset')).toThrow(TypeError);
 		expect(() => check({}, 'arguments')).toThrow(TypeError);
 		expect(() => check(true, 'promise')).toThrow(TypeError);
@@ -157,10 +157,10 @@ describe('check()', () => {
 	});
 	test('Return correctly when checks pass (custom constructor format)', () => {
 		class MyClass {}
-		const myClass = new MyClass;
+		const myClass = new MyClass();
 		expect(check(myClass, MyClass)).toBe(1);
 		class MySubClass extends MyClass {}
-		const mySubClass = new MySubClass;
+		const mySubClass = new MySubClass();
 		expect(check(mySubClass, MyClass)).toBe(1);
 	});
 	test('Throw TypeError when checks fail (custom constructor format)', () => {
@@ -174,17 +174,17 @@ describe('check()', () => {
 		expect(() => check({ a: 'notnumberparam' }, { a: Number })).toThrow(TypeError);
 	});
 	test('Return correctly when checks pass (array literal format)', () => {
-		expect(check([1,2,3], [Number])).toBe(3);
+		expect(check([1, 2, 3], [Number])).toBe(3);
 	});
 	test('Throw TypeError when checks fail (array literal format)', () => {
-		expect(() => check([1,2,'surprisestring'], [Number])).toThrow(TypeError);
+		expect(() => check([1, 2, 'surprisestring'], [Number])).toThrow(TypeError);
 	});
 	test('Return correctly when checks pass (array tuple format)', () => {
-		expect(check([1,2,3], [Number,Number,Number])).toBe(3);
+		expect(check([1, 2, 3], [Number, Number, Number])).toBe(3);
 	});
 	test('Throw TypeError when checks fail (array tuple format)', () => {
-		expect(() => check([1,1], [Number,String])).toThrow(TypeError);
-		expect(() => check([1,'b','excessitem'], [Number,String])).toThrow(TypeError);
+		expect(() => check([1, 1], [Number, String])).toThrow(TypeError);
+		expect(() => check([1, 'b', 'excessitem'], [Number, String])).toThrow(TypeError);
 	});
 	test('Throw BlorkError if type is not object, function, or string', () => {
 		expect(() => check(1, 123)).toThrow(BlorkError);
@@ -199,7 +199,7 @@ describe('check()', () => {
 describe('args()', () => {
 	test('Return correctly when argument checks pass', () => {
 		const argsObj = { '0': 'a', '1': 123, '2': true, length: 3 };
-		expect(args(argsObj, [String,Number,Boolean])).toBe(3);
+		expect(args(argsObj, [String, Number, Boolean])).toBe(3);
 	});
 	test('Throw TypeError when argument checks fail', () => {
 		const argsObj = { '0': 'a', length: 3 };
@@ -207,7 +207,7 @@ describe('args()', () => {
 	});
 	test('Throw TypeError when too many arguments', () => {
 		const argsObj = { '0': true, '1': true, '2': true, length: 3 };
-		expect(() => args(argsObj, [Boolean,Boolean])).toThrow(TypeError);
+		expect(() => args(argsObj, [Boolean, Boolean])).toThrow(TypeError);
 	});
 	test('Throw BlorkError if passing non-arguments-like object', () => {
 		expect(() => args({}, [Number])).toThrow(BlorkError);
@@ -215,7 +215,6 @@ describe('args()', () => {
 });
 describe('add()', () => {
 	test('Add and run a custom checker', () => {
-
 		// Define a checker called 'isstring'.
 		expect(add('test.checker', v => typeof v === 'string' || 'must be string')).toBeUndefined();
 
@@ -224,7 +223,6 @@ describe('add()', () => {
 
 		// Check a failing value.
 		expect(() => check(123, 'test.checker')).toThrow(TypeError);
-
 	});
 	test('Throw BlorkError if not non-empty lowercase string', () => {
 		expect(() => add(123, func)).toThrow(BlorkError);
@@ -241,16 +239,14 @@ describe('add()', () => {
 });
 describe('throws()', () => {
 	test('Set a custom error object and check it throws', () => {
-
 		// Define a custom error.
-		class MyError extends Error {};
+		class MyError extends Error {}
 
 		// Set it as the custom error.
 		expect(throws(MyError)).toBeUndefined();
 
 		// Fail a check and make sure it throws the custom error (not TypeError).
 		expect(() => check(false, 'true')).toThrow(MyError);
-
 	});
 	test('Throw BlorkError if passing a non-function', () => {
 		expect(() => throws(false)).toThrow(BlorkError);

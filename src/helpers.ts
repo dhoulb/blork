@@ -1,39 +1,67 @@
-import { CheckerFunction } from './types';
+/**
+ * Blork! Helper functions
+ * @author Dave Houlbrooke <dave@shax.com
+ */
+
+// Vars.
+const UNDEF = Symbol();
 
 /**
  * Neatly convert any value into a string for debugging.
  *
- * @param {mixed} value The value to convert to a string.
- * @return {string} The value after it has been converted to a string.
+ * @param value The value to convert to a string.
+ * @return The value after it has been converted to a string.
  */
-export function debug(value: any)
-{
-	switch (value)
-	{
-		case null: return 'null';
-		case undefined: return 'undefined';
-		case true: return 'true';
-		case false: return 'false';
-		default: switch (typeof value)
-		{
-			case 'string': return JSON.stringify(value.length > 20 ? value.substr(0, 20) + '…' : value); // e.g. "You can \"quote me\" on that"
-			case 'number': return value.toString(); // e.g. 123 or 456.789
-			case 'function': return value.name ? 'function ' + value.name + '()' : 'anonymous function';
-			case 'object': switch (value.constructor)
-			{
-				case Object: const l = Object.keys(value).length; l ? 'object {} with ' + l + ' props' : 'empty object';
-				case Array: return value.length ? 'Array with ' + value.length + ' items' : 'empty array';
-				case Map: case Set: return value.size ? 'empty ' + value.constructor.name : value.constructor.name + ' with ' + value.size + ' items';
-				default: return value.constructor.name ? 'instance of ' + value.constructor.name : 'instance of anonymous class';
-			}
-		}
+export function debug(value: any) { // tslint:disable-line:no-any
+
+	if (value === null) return 'null';
+	if (value === undefined) return 'undefined';
+	if (value === true) return 'true';
+	if (value === false) return 'false';
+	if (typeof value === 'string') {
+		const max = 20;
+		return JSON.stringify(value.length > max ? `${value.substr(0, max)}…` : value);
 	}
+	if (typeof value === 'number') return value.toString(); // E.g. 123 or 456.789
+	if (typeof value === 'symbol') return value.toString(); // E.g. Symbol(foo)
+	if (value instanceof Function) {
+		// tslint:disable:no-unsafe-any
+		if (value.name.length > 0) return `function ${value.name}()`;
+		// tslint:enable:no-unsafe-any
+		return 'anonymous function';
+	}
+	if (value instanceof Array) return value.length > 0 ? `${value.constructor.name} with ${value.length} items` : `empty ${value.constructor.name}`;
+	if (value instanceof Object) {
+		// tslint:disable:no-unsafe-any
+		if (value.constructor instanceof Function && value.constructor.name.length > 0) {
+			if (value.constructor === Object) {
+				const l = Object.keys(value).length;
+				return l > 0 ? `Object with ${l} props` : 'empty Object';
+			}
+			return `instance of ${value.constructor.name}`;
+		}
+		// tslint:enable:no-unsafe-any
+		return 'instance of anonymous class';
+	}
+	return 'unknown value';
+
 }
 
-// Format an error message.
-// Optionally with a prefix and a variable to debug.
-export function format(message:string, value:any, prefix?:string):string
-{
-	// Something like 'prefix must be string (received 123)
-	return (prefix ? prefix + ': ' : '') + message + (typeof value !== undefined ? ' (received ' + debug(value) + ')' : '');
+/**
+ * Format an error message.
+ * Optionally with a prefix and a variable to debug.
+ *
+ * @param message Message describing what went wrong, e.g. "Must be a string"
+ * @param value A value to debug shown at the end of the message, e.g. "Must be string (received 123)"
+ * @param prefix=undefined An optional prefix for the message e.g. the function name or the name of the value, e.g. "name: Must be string (received 123)"
+ * @returns The error message.
+ */
+export function format(message: string, value: any = UNDEF, prefix?: string) { // tslint:disable-line:no-any
+
+	// Debug the value.
+	const debugged = debug(value);
+
+	// E.g. MyPrefix: Must be string (received 123)
+	return (typeof prefix === 'string' && prefix.length > 0 ? `${prefix}: ` : '') + message + (value !== UNDEF ? ` (received ${debugged})` : '');
+
 }

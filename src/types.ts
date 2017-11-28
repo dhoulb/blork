@@ -1,28 +1,30 @@
-// Checker function interface.
-// A function that must return true or string.
-export interface CheckerFunction {
-    (v:any): true|string;
-}
+/**
+ * Blork! Typescript types
+ * @author Dave Houlbrooke <dave@shax.com
+ */
 
-// An error constructor.
-// A constructor function that must accept string message (and return/generate any object).
-export interface ErrorConstructor {
-    new (message:string): Object;
-}
+// Types.
 
-// Arguments object interface.
-// An object (not an array) that has a numeric length property and string keys with any values.
-export interface ArgumentsObject {
-	[key:string]: any;
-	length: number;
-}
+	// Types can be string, function, array, or object.
+	export type Types = string | TypeFunction | TypesArray | TypesObject;
+	export type TypeFunction = () => void;
+	export interface TypesArray extends Array<Types> {}
+	export interface TypesObject { [key: string]: Types; }
 
-// A list of types.
-// An array that can contain strings ('bool'), functions (Boolean), or other nested TypesObjects or TypesArrays.
-export interface TypesArray extends Array<string|Function|TypesObject|TypesArray> {}
+// Checkers.
 
-// A set of named types.
-// An object with string keys that can contain strings ('bool'), functions (Boolean), or other nested TypesObjects or TypesArrays.
-export interface TypesObject {
-	[key:string]: string|Function|TypesArray|TypesObject;
-}
+	// Checkers can return true or string.
+	export type CheckerReturns = true | string;
+
+	// Checker function interface.
+	export type CheckerFunction = (v: any) => CheckerReturns; // tslint:disable-line:no-any
+
+// Other.
+
+	// An error constructor.
+	// A constructor function that must accept string message (and return/generate any object).
+	export interface ErrorConstructor { new (message: string): object; }
+
+	// Arguments object interface.
+	// An object (not an array) that has a numeric length property and string keys with any values.
+	export interface ArgumentsObject { [key: string]: any; length: number; } // tslint:disable-line:no-any

@@ -117,7 +117,7 @@ import { add, check, args } from 'blork';
 add('catty', (v) => { 
 	// Check it's a string starting with 'cat', or return an error message.
 	return typeof v === 'string' && v.indexOf('cat') >= 0 || "Must be a string containing 'cat'"; 
-}
+});
 
 // Check some strings with your checker.
 check('That cat is having fun', 'catty'); // Returns true.
@@ -186,7 +186,7 @@ Types are generally accessed via a string reference. The following list shows al
 - `'weakmap'` — An instance of **WeakMap**
 - `'set'` — An instance of **Set**
 - `'set+'` — An instance of **Set** with one or more items
-- `'weakset'` — An instance of **WeakSet*
+- `'weakset'` — An instance of **WeakSet**
 - `'arguments'` or `'args'` — An **arguments** object (i.e. an object with a numeric **length** property, not an array)
 - `'promise'` — An instance of **Promise**
 - `'date'` — An instance of **Date**
@@ -198,7 +198,7 @@ Types are generally accessed via a string reference. The following list shows al
 check('abc', 'str'); // Returns 1
 check('abc', 'lower'); // Returns 1
 check(100, 'whole'); // Returns 1
-check([1,2,3], 'array+'); // Returns 1
+check([1, 2, 3], 'array+'); // Returns 1
 check(new Date(2180, 1, 1), 'future'); // Returns 1
 
 // Fail.
