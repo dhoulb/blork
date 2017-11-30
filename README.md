@@ -14,12 +14,12 @@ npm install blork
 
 ## Usage
 
-### Checking function arguments
+### args(): Check function arguments
 
 The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose, and should be passed two arguments:
 
-1. `arguments` — The **arguments** object provided automatically to functions in Javascript
-2. `types` — An array identifying the types for the arguments (list of types is available below)
+1. `arguments` | The **arguments** object provided automatically to functions in Javascript
+2. `types` | An array identifying the types for the arguments (list of types is available below)
 
 ```js
 import { args } from 'blork';
@@ -42,76 +42,107 @@ myFunc('abc'); // Returns "It passed!"
 myFunc(123); // Throws TypeError "arguments[0]: Must be string (received 123)"
 myFunc('abc', 'abc'); // Throws TypeError "arguments[1]: Must be number (received 'abc')"
 myFunc(); // Throws TypeError "arguments[0]: Must be string (received undefined)"
-myFunc('abc', 123, true); // Throws TypeError "Too many arguments (expected 2 but received 3)"
+myFunc('abc', 123, true); // Throws TypeError "arguments: No more than 2 arguments allowed (received 3)"
 ```
 
-### Checking individual values
+### check(): Check individual values
 
-The `args()` function is a convenient wrapper for the `check()` function, which allows you to test individual values and more. The `check()` function is more versatile and allows more use cases than validating function input arguments.
+The `check()` function allows you to test individual values with more granularity. The `check()` function is more versatile and allows more use cases than validating function input arguments.
 
 `check()` can be passed three arguments:
 
-1. `value` — The value to check
-2. `type` — The type to check the value against (list of types is available below)
+1. `value` | The value to check
+2. `type` | The type to check the value against (list of types is available below)
 3. An optional string name for the value, which is prepended to any error message thrown to help debugging
 
 ```js
 import { check } from 'blork';
 
-// Check that passes.
+// Checks that pass.
 check('Sally', 'string'); // Returns 1
+check('Sally', String); // Returns 1
 
-// Check that fails.
+// Checks that fail.
 check('Sally', 'number'); // Throws TypeError "Must be a number (received 'Sally')"
+check('Sally', Boolean); // Throws TypeError "Must be true or false (received 'Sally')"
 
-// Check that fails (with a name set).
-check('Sally', 'number', 'name'); // Throws TypeError "name: Must be a number (received 'Sally')"
+// Checks that fail (with a name set).
+check('Sally', 'num', 'name'); // Throws TypeError "name: Must be a number (received 'Sally')"
+check(true, 'str', 'status'); // Throws TypeError "status: Must be a string (received true)"
 ```
 
-### Optional values
+### Checking optional values
 
 Appending `?` question mark to any type string makes it optional. This means it will accept `undefined` in addition to the specified type.
 
 ```js
-// This check fails.
-check(undefined, 'number'); // Throws TypeError "Must be a number (received 'Sally')"
+// This check fails because it's not optional.
+check(undefined, 'number'); // Throws TypeError "Must be a number (received undefined)"
 
-// This check passes (because it's optional).
+// This check passes because it's optional.
 check(undefined, 'number?'); // Returns 0
 
 // Null does not count as optional.
 check(null, 'number?'); // Throws TypeError "Must be a number (received null)"
 ```
 
-_`check()` and `args()` return the number of defined values that passed their tests. i.e. If a single-value check doesn't throw an error because it's optional, it will return `0` as shown above._
+_`check()` and `args()` return the number of **defined** values that passed. i.e. If a check passes because it's optional it will return `0` as shown above._
 
 ### Checking objects and arrays
 
-Blork can perform deep checks on objects and arrays to ensure the schema is correct _all_ the way down. To use this pass an array or object `check()` (or to to `args()`).
+Blork can perform deep checks on objects and arrays to ensure the schema is correct. To do object or array checks pass literal arrays or literal objects to `check()` or `args()`:
 
 ```js
 // Check object properties.
 check({ name: 'Sally' }, { name: 'string' }); // Returns 1
 
 // Check all array items.
-check(['Sally', 'John', 'Sonia'], ['string']); // Returns 3
+check(['Sally', 'John', 'Sonia'], ['str']); // Returns 3
 
 // Check tuple-style array.
 check([1029, 'Sonia'], ['number', 'string']); // Returns 2
 
-// Check deep object properties.
-check(
-	{ owner: { id: 1028, name: 'Sally' }},
-	{ owner: { id: 'num', name: 'str' }}
-);
+// Failing checks.
+check({ name: 'Sally' }, { name: 'string' }); // Returns 1
+check(['Sally', 'John', 'Sonia'], ['str']); // Returns 3
+check([1029, 'Sonia'], ['number', 'string']); // Returns 2
+check([1029, 'Sonia', true], ['number', 'string']); // Throws TypeError: "Array: Must not have more than 2 array items (received 3)"
 ```
 
-### Add a custom checker
-
-Register your own checker using the `add()` function. If you're going to be applying the same check over and over and want to make sure your error messages are consistent, or want your custom type to clean and integrated with our built-in types, this is a great way to go.
+Arrays and objects can be deeply nested within each other and Blork will recursively check the schema _all_ the way down:
 
 ```js
-import { add, check, args } from 'blork';
+// Deeply nested check (passes).
+// Will return 1
+check(
+	[
+		{ id: 1028, name: 'Sally', status: [1, 2, 3] },
+		{ id: 1062, name: 'Bobby', status: [1, 2, 3] }
+	],
+	[
+		{ id: Number, name: String, status: [Number] }
+	]
+); 
+
+// Deeply nested check (fails).
+// Will throw TypeError "Array[1][status][2]: Must be a number (received 'not_a_number')"
+check(
+	[
+		{ id: 1028, name: 'Sally', status: [1, 2, 3] },
+		{ id: 1062, name: 'Bobby', status: [1, 2, 'not_a_number'] }
+	],
+	[
+		{ id: Number, name: String, status: [Number] }
+	]
+); 
+```
+
+### add(): Add a custom checker type
+
+Register your own checker using the `add()` function. If you're going to be applying the same check over and over and want a custom type that's integrated with Blork's built-in types and has consistent error messages, this is a great way to go.
+
+```js
+import { add, check } from 'blork';
 
 // Register your new checker.
 add('catty', (v) => {
@@ -119,9 +150,15 @@ add('catty', (v) => {
 	return typeof v === 'string' && v.indexOf('cat') >= 0 || "Must be a string containing 'cat'";
 });
 
-// Check some strings with your checker.
+// Passes.
 check('That cat is having fun', 'catty'); // Returns 1.
+
+// Fails.
 check('A dog sits on the chair', 'catty'); // Throws TypeError "Must be a string containing 'cat' (received 'A dog sits on the chair')"
+```
+
+```js
+import { add, args } from 'blork';
 
 // Use your checker to check function args.
 function myFunc(str)
@@ -130,14 +167,16 @@ function myFunc(str)
 	return 'It passed!';
 }
 
-// Try out your custom function.
+// Passes.
 myFunc('That cat is chasing string'); // Returns "It passed!"
+
+// Fails.
 myFunc('A dog sits over there'); // Throws TypeError "arguments[1]: Must be a string containing 'cat' (received 'A dog sits over there')"
 ```
 
-### Custom error type
+### throws(): Set a custom error constructor
 
-To change the error type Blork throws when a type doesn't match, use the `throws()` function.
+To change the error object Blork throws when a type doesn't match, use the `throws()` function.
 
 ```js
 import { throws, check } from 'blork';
@@ -156,42 +195,44 @@ check(true, 'false'); // Throws MyError "Must be false (received true)"
 
 Types are generally accessed via a string reference. This list shows all Blork built-in checkers:
 
-- `null` — Value is **null**
-- `undefined`,`undef`,`void` — Value is **undefined**
-- `defined`,`def` — Value is **not undefined**
-- `boolean`,`bool` — Value is **true** or **false**
-- `true` — Value is **true**
-- `false` — Value is **false**
-- `truthy` — Truthy values (i.e. **== true**)
-- `falsy` — Falsy values (i.e. **== false**)
-- `number`,`num` — Numbers (using **typeof**)
-- `integer`,`int` — Integers (using **Number.isInteger()**)
-- `natural` — Natural numbers **(1, 2, 3...)**
-- `whole` — Whole numbers **(1, 2, 3...)**
-- `finite` — Finite numbers (not **NaN** or **Infinity**)
-- `string`,`str` — Strings (using **typeof**)
-- `string+`,`str+` — Non-empty strings (using **str.length**)
-- `lowercase`,`lower` — Strings with no uppercase characters
-- `lowercase+`,`lower+` — Non-empty strings with no uppercase characters
-- `uppercase`,`upper` — Strings with no lowercase characters
-- `uppercase+`,`upper+` — Non-empty strings with no lowercase characters
-- `function`,`func` — Functions (using **instanceof Function**)
-- `object`,`obj` — Objects (using **instanceof Object**)
-- `object+`,`obj` — Objects with one or more enumerable properties (using **Object.keys().length**)
-- `iterable` — Objects with a **Symbol.iterator** method that can be used with **for..of** loops
-- `array`,`arr` — Arrays (using **instanceof Array**)
-- `array+`,`arr+` — Arrays with one or more items
-- `map` — Instances of **Map**
-- `map+` — Instances of **Map** with one or more items
-- `weakmap` — Instances of **WeakMap**
-- `set` — Instances of **Set**
-- `set+` — Instances of **Set** with one or more items
-- `weakset` — Instances of **WeakSet**
-- `arguments`,`args` — Arguments objects (has a numeric **.length** property)
-- `promise` — Instances of **Promise**
-- `date` — Instances of **Date**
-- `future` — Instances of **Date** with a value in the future
-- `past` — Instances of **Date** with a value in the past
+| Type string reference      | Description                                                                         |
+|----------------------------|-------------------------------------------------------------------------------------|
+| `null`                     | Value is **null**                                                                   |
+| `undefined` `undef` `void` | Value is **undefined**                                                              |
+| `defined` `def`            | Value is **not undefined**                                                          |
+| `boolean` `bool`           | Value is **true** or **false**                                                      |
+| `true`                     | Value is **true**                                                                   |
+| `false`                    | Value is **false**                                                                  |
+| `truthy`                   | Any truthy values (i.e. **== true**)                                                |
+| `falsy`                    | Any falsy values (i.e. **== false**)                                                |
+| `number` `num`             | Numbers (using **typeof**)                                                          |
+| `integer` `int`            | Integers (i.e. not floats, using **Number.isInteger()**)                            |
+| `natural`                  | Natural numbers **(1, 2, 3...)**                                                    |
+| `whole`                    | Whole numbers **(1, 2, 3...)**                                                      |
+| `finite`                   | Finite numbers (not **NaN** or **Infinity**)                                        |
+| `string` `str`             | Strings (using **typeof**)                                                          |
+| `string+` `str+`           | Non-empty strings (using **str.length**)                                            |
+| `lowercase` `lower`        | Strings with no uppercase characters                                                |
+| `lowercase+` `lower+`      | Non-empty strings with no uppercase characters                                      |
+| `uppercase` `upper`        | Strings with no lowercase characters                                                |
+| `uppercase+` `upper+`      | Non-empty strings with no lowercase characters                                      |
+| `function` `func`          | Functions (using **instanceof Function**)                                           |
+| `object` `obj`             | Objects (using **instanceof Object**)                                               |
+| `object+` `obj+`           | Objects with one or more properties (using **Object.keys().length**)                |
+| `iterable`                 | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops) |
+| `array` `arr`              | Instances of Array (using **instanceof Array**)                                     |
+| `array+` `arr+`            | Instances of Array with one or more items                                           |
+| `map`                      | Instances of **Map**                                                                |
+| `map+`                     | Instances of **Map** with one or more items                                         |
+| `weakmap`                  | Instances of **WeakMap**                                                            |
+| `set`                      | Instances of **Set**                                                                |
+| `set+`                     | Instances of **Set** with one or more items                                         |
+| `weakset`                  | Instances of **WeakSet**                                                            |
+| `promise`                  | Instances of **Promise**                                                            |
+| `date`                     | Instances of **Date**                                                               |
+| `future`                   | Instances of **Date** with a value in the future                                    |
+| `past`                     | Instances of **Date** with a value in the past                                      |
+| `arguments` `args`         | Arguments (any object, not just arrays, with numeric **.length** property)          |
 
 ```js
 // Pass.
@@ -225,11 +266,13 @@ check(null, 'str?'); // Throws TypeError "Must be string (received null)"
 
 For convenience constructors can also be used as types in `args()` and `check()`. The following built-in objects can be used:
 
-- `Boolean` — Same as **'boolean'** type
-- `String` — Same as **'string'** type
-- `Number` — Same as **'number'** type
-- `Array` — Same as **'array'** type
-- `Object` — Same as **'object'** type
+| Type      | Description                |
+|-----------|----------------------------|
+| `Boolean` | Same as **'boolean'** type |
+| `String`  | Same as **'string'** type  |
+| `Number`  | Same as **'number'** type  |
+| `Array`   | Same as **'array'** type   |
+| `Object`  | Same as **'object'** type  |
 
 You can also pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
 
