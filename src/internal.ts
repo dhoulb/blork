@@ -158,7 +158,7 @@ export function internalCheckArray(value: any, type: TypesArray, name: string, e
 			for (let i = 0; i < l; i++) if (internalCheck(value[i], type[i], `${prefix}[${i}]`, err)) pass++;
 
 			// No excess items in a tuple.
-			if (value.length > l) throw new err(format(`Must not have more than ${l} array items`, value.length, prefix));
+			if (value.length > l) throw new err(format(`Too many array items (expected ${l})`, value.length, prefix));
 
 		}
 

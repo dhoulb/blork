@@ -42,7 +42,7 @@ myFunc('abc'); // Returns "It passed!"
 myFunc(123); // Throws TypeError "arguments[0]: Must be string (received 123)"
 myFunc('abc', 'abc'); // Throws TypeError "arguments[1]: Must be number (received 'abc')"
 myFunc(); // Throws TypeError "arguments[0]: Must be string (received undefined)"
-myFunc('abc', 123, true); // Throws TypeError "arguments: No more than 2 arguments allowed (received 3)"
+myFunc('abc', 123, true); // Throws TypeError "arguments: Too many arguments (expected 2) (received 3)"
 ```
 
 ### check(): Check individual values
@@ -106,7 +106,7 @@ check([1029, 'Sonia'], ['number', 'string']); // Returns 2
 check({ name: 'Sally' }, { name: 'string' }); // Returns 1
 check(['Sally', 'John', 'Sonia'], ['str']); // Returns 3
 check([1029, 'Sonia'], ['number', 'string']); // Returns 2
-check([1029, 'Sonia', true], ['number', 'string']); // Throws TypeError: "Array: Must not have more than 2 array items (received 3)"
+check([1029, 'Sonia', true], ['number', 'string']); // Throws TypeError: "Array: Too many array items (expected 2) (received 3)"
 ```
 
 Arrays and objects can be deeply nested within each other and Blork will recursively check the schema _all_ the way down:

@@ -60,7 +60,7 @@ export function args(argsObj: ArgumentsObject, types: TypesArray) {
 	for (let i = 0; i < l; i++) if (internalCheck(argsObj[i], types[i], `arguments[${i}]`, errorConstructor)) pass++;
 
 	// No excess arguments.
-	if (argsObj.length > l) { throw new errorConstructor(format(`Must not have more than ${l} arguments`, argsObj.length, 'arguments')); }
+	if (argsObj.length > l) { throw new errorConstructor(format(`Too many arguments (expected ${l})`, argsObj.length, 'arguments')); }
 
 	// Success.
 	return pass;
