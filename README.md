@@ -1,4 +1,4 @@
-# Blork! Mini (non-static) argument checking in Javascript
+# Blork! Mini runtime type checking in Javascript
 
 [![Build Status](https://travis-ci.org/dhoulb/blork.svg?branch=master)](https://travis-ci.org/dhoulb/blork)
 
@@ -8,7 +8,7 @@ Everything is unit tested and everything has TypeScript types (if you're into th
 
 ## Installation
 
-```
+```sh
 npm install blork
 ```
 
@@ -331,3 +331,11 @@ check([123], ['num', 'str']); // Throws TypeError "Array[1]: Must be a string (r
 check([123, 123], ['num', 'str']); // Throws TypeError "Array[1]: Must be a string (received 123)"
 check([123, 'abc', true], ['num', 'str']); // Throws TypeError "Array: Too many items (expected 2 but received 3)"
 ```
+
+## Contributing
+
+Please see (CONTRIBUTING.md)
+
+## Roadmap
+
+- [ ] Support `@decorator` syntax for class methods (PRs welcome)

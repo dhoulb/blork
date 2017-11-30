@@ -1,6 +1,6 @@
 {
 	"name": "blork",
-	"description": "Blork! Mini (non-static) argument checking in Javascript",
+	"description": "Blork! Mini runtime type checking in Javascript",
 	"version": "1.1.2",
 	"license": "0BSD",
 	"author": "Dave Houlbrooke <dave@shax.com>",
