@@ -31,12 +31,12 @@ export default function myFunc(definitelyString, optionalNumber)
 	args(arguments, ['string', 'number?']);
 
 	// Rest of the function.
-	return true;
+	return 'It passed!';
 }
 
 // Call with good args.
-myFunc('abc', 123); // Returns true
-myFunc('abc'); // Returns true
+myFunc('abc', 123); // Returns "It passed!"
+myFunc('abc'); // Returns "It passed!"
 
 // Call with invalid args.
 myFunc(123); // Throws TypeError "arguments[0]: Must be string (received 123)"
@@ -114,24 +114,24 @@ Register your own checker using the `add()` function. If you're going to be appl
 import { add, check, args } from 'blork';
 
 // Register your new checker.
-add('catty', (v) => { 
-	// Check it's a string starting with 'cat', or return an error message.
-	return typeof v === 'string' && v.indexOf('cat') >= 0 || "Must be a string containing 'cat'"; 
+add('catty', (v) => {
+	// Check it's a string containing 'cat', or return an error message.
+	return typeof v === 'string' && v.indexOf('cat') >= 0 || "Must be a string containing 'cat'";
 });
 
 // Check some strings with your checker.
-check('That cat is having fun', 'catty'); // Returns true.
+check('That cat is having fun', 'catty'); // Returns 1.
 check('A dog sits on the chair', 'catty'); // Throws TypeError "Must be a string containing 'cat' (received 'A dog sits on the chair')"
 
 // Use your checker to check function args.
 function myFunc(str)
 {
 	args(arguments, ['catty']);
-	return true;
+	return 'It passed!';
 }
 
 // Try out your custom function.
-myFunc('That cat is chasing string'); // Returns true.
+myFunc('That cat is chasing string'); // Returns "It passed!"
 myFunc('A dog sits over there'); // Throws TypeError "arguments[1]: Must be a string containing 'cat' (received 'A dog sits over there')"
 ```
 
@@ -154,44 +154,44 @@ check(true, 'false'); // Throws MyError "Must be false (received true)"
 
 ## Types
 
-Types are generally accessed via a string reference. The following list shows all checkers available in Blork:
+Types are generally accessed via a string reference. This list shows all Blork built-in checkers:
 
-- `'null'` — The value is null.
-- `'undefined`, `'undef'`, `'void'` — Passes if the value is **undefined**
-- `'defined`, `'def'` — Passes if the value is not **undefined**
-- `'boolean'` or `'bool'` — Passes if the value is **true** or **false**
-- `'true'` — Passes if the value is **true**
-- `'false'` — Passes if the value is **false**
-- `'truthy'` — Passes if the value is like **true** (i.e. **== true**)
-- `'falsy'` — Passes if the value is like **true** (i.e. **== false**)
-- `'number'` or `'num'` — Passes if the value is a number (checked using **typeof**)
-- `'integer'` or `'int'` — Passes if the value is an integer (using **Number.isInteger()**)
-- `'natural'` — Passes if the value is a natural number (1, 2, 3...)
-- `'whole'` — Passes if the value is a whole number (1, 2, 3...)
-- `'finite'` — Passes if the value is a finite number (not **NaN** or **Infinity**)
-- `'string'` or `'str'` — Passes if the value is a string (checked using **typeof**)
-- `'string+'` or `'str+'` — Passes if the value is a non-empty string
-- `'lowercase'` or `'lower'` — Passes if the value is a string with no uppercase characters
-- `'lowercase+'` or `'lower+'` — Passes if the value is a non-empty string with no uppercase characters
-- `'uppercase'` or `'upper'` — Passes if the value is a non-empty string with no lowercase characters
-- `'uppercase+'` or `'upper+'` — Passes if the value is a non-empty string with no lowercase characters
-- `'function'` or `'func'` — Passes if the value is a function (checked using **instanceof Function**)
-- `'object'` or `'obj'` — Passes if the value is an object (checked using **instanceof Object**)
-- `'object+'` or `'obj'` — Passes if the value is an object with one or more enumerable properties (using **Object.keys()**)
-- `'iterable'` — An object with a method called **Symbol.iterator** that can be used with **for..of** loops
-- `'array'` or `'arr'` — An instance of **Array**
-- `'array+'` or `'arr+'` — An instance of **Array** with one or more items
-- `'map'` — An instance of **Map**
-- `'map+'` — An instance of **Map** with one or more items
-- `'weakmap'` — An instance of **WeakMap**
-- `'set'` — An instance of **Set**
-- `'set+'` — An instance of **Set** with one or more items
-- `'weakset'` — An instance of **WeakSet**
-- `'arguments'` or `'args'` — An **arguments** object (i.e. an object with a numeric **length** property, not an array)
-- `'promise'` — An instance of **Promise**
-- `'date'` — An instance of **Date**
-- `'future'` — An instance of **Date** with a value in the future
-- `'past'` — An instance of **Date** with a value in the past
+- `null` — Value is **null**
+- `undefined`,`undef`,`void` — Value is **undefined**
+- `defined`,`def` — Value is **not undefined**
+- `boolean`,`bool` — Value is **true** or **false**
+- `true` — Value is **true**
+- `false` — Value is **false**
+- `truthy` — Truthy values (i.e. **== true**)
+- `falsy` — Falsy values (i.e. **== false**)
+- `number`,`num` — Numbers (using **typeof**)
+- `integer`,`int` — Integers (using **Number.isInteger()**)
+- `natural` — Natural numbers **(1, 2, 3...)**
+- `whole` — Whole numbers **(1, 2, 3...)**
+- `finite` — Finite numbers (not **NaN** or **Infinity**)
+- `string`,`str` — Strings (using **typeof**)
+- `string+`,`str+` — Non-empty strings (using **str.length**)
+- `lowercase`,`lower` — Strings with no uppercase characters
+- `lowercase+`,`lower+` — Non-empty strings with no uppercase characters
+- `uppercase`,`upper` — Strings with no lowercase characters
+- `uppercase+`,`upper+` — Non-empty strings with no lowercase characters
+- `function`,`func` — Functions (using **instanceof Function**)
+- `object`,`obj` — Objects (using **instanceof Object**)
+- `object+`,`obj` — Objects with one or more enumerable properties (using **Object.keys().length**)
+- `iterable` — Objects with a **Symbol.iterator** method that can be used with **for..of** loops
+- `array`,`arr` — Arrays (using **instanceof Array**)
+- `array+`,`arr+` — Arrays with one or more items
+- `map` — Instances of **Map**
+- `map+` — Instances of **Map** with one or more items
+- `weakmap` — Instances of **WeakMap**
+- `set` — Instances of **Set**
+- `set+` — Instances of **Set** with one or more items
+- `weakset` — Instances of **WeakSet**
+- `arguments`,`args` — Arguments objects (has a numeric **.length** property)
+- `promise` — Instances of **Promise**
+- `date` — Instances of **Date**
+- `future` — Instances of **Date** with a value in the future
+- `past` — Instances of **Date** with a value in the past
 
 ```js
 // Pass.
@@ -209,13 +209,14 @@ check([], 'array+'); // Throws TypeError "Must be array with one or more items (
 
 Any type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
-Note: If the check passes (doesn't throw an error) because it was optional and `undefined` was passed, the `check()` and `args()` do not add it to their return count.
+Note: If the check passes because the value was optional (and `undefined` was received), `check()` and `args()` do not increment their return count (of defined values), and will return 1.
 
 ```js
 // Pass.
 check(undefined, 'str?'); // Returns 0 (not 1)
 check(undefined, 'lower?'); // Returns 0 (not 1)
 check(undefined, 'whole?'); // Returns 0 (not 1)
+check([undefined, undefined, 123], ['number?']); // Returns 1 (not 3)
 
 // Fail.
 check(123, 'str?'); // Throws TypeError "Must be string (received 123)"
