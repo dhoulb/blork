@@ -5,7 +5,6 @@
 
 // Vars.
 const UNDEF = Symbol();
-const LIMIT = 50;
 
 /**
  * Neatly convert any value into a string for debugging.
@@ -22,7 +21,7 @@ export function debug(value: any) { // tslint:disable-line:no-any
 	else if (typeof value === 'number') return value.toString(); // E.g. 123 or 456.789
 	else if (typeof value === 'symbol') return value.toString(); // E.g. Symbol(foo)
 	else if (typeof value === 'string') return JSON.stringify(value);
-	else return debugObject(value);
+	else return debugObject(value as object);
 
 }
 
