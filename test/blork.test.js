@@ -1,10 +1,6 @@
 const { BlorkError } = require('../lib/errors');
 const { checkers } = require('../lib/checkers');
-const { debug } = require('../lib/helpers');
 const { check, args, add, throws } = require('../lib/blork');
-
-// Vars.
-const func = () => {};
 
 // Tests.
 describe('check()', () => {
@@ -154,6 +150,12 @@ describe('check()', () => {
 		expect(() => check('a', Object)).toThrow(TypeError);
 		expect(() => check({}, Array)).toThrow(TypeError);
 		expect(() => check({}, Promise)).toThrow(TypeError);
+		expect(() => check(1, Boolean)).toThrow(/Must be true or false/);
+		expect(() => check('a', Number)).toThrow(/Must be a number/);
+		expect(() => check(null, String)).toThrow(/Must be a string/);
+		expect(() => check('a', Object)).toThrow(/Must be an instance of Object/);
+		expect(() => check({}, Array)).toThrow(/Must be an instance of Array/);
+		expect(() => check({}, Promise)).toThrow(/Must be an instance of Promise/);
 	});
 	test('Return correctly when checks pass (custom constructor format)', () => {
 		class MyClass {}
@@ -164,27 +166,49 @@ describe('check()', () => {
 		expect(check(mySubClass, MyClass)).toBe(1);
 	});
 	test('Throw TypeError when checks fail (custom constructor format)', () => {
-		expect(() => check(1, Boolean)).toThrow(TypeError);
+		class MyClass {}
+		class MyOtherClass {}
+		const myClass = new MyClass();
+		expect(() => check(myClass, MyOtherClass)).toThrow(TypeError);
+		expect(() => check(myClass, MyOtherClass)).toThrow(/Must be an instance of MyOtherClass/);
+		expect(() => check(myClass, class {})).toThrow(TypeError);
+		expect(() => check(myClass, class {})).toThrow(/Must be an instance of anonymous class/);
+		expect(() => check(myClass, function () {})).toThrow(TypeError);
+		expect(() => check(myClass, function () {})).toThrow(/Must be an instance of anonymous class/);
 	});
 	test('Return correctly when checks pass (object literal format)', () => {
 		expect(check({ a: 'a', b: 1 }, { a: 'str', b: Number })).toBe(2);
 		expect(check({ a: 'a', z: 'extraparam' }, { a: String })).toBe(1); // Objects ignore extra params.
+		expect(check({ a: 'a', b: undefined }, { a: 'str', b: 'num?' })).toBe(1);  // Objects don't count undefined optional values.
 	});
 	test('Throw TypeError when checks fail (object literal format)', () => {
 		expect(() => check({ a: 'notnumberparam' }, { a: Number })).toThrow(TypeError);
 	});
+	test('Throw TypeError if value is not object (object literal format)', () => {
+		expect(() => check(123, { '1': Number })).toThrow(TypeError);
+	});
 	test('Return correctly when checks pass (array literal format)', () => {
 		expect(check([1, 2, 3], [Number])).toBe(3);
+		expect(check([1, 2, 3], ['num'])).toBe(3);
+		expect(check([1, undefined, 3], ['num?'])).toBe(2); // Arrays don't count undefined optional values.
 	});
 	test('Throw TypeError when checks fail (array literal format)', () => {
 		expect(() => check([1, 2, 'surprisestring'], [Number])).toThrow(TypeError);
 	});
+	test('Throw TypeError if value is not array (array literal format)', () => {
+		expect(() => check({ a: 123 }, [String])).toThrow(TypeError);
+	});
 	test('Return correctly when checks pass (array tuple format)', () => {
 		expect(check([1, 2, 3], [Number, Number, Number])).toBe(3);
+		expect(check([1, 2, 3], ['num', 'num', 'num'])).toBe(3);
+		expect(check([1, undefined, 3], ['num?', 'num?', 'num?'])).toBe(2); // Arrays don't count undefined optional values.
 	});
 	test('Throw TypeError when checks fail (array tuple format)', () => {
 		expect(() => check([1, 1], [Number, String])).toThrow(TypeError);
 		expect(() => check([1, 'b', 'excessitem'], [Number, String])).toThrow(TypeError);
+	});
+	test('Throw TypeError if value is not array (array tuple format)', () => {
+		expect(() => check({ a: 123 }, [String])).toThrow(TypeError);
 	});
 	test('Throw BlorkError if type is not object, function, or string', () => {
 		expect(() => check(1, 123)).toThrow(BlorkError);
@@ -192,14 +216,31 @@ describe('check()', () => {
 		expect(() => check(1, null)).toThrow(BlorkError);
 		expect(() => check(1, undefined)).toThrow(BlorkError);
 	});
+	test('Do not throw error if passing string name', () => {
+		expect(check(true, 'bool', 'myValue')).toBe(1);
+		expect(check(true, Boolean, 'myValue')).toBe(1);
+		expect(check([true], ['bool'], 'myValue')).toBe(1);
+		expect(check({ bool: true }, { bool: 'bool' }, 'myValue')).toBe(1);
+	});
 	test('Throw BlorkError if passing non-string name', () => {
 		expect(() => check(1, 'bool', 123)).toThrow(BlorkError);
+	});
+	test('Throw BlorkError if checker does not exist', () => {
+		expect(() => check(1, 'checkerthatdoesnotexist')).toThrow(BlorkError);
 	});
 });
 describe('args()', () => {
 	test('Return correctly when argument checks pass', () => {
 		const argsObj = { '0': 'a', '1': 123, '2': true, length: 3 };
 		expect(args(argsObj, [String, Number, Boolean])).toBe(3);
+		const argsArr = ['a', 123, true];
+		expect(args(argsArr, [String, Number, Boolean])).toBe(3);
+	});
+	test('Return correct number when arguments are optional', () => {
+		const argsObj = { '0': 'a', '1': 123, length: 2 };
+		expect(args(argsObj, ['str', 'num', 'bool?'])).toBe(2);
+		const argsArr = ['a', 123];
+		expect(args(argsArr, ['str', 'num', 'bool?'])).toBe(2);
 	});
 	test('Throw TypeError when argument checks fail', () => {
 		const argsObj = { '0': 'a', length: 3 };
@@ -225,6 +266,7 @@ describe('add()', () => {
 		expect(() => check(123, 'test.checker')).toThrow(TypeError);
 	});
 	test('Throw BlorkError if not non-empty lowercase string', () => {
+		const func = () => {};
 		expect(() => add(123, func)).toThrow(BlorkError);
 		expect(() => add('', func)).toThrow(BlorkError);
 		expect(() => add('UPPER', func)).toThrow(BlorkError);
@@ -233,6 +275,7 @@ describe('add()', () => {
 		expect(() => add('test.checker.nonfunction', true)).toThrow(BlorkError);
 	});
 	test('Throw BlorkError if same name as existing', () => {
+		const func = () => {};
 		add('test.checker.samename', func);
 		expect(() => add('test.checker.samename', func)).toThrow(BlorkError);
 	});

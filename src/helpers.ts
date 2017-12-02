@@ -5,46 +5,72 @@
 
 // Vars.
 const UNDEF = Symbol();
+const LIMIT = 50;
 
 /**
  * Neatly convert any value into a string for debugging.
- *
- * @param value The value to convert to a string.
- * @return The value after it has been converted to a string.
+ * @param value The value to debug.
+ * @return String representing the debugged value.
+ * @internal
  */
 export function debug(value: any) { // tslint:disable-line:no-any
 
 	if (value === null) return 'null';
-	if (value === undefined) return 'undefined';
-	if (value === true) return 'true';
-	if (value === false) return 'false';
-	if (typeof value === 'string') {
-		const max = 20;
-		return JSON.stringify(value.length > max ? `${value.substr(0, max)}…` : value);
-	}
-	if (typeof value === 'number') return value.toString(); // E.g. 123 or 456.789
-	if (typeof value === 'symbol') return value.toString(); // E.g. Symbol(foo)
-	if (value instanceof Function) {
-		// tslint:disable:no-unsafe-any
-		if (value.name.length > 0) return `function ${value.name}()`;
-		// tslint:enable:no-unsafe-any
-		return 'anonymous function';
-	}
-	if (value instanceof Array) return value.length > 0 ? `${value.constructor.name} with ${value.length} items` : `empty ${value.constructor.name}`;
-	if (value instanceof Object) {
-		// tslint:disable:no-unsafe-any
-		if (value.constructor instanceof Function && value.constructor.name.length > 0) {
-			if (value.constructor === Object) {
-				const l = Object.keys(value).length;
-				return l > 0 ? `Object with ${l} props` : 'empty Object';
-			}
-			return `instance of ${value.constructor.name}`;
-		}
-		// tslint:enable:no-unsafe-any
-		return 'instance of anonymous class';
-	}
-	return 'unknown value';
+	else if (value === undefined) return 'undefined';
+	else if (value === true) return 'true';
+	else if (value === false) return 'false';
+	else if (typeof value === 'number') return value.toString(); // E.g. 123 or 456.789
+	else if (typeof value === 'symbol') return value.toString(); // E.g. Symbol(foo)
+	else if (typeof value === 'string') return JSON.stringify(value);
+	else return debugObject(value);
 
+}
+
+/**
+ * Debug an object.
+ * @param value The value to debug.
+ * @return String representing the debugged value.
+ * @internal
+ */
+function debugObject(value: object): string {
+
+	// Function, e.g. myFunc()
+	if (value instanceof Function) {
+
+		// Named function.
+		if (value.name.length > 0) return `${value.name}()`; // tslint:disable-line:no-unsafe-any
+
+		// Unnamed function.
+		return 'anonymous function';
+
+	}
+
+	// tslint:disable:no-unsafe-any
+	if (value.constructor instanceof Function && value.constructor.name.length > 0) {
+
+		// Error, e.g. TypeError "Must be a string"
+		if (value instanceof Error) return `${value.constructor.name} ${debug(value.message)}`;
+
+		// Date, e.g. 2011-10-05T14:48:00.000Z
+		if (value instanceof Date) return value.toISOString();
+
+		// Regular expression, e.g. /abc/
+		if (value.constructor === RegExp) return value.toString();
+
+		// Array, e.g. Array: [1,3,4]
+		if (value.constructor === Array) return JSON.stringify(value, undefined, '\t');
+
+		// Object, e.g. Object: {"a":123}
+		if (value.constructor === Object) return JSON.stringify(value, undefined, '\t');
+
+		// Other object with named constructor.
+		return `instance of ${value.constructor.name}`;
+
+	}
+	// tslint:enable:no-unsafe-any
+
+	// Other unnamed object.
+	return 'instance of anonymous class';
 }
 
 /**
@@ -62,6 +88,6 @@ export function format(message: string, value: any = UNDEF, prefix?: string) { /
 	const debugged = debug(value);
 
 	// E.g. MyPrefix: Must be string (received 123)
-	return (typeof prefix === 'string' && prefix.length > 0 ? `${prefix}: ` : '') + message + (value !== UNDEF ? ` (received ${debugged})` : '');
+	return (typeof prefix === 'string' && prefix.length > 0 ? `;$;{prefix;}: ` : '') + message + (value !== UNDEF ? ` (received ${debugged})` : '');
 
 }

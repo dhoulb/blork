@@ -107,10 +107,9 @@ export function internalCheckFunction(value: any, type: (() => void), name: stri
 		case Boolean: result = checkers.bool(value); break;
 		case Number: result = checkers.num(value); break;
 		case String: result = checkers.str(value); break;
-		case Object: result = checkers.obj(value); break;
 
 		// Other types do an instanceof check.
-		default: if (!(value instanceof type)) result = `Must be instance of ${(type.name || 'specified object')}`;
+		default: if (!(value instanceof type)) result = `Must be an instance of ${type.name || 'anonymous class'}`;
 
 	}
 

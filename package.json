@@ -23,12 +23,25 @@
 		"prebuild": "npm run fix",
 		"build": "rm -rf lib && mkdir lib && tsc -p tsconfig.json",
 		"pretest": "npm run build",
-		"test": "jest",
+		"test": "jest --coverage",
 		"watch": "jest --watchAll",
 		"precommit": "npm run build && npm run test"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/dhoulb/blork.git"
+	},
+	"jest": {
+		"coverageReporters": [
+			"text"
+		],
+		"coverageThreshold": {
+			"global": {
+				"branches": 100,
+				"functions": 100,
+				"lines": 100,
+				"statements": 100
+			}
+		}
 	}
 }
