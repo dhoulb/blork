@@ -25,7 +25,7 @@
 		"pretest": "npm run build",
 		"test": "jest --coverage",
 		"watch": "jest --watchAll",
-		"precommit": "npm run build && npm run test"
+		"prepush": "npm run build && npm run test"
 	},
 	"repository": {
 		"type": "git",
