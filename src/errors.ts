@@ -21,4 +21,15 @@ export class BlorkError extends Error {
 	/** Error name */
 	public name = BlorkError.name;
 
+	// Construct.
+	public constructor(message: string) {
+
+		// Super.
+		super(message);
+
+		// Save message.
+		if (message) this.message = message;
+
+	}
+
 }
