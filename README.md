@@ -122,7 +122,7 @@ check(
 	[
 		{ id: Number, name: String, status: [Number] }
 	]
-); 
+);
 
 // Deeply nested check (fails).
 // Will throw TypeError "Array[1][status][2]: Must be a number (received 'not_a_number')"
@@ -134,7 +134,7 @@ check(
 	[
 		{ id: Number, name: String, status: [Number] }
 	]
-); 
+);
 ```
 
 ### add(): Add a custom checker type
@@ -195,44 +195,47 @@ check(true, 'false'); // Throws MyError "Must be false (received true)"
 
 Types are generally accessed via a string reference. This list shows all Blork built-in checkers:
 
-| Type string reference      | Description                                                                         |
-|----------------------------|-------------------------------------------------------------------------------------|
-| `null`                     | Value is **null**                                                                   |
-| `undefined` `undef` `void` | Value is **undefined**                                                              |
-| `defined` `def`            | Value is **not undefined**                                                          |
-| `boolean` `bool`           | Value is **true** or **false**                                                      |
-| `true`                     | Value is **true**                                                                   |
-| `false`                    | Value is **false**                                                                  |
-| `truthy`                   | Any truthy values (i.e. **== true**)                                                |
-| `falsy`                    | Any falsy values (i.e. **== false**)                                                |
-| `number` `num`             | Numbers (using **typeof**)                                                          |
-| `integer` `int`            | Integers (i.e. not floats, using **Number.isInteger()**)                            |
-| `natural`                  | Natural numbers **(1, 2, 3...)**                                                    |
-| `whole`                    | Whole numbers **(1, 2, 3...)**                                                      |
-| `finite`                   | Finite numbers (not **NaN** or **Infinity**)                                        |
-| `string` `str`             | Strings (using **typeof**)                                                          |
-| `string+` `str+`           | Non-empty strings (using **str.length**)                                            |
-| `lowercase` `lower`        | Strings with no uppercase characters                                                |
-| `lowercase+` `lower+`      | Non-empty strings with no uppercase characters                                      |
-| `uppercase` `upper`        | Strings with no lowercase characters                                                |
-| `uppercase+` `upper+`      | Non-empty strings with no lowercase characters                                      |
-| `function` `func`          | Functions (using **instanceof Function**)                                           |
-| `object` `obj`             | Objects (using **instanceof Object**)                                               |
-| `object+` `obj+`           | Objects with one or more properties (using **Object.keys().length**)                |
-| `iterable`                 | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops) |
-| `array` `arr`              | Instances of Array (using **instanceof Array**)                                     |
-| `array+` `arr+`            | Instances of Array with one or more items                                           |
-| `map`                      | Instances of **Map**                                                                |
-| `map+`                     | Instances of **Map** with one or more items                                         |
-| `weakmap`                  | Instances of **WeakMap**                                                            |
-| `set`                      | Instances of **Set**                                                                |
-| `set+`                     | Instances of **Set** with one or more items                                         |
-| `weakset`                  | Instances of **WeakSet**                                                            |
-| `promise`                  | Instances of **Promise**                                                            |
-| `date`                     | Instances of **Date**                                                               |
-| `future`                   | Instances of **Date** with a value in the future                                    |
-| `past`                     | Instances of **Date** with a value in the past                                      |
-| `arguments` `args`         | Arguments (any object, not just arrays, with numeric **.length** property)          |
+| Type string reference           | Description
+|---------------------------------|-------------------
+| `null`                          | Value is **null**
+| `undefined`, `undef`, `void`    | Value is **undefined**
+| `defined`, `def`                | Value is **not undefined**
+| `boolean`, `bool`               | Value is **true** or **false**
+| `true`                          | Value is **true**
+| `false`                         | Value is **false**
+| `truthy`                        | Any truthy values (i.e. **== true**)
+| `falsy`                         | Any falsy values (i.e. **== false**)
+| `number`, `num`                 | Numbers excluding NaN/Infinity (using **typeof** and finite check) 
+| `number+`, `num+`               | Numbers more than or equal to zero
+| `number-`, `num-`               | Numbers less than or equal to zero
+| `integer`, `int`                | Integers (using **Number.isInteger()**)
+| `integer+`, `int+`              | Positive integers including zero
+| `integer-`, `int-`              | Negative integers including zero
+| `string`, `str`                 | Strings (using **typeof**)
+| `string+`, `str+`               | Non-empty strings (using **str.length**)
+| `lowercase`, `lower`            | Strings with no uppercase characters
+| `lowercase+`, `lower+`          | Non-empty strings with no uppercase characters
+| `uppercase`, `upper`            | Strings with no lowercase characters
+| `uppercase+`, `upper+`          | Non-empty strings with no lowercase characters
+| `function`, `func`              | Functions (using **instanceof Function**)
+| `object`, `obj`                 | Plain objects (using **instanceof Object** and constructor check)
+| `object+`, `obj+`               | Plain objects with one or more properties (using **Object.keys().length**)
+| `objectlike`                    | Any object-like object (using **instanceof Object**)
+| `iterable`                      | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
+| `array`, `arr`                  | Plain instances of Array (using **instanceof Array** and constructor check) 
+| `array+`, `arr+`                | Plain instances of **Array** with one or more items
+| `arraylike`                     | Any object inheriting **Array**
+| `map`                           | Instances of **Map**
+| `map+`                          | Instances of **Map** with one or more items
+| `weakmap`                       | Instances of **WeakMap**
+| `set`                           | Instances of **Set**
+| `set+`                          | Instances of **Set** with one or more items
+| `weakset`                       | Instances of **WeakSet**
+| `promise`                       | Instances of **Promise**
+| `date`                          | Instances of **Date**
+| `date+`, `future`               | Instances of **Date** with a value in the future
+| `date-`, `past`                 | Instances of **Date** with a value in the past
+| `arguments`, `args`             | Arguments (any object, not just arrays, with numeric **.length** property)
 
 ```js
 // Pass.
