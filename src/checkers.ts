@@ -45,8 +45,8 @@ export const checkers: { [key: string]: CheckerFunction } = {
 	'weakset': (v: any) => (v instanceof WeakSet && v.constructor === WeakSet) || 'Must be a weak set',
 	'promise': (v: any) => v instanceof Promise || 'Must be a promise',
 	'date': (v: any) => v instanceof Date || 'Must be a date',
-	'future': (v: any) => (v instanceof Date && v.getTime() > Date.now()) || 'Must be a date in the future',
-	'past': (v: any) => (v instanceof Date && v.getTime() < Date.now()) || 'Must be a date in the past',
+	'date+': (v: any) => (v instanceof Date && v.getTime() > Date.now()) || 'Must be a date in the future',
+	'date-': (v: any) => (v instanceof Date && v.getTime() < Date.now()) || 'Must be a date in the past',
 };
 // tslint:enable:no-any no-unsafe-any
 
@@ -74,3 +74,5 @@ checkers.arr = checkers.array;
 checkers['arr+'] = checkers['array+'];
 checkers.arguments = checkers.arraylike;
 checkers.args = checkers.arraylike;
+checkers.future = checkers['date+'];
+checkers.past = checkers['date-'];

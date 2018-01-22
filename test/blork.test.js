@@ -43,8 +43,8 @@ describe('check()', () => {
 		expect(check(new WeakSet(), 'weakset')).toBe(1);
 		expect(check(Promise.resolve(), 'promise')).toBe(1);
 		expect(check(new Date(), 'date')).toBe(1);
-		expect(check(new Date(2080, 0, 1), 'future')).toBe(1);
-		expect(check(new Date(1980, 0, 1), 'past')).toBe(1);
+		expect(check(new Date(2080, 0, 1), 'date+')).toBe(1);
+		expect(check(new Date(1980, 0, 1), 'date-')).toBe(1);
 		// Checker alternates.
 		expect(check(undefined, 'void')).toBe(1);
 		expect(check(undefined, 'undef')).toBe(1);
@@ -69,6 +69,8 @@ describe('check()', () => {
 		expect(check([1], 'arr+')).toBe(1);
 		expect(check(arguments, 'arguments')).toBe(1);
 		expect(check(arguments, 'args')).toBe(1);
+		expect(check(new Date(2080, 0, 1), 'future')).toBe(1);
+		expect(check(new Date(1980, 0, 1), 'past')).toBe(1);
 	});
 	test('Throw TypeError when checks fail (string format)', () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -109,8 +111,8 @@ describe('check()', () => {
 		expect(() => check([], 'weakset')).toThrow(TypeError);
 		expect(() => check(true, 'promise')).toThrow(TypeError);
 		expect(() => check('2016', 'date')).toThrow(TypeError);
-		expect(() => check(new Date(1080, 0, 1), 'future')).toThrow(TypeError);
-		expect(() => check(new Date(2980, 0, 1), 'past')).toThrow(TypeError);
+		expect(() => check(new Date(1080, 0, 1), 'date+')).toThrow(TypeError);
+		expect(() => check(new Date(2980, 0, 1), 'date-')).toThrow(TypeError);
 		// Checker alternates.
 		expect(() => check(null, 'void')).toThrow(TypeError);
 		expect(() => check(null, 'undef')).toThrow(TypeError);
@@ -135,6 +137,8 @@ describe('check()', () => {
 		expect(() => check({}, 'arr+')).toThrow(TypeError);
 		expect(() => check({}, 'arguments')).toThrow(TypeError);
 		expect(() => check({}, 'args')).toThrow(TypeError);
+		expect(() => check(new Date(1080, 0, 1), 'future')).toThrow(TypeError);
+		expect(() => check(new Date(2980, 0, 1), 'past')).toThrow(TypeError);
 	});
 	test('Return correctly when checks pass (optional string format)', () => {
 		expect(check(1, 'number?')).toBe(1);
