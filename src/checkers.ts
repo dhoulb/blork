@@ -31,16 +31,17 @@ export const checkers: { [key: string]: CheckerFunction } = {
 	'function': (v: any) => v instanceof Function || 'Must be a function',
 	'object': (v: any) => (typeof v === 'object' && v !== null && v.constructor === Object) || 'Must be a plain object',
 	'object+': (v: any) => (typeof v === 'object' && v !== null && v.constructor === Object && Object.keys(v).length > 0) || 'Must be a plain object with one or more enumerable properties',
+	'objectlike': (v: any) => (typeof v === 'object' && v !== null) || 'Must be an object',
 	'iterable': (v: any) => (typeof v === 'object' && v !== null && typeof v[Symbol.iterator] === 'function') || 'Must be an iterable object', // tslint:disable-line:no-any
 	'array': (v: any) => (v instanceof Array && v.constructor === Array) || 'Must be a plain array',
 	'array+': (v: any) => (v instanceof Array && v.constructor === Array && v.length > 0) || 'Must be a plain non-empty array',
+	'arraylike': (v: any) => (typeof v === 'object' && v !== null && v.hasOwnProperty('length') && typeof v.length === 'number' && v.length > 0 && v.length <= Number.MAX_SAFE_INTEGER) || 'Must be a plain array',
 	'map': (v: any) => (v instanceof Map && v.constructor === Map) || 'Must be a map',
 	'map+': (v: any) => (v instanceof Map && v.constructor === Map && v.size > 0) || 'Must be a map',
 	'weakmap': (v: any) => (v instanceof WeakMap && v.constructor === WeakMap) || 'Must be a weak map',
 	'set': (v: any) => (v instanceof Set && v.constructor === Set) || 'Must be a set',
 	'set+': (v: any) => (v instanceof Set && v.constructor === Set && v.size > 0) || 'Must be a non-empty set',
 	'weakset': (v: any) => (v instanceof WeakSet && v.constructor === WeakSet) || 'Must be a weak set',
-	'arguments': (v: any) => (typeof v === 'object' && v !== null && v.hasOwnProperty('length') && typeof v.length === 'number') || 'Must be an arguments object',
 	'promise': (v: any) => v instanceof Promise || 'Must be a promise',
 	'date': (v: any) => v instanceof Date || 'Must be a date',
 	'future': (v: any) => (v instanceof Date && v.getTime() > Date.now()) || 'Must be a date in the future',
@@ -66,4 +67,5 @@ checkers.obj = checkers.object;
 checkers['obj+'] = checkers['object+'];
 checkers.arr = checkers.array;
 checkers['arr+'] = checkers['array+'];
-checkers.args = checkers.arguments;
+checkers.arguments = checkers.arraylike;
+checkers.args = checkers.arraylike;

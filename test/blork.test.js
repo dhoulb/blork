@@ -29,9 +29,11 @@ describe('check()', () => {
 		expect(check(function() {}, 'function')).toBe(1);
 		expect(check({}, 'object')).toBe(1);
 		expect(check({ a: 1 }, 'object+')).toBe(1);
+		expect(check({}, 'objectlike')).toBe(1);
 		expect(check({ [Symbol.iterator]: () => {} }, 'iterable')).toBe(1);
 		expect(check([], 'array')).toBe(1);
 		expect(check([1], 'array+')).toBe(1);
+		expect(check({"0":"abc",length:1}, 'arraylike')).toBe(1);
 		expect(check(new Map(), 'map')).toBe(1);
 		expect(check(new Map([[1, 1]]), 'map+')).toBe(1);
 		expect(check(new WeakMap(), 'weakmap')).toBe(1);
@@ -88,9 +90,11 @@ describe('check()', () => {
 		expect(() => check({}, 'function')).toThrow(TypeError);
 		expect(() => check(1, 'object')).toThrow(TypeError);
 		expect(() => check({}, 'object+')).toThrow(TypeError);
+		expect(() => check('a', 'objectlike')).toThrow(TypeError);
 		expect(() => check({}, 'iterable')).toThrow(TypeError);
 		expect(() => check({}, 'array')).toThrow(TypeError);
 		expect(() => check({}, 'array+')).toThrow(TypeError);
+		expect(() => check({}, 'arraylike')).toThrow(TypeError);
 		expect(() => check([], 'map')).toThrow(TypeError);
 		expect(() => check(new Map(), 'map+')).toThrow(TypeError);
 		expect(() => check([], 'weakmap')).toThrow(TypeError);
