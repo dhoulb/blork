@@ -27,7 +27,7 @@ describe('check()', () => {
 		expect(check('A', 'uppercase')).toBe(1);
 		expect(check('A', 'uppercase+')).toBe(1);
 		expect(check(function() {}, 'function')).toBe(1);
-		expect(check({ a: 1 }, 'object')).toBe(1);
+		expect(check({}, 'object')).toBe(1);
 		expect(check({ a: 1 }, 'object+')).toBe(1);
 		expect(check({ [Symbol.iterator]: () => {} }, 'iterable')).toBe(1);
 		expect(check([], 'array')).toBe(1);
