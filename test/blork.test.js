@@ -15,11 +15,12 @@ describe('check()', () => {
 		expect(check(false, 'false')).toBe(1);
 		expect(check(true, 'truthy')).toBe(1);
 		expect(check(false, 'falsy')).toBe(1);
-		expect(check(1, 'number')).toBe(1);
+		expect(check(1.5, 'number')).toBe(1);
+		expect(check(1.5, 'number+')).toBe(1);
+		expect(check(-1.5, 'number-')).toBe(1);
 		expect(check(1, 'integer')).toBe(1);
-		expect(check(1, 'natural')).toBe(1);
-		expect(check(1, 'whole')).toBe(1);
-		expect(check(1, 'finite')).toBe(1);
+		expect(check(1, 'integer+')).toBe(1);
+		expect(check(-1, 'integer-')).toBe(1);
 		expect(check('a', 'string')).toBe(1);
 		expect(check('a', 'string+')).toBe(1);
 		expect(check('a', 'lowercase')).toBe(1);
@@ -40,7 +41,6 @@ describe('check()', () => {
 		expect(check(new Set(), 'set')).toBe(1);
 		expect(check(new Set([1]), 'set+')).toBe(1);
 		expect(check(new WeakSet(), 'weakset')).toBe(1);
-		expect(check(arguments, 'arguments')).toBe(1);
 		expect(check(Promise.resolve(), 'promise')).toBe(1);
 		expect(check(new Date(), 'date')).toBe(1);
 		expect(check(new Date(2080, 0, 1), 'future')).toBe(1);
@@ -50,8 +50,12 @@ describe('check()', () => {
 		expect(check(undefined, 'undef')).toBe(1);
 		expect(check(true, 'def')).toBe(1);
 		expect(check(true, 'bool')).toBe(1);
-		expect(check(1, 'num')).toBe(1);
+		expect(check(1.5, 'num')).toBe(1);
+		expect(check(0.5, 'num+')).toBe(1);
+		expect(check(-1.5, 'num-')).toBe(1);
 		expect(check(1, 'int')).toBe(1);
+		expect(check(1, 'int+')).toBe(1);
+		expect(check(-1, 'int-')).toBe(1);
 		expect(check('a', 'str')).toBe(1);
 		expect(check('a', 'str+')).toBe(1);
 		expect(check(function() {}, 'func')).toBe(1);
@@ -63,6 +67,7 @@ describe('check()', () => {
 		expect(check({ a: 1 }, 'obj+')).toBe(1);
 		expect(check([], 'arr')).toBe(1);
 		expect(check([1], 'arr+')).toBe(1);
+		expect(check(arguments, 'arguments')).toBe(1);
 		expect(check(arguments, 'args')).toBe(1);
 	});
 	test('Throw TypeError when checks fail (string format)', () => {
@@ -77,10 +82,11 @@ describe('check()', () => {
 		expect(() => check(0, 'truthy')).toThrow(TypeError);
 		expect(() => check(1, 'falsy')).toThrow(TypeError);
 		expect(() => check('1', 'number')).toThrow(TypeError);
+		expect(() => check(-1, 'number+')).toThrow(TypeError);
+		expect(() => check(1, 'number-')).toThrow(TypeError);
 		expect(() => check(1.5, 'integer')).toThrow(TypeError);
-		expect(() => check(0, 'natural')).toThrow(TypeError);
-		expect(() => check(-1, 'whole')).toThrow(TypeError);
-		expect(() => check(NaN, 'finite')).toThrow(TypeError);
+		expect(() => check(1.5, 'integer+')).toThrow(TypeError);
+		expect(() => check(-1.5, 'integer-')).toThrow(TypeError);
 		expect(() => check(1, 'string')).toThrow(TypeError);
 		expect(() => check('', 'string+')).toThrow(TypeError);
 		expect(() => check('A', 'lowercase')).toThrow(TypeError);
@@ -101,7 +107,6 @@ describe('check()', () => {
 		expect(() => check([], 'set')).toThrow(TypeError);
 		expect(() => check(new Set(), 'set+')).toThrow(TypeError);
 		expect(() => check([], 'weakset')).toThrow(TypeError);
-		expect(() => check({}, 'arguments')).toThrow(TypeError);
 		expect(() => check(true, 'promise')).toThrow(TypeError);
 		expect(() => check('2016', 'date')).toThrow(TypeError);
 		expect(() => check(new Date(1080, 0, 1), 'future')).toThrow(TypeError);
@@ -112,7 +117,11 @@ describe('check()', () => {
 		expect(() => check(undefined, 'def')).toThrow(TypeError);
 		expect(() => check(9, 'bool')).toThrow(TypeError);
 		expect(() => check('1', 'num')).toThrow(TypeError);
+		expect(() => check(-1, 'num+')).toThrow(TypeError);
+		expect(() => check(1, 'num-')).toThrow(TypeError);
 		expect(() => check(1.5, 'int')).toThrow(TypeError);
+		expect(() => check(2.5, 'int+')).toThrow(TypeError);
+		expect(() => check(-2.5, 'int-')).toThrow(TypeError);
 		expect(() => check(1, 'str')).toThrow(TypeError);
 		expect(() => check('', 'str+')).toThrow(TypeError);
 		expect(() => check('A', 'lower')).toThrow(TypeError);
@@ -124,6 +133,7 @@ describe('check()', () => {
 		expect(() => check({}, 'obj+')).toThrow(TypeError);
 		expect(() => check({}, 'arr')).toThrow(TypeError);
 		expect(() => check({}, 'arr+')).toThrow(TypeError);
+		expect(() => check({}, 'arguments')).toThrow(TypeError);
 		expect(() => check({}, 'args')).toThrow(TypeError);
 	});
 	test('Return correctly when checks pass (optional string format)', () => {
@@ -155,7 +165,7 @@ describe('check()', () => {
 		expect(() => check({}, Array)).toThrow(TypeError);
 		expect(() => check({}, Promise)).toThrow(TypeError);
 		expect(() => check(1, Boolean)).toThrow(/Must be true or false/);
-		expect(() => check('a', Number)).toThrow(/Must be a number/);
+		expect(() => check('a', Number)).toThrow(/Must be a finite number/);
 		expect(() => check(null, String)).toThrow(/Must be a string/);
 		expect(() => check('a', Object)).toThrow(/Must be an instance of Object/);
 		expect(() => check({}, Array)).toThrow(/Must be an instance of Array/);

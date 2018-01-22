@@ -17,11 +17,12 @@ export const checkers: { [key: string]: CheckerFunction } = {
 	'false': (v: any) => v === false || 'Must be false',
 	'truthy': (v: any) => !!v || 'Must be truthy',
 	'falsy': (v: any) => !v || 'Must be falsy',
-	'number': (v: any) => typeof v === 'number' || 'Must be a number',
+	'number': (v: any) => typeof v === 'number' && Number.isFinite(v) || 'Must be a finite number',
+	'number+': (v: any) => (typeof v === 'number' && Number.isFinite(v) && v >= 0) || 'Must be a positive finite number',
+	'number-': (v: any) => (typeof v === 'number' && Number.isFinite(v) && v <= 0) || 'Must be a negative finite number',
 	'integer': (v: any) => (typeof v === 'number' && Number.isInteger(v) && v >= Number.MIN_SAFE_INTEGER && v <= Number.MAX_SAFE_INTEGER) || 'Must be an integer',
-	'natural': (v: any) => (typeof v === 'number' && Number.isInteger(v) && v > 0 && v <= Number.MAX_SAFE_INTEGER) || 'Must be a natural number, e.g. 1, 2, 3',
-	'whole': (v: any) => (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= Number.MAX_SAFE_INTEGER) || 'Must be a whole number, e.g. 0, 1, 2, 3',
-	'finite': (v: any) => (typeof v === 'number' && Number.isFinite(v)) || 'Must be a finite number',
+	'integer+': (v: any) => (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= Number.MAX_SAFE_INTEGER) || 'Must be a positive integer',
+	'integer-': (v: any) => (typeof v === 'number' && Number.isInteger(v) && v >= Number.MIN_SAFE_INTEGER && v <= 0) || 'Must be a negative integer',
 	'string': (v: any) => typeof v === 'string' || 'Must be a string',
 	'string+': (v: any) => (typeof v === 'string' && v.length > 0) || 'Must be a non-empty string',
 	'lowercase': (v: any) => (typeof v === 'string' && v === v.toLowerCase()) || 'Must be a lowercase string',
@@ -55,7 +56,11 @@ checkers.undef = checkers.undefined;
 checkers.def = checkers.defined;
 checkers.bool = checkers.boolean;
 checkers.num = checkers.number;
+checkers['num+'] = checkers['number+'];
+checkers['num-'] = checkers['number-'];
 checkers.int = checkers.integer;
+checkers['int+'] = checkers['integer+'];
+checkers['int-'] = checkers['integer-'];
 checkers.str = checkers.string;
 checkers['str+'] = checkers['string+'];
 checkers.lower = checkers.lowercase;
