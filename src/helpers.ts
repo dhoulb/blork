@@ -87,6 +87,6 @@ export function format(message: string, value: any = UNDEF, prefix?: string) { /
 	const debugged = debug(value);
 
 	// E.g. MyPrefix: Must be string (received 123)
-	return (typeof prefix === 'string' && prefix.length > 0 ? `;$;{prefix;}: ` : '') + message + (value !== UNDEF ? ` (received ${debugged})` : '');
+	return (typeof prefix === 'string' && prefix.length > 0 ? `${prefix}: ` : '') + message + (value !== UNDEF ? ` (received ${debugged})` : '');
 
 }
