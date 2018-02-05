@@ -10,7 +10,7 @@ import { CheckerFunction, ArgumentsObject, Types, TypesArray, ErrorConstructor }
 import { internalCheck, internalCheckString } from './internal';
 import { checkers } from './checkers';
 import { format } from './helpers';
-import { BlorkError } from './errors';
+import BlorkError from './BlorkError';
 
 /**
  * Create a new instance of Blork.
@@ -30,24 +30,20 @@ export default function blork() {
 	 * @param values A single value (or object/array with values) to check against the type(s).
 	 * @param type A single stringy type reference (e.g. 'str'), functional shorthand type reference (e.g. `String`), or an object/array with list of types (e.g. `{name:'str'}` or `['str', 'num']`).
 	 * @param prefix='' Prefix for error messages, to assist debugging.
-	 * @param error=TypeError The error type to throw if the check fails.
 	 *
 	 * @return Returns the number of values that passed their checks.
 	 * @throws An error describing what went wrong (usually an error object).
 	 */
-	function check(value: any, type: Types, prefix = '', error: ErrorConstructor = errorConstructor) { // tslint:disable-line:no-any
-
-		// Check args.
-		internalCheck(prefix, 'string', 'arguments[2]', BlorkError);
+	function check(value: any, type: Types, prefix = '') { // tslint:disable-line:no-any
 
 		// Check the value against the type.
-		return internalCheck(value, type, prefix, error);
+		return internalCheck(value, type, prefix, errorConstructor);
 
 	}
 
 	/**
 	 * Check function arguments against types.
-	 * Same as check() but slightly friendlier
+	 * Same as check() but slightly friendlier and easier to use.
 	 *
 	 * @param argsObj The entire arguments object from the function call. Must have a .length property.
 	 * @param types A set of types corresponding to the argument.
