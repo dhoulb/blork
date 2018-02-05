@@ -36,7 +36,7 @@ export const checkers: { [key: string]: CheckerFunction } = {
 	'iterable': (v: any) => (typeof v === 'object' && v !== null && typeof v[Symbol.iterator] === 'function') || 'Must be an iterable object', // tslint:disable-line:no-any
 	'array': (v: any) => (v instanceof Array && v.constructor === Array) || 'Must be a plain array',
 	'array+': (v: any) => (v instanceof Array && v.constructor === Array && v.length > 0) || 'Must be a plain non-empty array',
-	'arraylike': (v: any) => (typeof v === 'object' && v !== null && v.hasOwnProperty('length') && typeof v.length === 'number' && v.length > 0 && v.length <= Number.MAX_SAFE_INTEGER) || 'Must be a plain array',
+	'arraylike': (v: any) => (typeof v === 'object' && v !== null && v.hasOwnProperty('length') && typeof v.length === 'number' && v.length > 0 && v.length <= Number.MAX_SAFE_INTEGER) || 'Must be an arraylike object with a numeric length property',
 	'map': (v: any) => (v instanceof Map && v.constructor === Map) || 'Must be a map',
 	'map+': (v: any) => (v instanceof Map && v.constructor === Map && v.size > 0) || 'Must be a map',
 	'weakmap': (v: any) => (v instanceof WeakMap && v.constructor === WeakMap) || 'Must be a weak map',
