@@ -1,6 +1,8 @@
 # Blork! Mini runtime type checking in Javascript
 
 [![Build Status](https://travis-ci.org/dhoulb/blork.svg?branch=master)](https://travis-ci.org/dhoulb/blork)
+[![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![npm](https://img.shields.io/npm/dm/blork.svg)](https://www.npmjs.com/package/blork)
 
 A mini type checker for locking down the external edges of your code. Mainly for use in modules when you don't know who'll be using the code. Minimal boilerplate code keeps your functions hyper readable and lets them be their beautiful minimal best selves (...or something?)
 

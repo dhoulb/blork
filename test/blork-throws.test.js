@@ -1,10 +1,9 @@
-const { BlorkError } = require('../lib/errors');
-const { checkers } = require('../lib/checkers');
-const { check, throws } = require('../lib/blork');
+const BlorkError = require("../lib/BlorkError");
+const { check, throws } = require("../lib/exports");
 
 // Tests.
-describe('throws()', () => {
-	test('Set a custom error object and check it throws', () => {
+describe("throws()", () => {
+	test("Set a custom error object and check it throws", () => {
 		// Define a custom error.
 		class MyError extends Error {}
 
@@ -12,9 +11,9 @@ describe('throws()', () => {
 		expect(throws(MyError)).toBeUndefined();
 
 		// Fail a check and make sure it throws the custom error (not TypeError).
-		expect(() => check(false, 'true')).toThrow(MyError);
+		expect(() => check(false, "true")).toThrow(MyError);
 	});
-	test('Throw BlorkError if passing a non-function', () => {
+	test("Throw BlorkError if passing a non-function", () => {
 		expect(() => throws(false)).toThrow(BlorkError);
 		expect(() => throws(123)).toThrow(BlorkError);
 		expect(() => throws({})).toThrow(BlorkError);
