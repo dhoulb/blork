@@ -6,7 +6,7 @@
 
 A mini type checker for locking down the external edges of your code. Mainly for use in modules when you don't know who'll be using the code. Minimal boilerplate code keeps your functions hyper readable and lets them be their beautiful minimal best selves (...or something?)
 
-Everything is unit tested and everything has TypeScript types (if you're into that!).
+Blork is fully unit tested and 100% covered (if you're into that!).
 
 ## Installation
 
@@ -191,6 +191,28 @@ throws(MyError);
 
 // Test a value.
 check(true, 'false'); // Throws MyError "Must be false (received true)"
+```
+
+### blork(): Create an independent instance of Blork
+
+To create an instance of Blork with an independent set of checkers (added with `add()`) and an independently set `throws()` error object, use the `blork()` function.
+
+This functionality is provided so you can ensure multiple versions of Blork in submodules of the same project don't interfere with each other, even if they have been (possibly purposefully) deduped in npm. 
+
+```js
+import { blork } from 'blork';
+
+// Create a new set of functions from Blork.
+const { check, add, throws } = blork();
+
+// Set a new custom error on the new instance.
+throws(class CustomError extends TypeError);
+
+// Add a custom checker on the new instance.
+add("mychecker", v => v === "abc" || "Must be 'abc'");
+
+// Try to use the custom checker.
+check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123')")
 ```
 
 ## Types
