@@ -4,8 +4,8 @@
 	"version": "2.0.1",
 	"license": "0BSD",
 	"author": "Dave Houlbrooke <dave@shax.com>",
-	"main": "lib/blork.js",
-	"types": "lib/blork.d.ts",
+	"main": "lib/exports.js",
+	"types": "lib/exports.d.ts",
 	"engineStrict": true,
 	"engines": {
 		"node": ">=6.0.0"
