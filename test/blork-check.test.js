@@ -85,6 +85,8 @@ describe("check()", () => {
 		expect(check(new Set([1]), "set+")).toBe(1);
 		expect(check(new WeakSet(), "weakset")).toBe(1);
 		expect(check(Promise.resolve(), "promise")).toBe(1);
+		expect(check(/[abc]+/g, "regexp")).toBe(1);
+		expect(check(/[abc]+/g, "regex")).toBe(1);
 	});
 	test("Throw TypeError when checks fail (string format)", () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -167,6 +169,8 @@ describe("check()", () => {
 		expect(() => check(new Set(), "set+")).toThrow(TypeError);
 		expect(() => check([], "weakset")).toThrow(TypeError);
 		expect(() => check(true, "promise")).toThrow(TypeError);
+		expect(() => check("/[abc]+/g", "regexp")).toThrow(TypeError);
+		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
 	});
 	test("Return correctly when checks pass (optional string format)", () => {
 		expect(check(1, "number?")).toBe(1);
