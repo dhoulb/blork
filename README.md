@@ -248,7 +248,8 @@ Types are generally accessed via a string reference. This list shows all Blork b
 | `iterable`                      | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
 | `array`, `arr`                  | Plain instances of Array (using **instanceof Array** and constructor check) 
 | `array+`, `arr+`                | Plain instances of **Array** with one or more items
-| `arraylike`                     | Any object inheriting **Array**
+| `arraylike`                     | Any object, not just arrays, with numeric **.length** property
+| `arguments`, `args`             | Arguments objects (any object, not just arrays, with numeric **.length** property)
 | `map`                           | Instances of **Map**
 | `map+`                          | Instances of **Map** with one or more items
 | `weakmap`                       | Instances of **WeakMap**
@@ -259,7 +260,8 @@ Types are generally accessed via a string reference. This list shows all Blork b
 | `date`                          | Instances of **Date**
 | `date+`, `future`               | Instances of **Date** with a value in the future
 | `date-`, `past`                 | Instances of **Date** with a value in the past
-| `arguments`, `args`             | Arguments (any object, not just arrays, with numeric **.length** property)
+| `regex`, `regexp`               | Instances of **RegExp** (regular expressions)
+| `any`, `mixed`                  | Allow any value (transparently passes through with no error)
 
 ```js
 // Pass.
