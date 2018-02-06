@@ -87,6 +87,8 @@ describe("check()", () => {
 		expect(check(Promise.resolve(), "promise")).toBe(1);
 		expect(check(/[abc]+/g, "regexp")).toBe(1);
 		expect(check(/[abc]+/g, "regex")).toBe(1);
+		expect(check(false, "any")).toBe(1);
+		expect(check("abc", "mixed")).toBe(1);
 	});
 	test("Throw TypeError when checks fail (string format)", () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -171,6 +173,8 @@ describe("check()", () => {
 		expect(() => check(true, "promise")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regexp")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
+		expect(check(false, "any")).toBe(1);
+		expect(check("abc", "mixed")).toBe(1);
 	});
 	test("Return correctly when checks pass (optional string format)", () => {
 		expect(check(1, "number?")).toBe(1);
