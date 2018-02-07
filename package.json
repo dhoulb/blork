@@ -21,6 +21,7 @@
 		"prettier": "^1.10.2"
 	},
 	"scripts": {
+		"watch": "jest --watchAll",
 		"test": "jest --coverage",
 		"lint": "eslint ./",
 		"fix": "eslint --fix ./",
