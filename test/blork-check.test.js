@@ -219,6 +219,26 @@ describe("check()", () => {
 		const mySubClass = new MySubClass();
 		expect(check(mySubClass, MyClass)).toBe(1);
 	});
+	test("Return correctly when object value contains circular references", () => {
+		const value = { a: 1 };
+		value.a = value;
+		expect(check(value, { a: { a: Object } })).toBe(1);
+	});
+	test("Return correctly when array value contain circular references", () => {
+		const value = [];
+		value.push(value);
+		expect(check(value, [[Array]])).toBe(1);
+	});
+	test("Throw BlorkError when object type contains circular references", () => {
+		const type = [];
+		type.push(type);
+		expect(() => check([[]], type)).toThrow(BlorkError);
+	});
+	test("Throw BlorkError when array type contain circular references", () => {
+		const type = { a: 1 };
+		type.a = type;
+		expect(() => check({ a: Object }, type)).toThrow(BlorkError);
+	});
 	test("Throw TypeError when checks fail (custom constructor format)", () => {
 		class MyClass {}
 		class MyOtherClass {}
