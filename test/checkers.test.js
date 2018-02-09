@@ -176,3 +176,82 @@ describe("checkers", () => {
 		expect(check("abc", "mixed")).toBe(1);
 	});
 });
+describe("array checker", () => {
+	test("Works with empty arrays", () => {
+		expect(check([1, 2, 3], "array")).toBe(1);
+	});
+	test("Works with non-empty arrays", () => {
+		expect(check([1, 2, 3], "array")).toBe(1);
+	});
+	test("Fails for superclasses of Array", () => {
+		class SuperArray extends Array {}
+		expect(() => check(new SuperArray(), "array")).toThrow(TypeError);
+	});
+});
+describe("arraylike/arguments checker", () => {
+	test("Works with empty arguments objects", () => {
+		(function() {
+			expect(check(arguments, "arraylike")).toBe(1);
+		})();
+	});
+	test("Works with non-empty arguments objects", () => {
+		(function() {
+			expect(check(arguments, "arraylike")).toBe(1);
+		})("abc", "abc");
+		(function() {
+			expect(check(arguments, "arraylike")).toBe(1);
+		})("abc", 123, false);
+	});
+	test("Works with arraylike objects", () => {
+		expect(check({ length: 5 }, "arraylike")).toBe(1);
+	});
+	test("Fails if length is not positive integer", () => {
+		expect(() => check({ length: 1.5 }, "arraylike")).toThrow(TypeError);
+		expect(() => check({ length: -10 }, "arraylike")).toThrow(TypeError);
+		expect(() => check({ length: Number.MAX_SAFE_INTEGER + 10 }, "arraylike")).toThrow(TypeError);
+	});
+});
+describe("object checker", () => {
+	test("Works with empty objects", () => {
+		expect(check({}, "object")).toBe(1);
+	});
+	test("Works with non-empty objects", () => {
+		expect(check({ a: 1, b: 2 }, "object")).toBe(1);
+	});
+	test("Fails for superclasses of object", () => {
+		class SuperObject extends Object {}
+		expect(() => check(new SuperObject(), "object")).toThrow(TypeError);
+	});
+});
+describe("integer checkers", () => {
+	test("Fails with floats", () => {
+		expect(() => check(1.5, "integer")).toThrow(TypeError);
+		expect(() => check(1.5, "integer-")).toThrow(TypeError);
+		expect(() => check(1.5, "integer+")).toThrow(TypeError);
+	});
+	test("Works with zero integers", () => {
+		expect(check(0, "integer")).toBe(1);
+		expect(check(0, "integer+")).toBe(1);
+		expect(check(0, "integer-")).toBe(1);
+	});
+	test("Works with highest allowed integers", () => {
+		expect(check(Number.MAX_SAFE_INTEGER, "integer")).toBe(1);
+		expect(check(Number.MAX_SAFE_INTEGER, "integer+")).toBe(1);
+		expect(check(0, "integer-")).toBe(1);
+	});
+	test("Works with lowest allowed integers", () => {
+		expect(check(Number.MIN_SAFE_INTEGER, "integer")).toBe(1);
+		expect(check(Number.MIN_SAFE_INTEGER, "integer-")).toBe(1);
+		expect(check(0, "integer+")).toBe(1);
+	});
+	test("Fails for numbers higher than allowed", () => {
+		expect(() => check(Number.MAX_SAFE_INTEGER + 10, "integer")).toThrow(TypeError);
+		expect(() => check(Number.MAX_SAFE_INTEGER + 10, "integer+")).toThrow(TypeError);
+		expect(() => check(1, "integer-")).toThrow(TypeError);
+	});
+	test("Fails for numbers lower than allowed", () => {
+		expect(() => check(Number.MIN_SAFE_INTEGER - 10, "integer")).toThrow(TypeError);
+		expect(() => check(-1, "integer+")).toThrow(TypeError);
+		expect(() => check(Number.MIN_SAFE_INTEGER - 10, "integer-")).toThrow(TypeError);
+	});
+});
