@@ -29,4 +29,9 @@ describe("args()", () => {
 	test("Throw BlorkError if types is not array", () => {
 		expect(() => args({ "0": "abc", length: 1 }, { length: 0 })).toThrow(BlorkError);
 	});
+	test("Arguments object check works correctly", () => {
+		(function() {
+			expect(args(arguments, ["str", "num", "bool"])).toBe(3);
+		})("abc", 123, true);
+	});
 });
