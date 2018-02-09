@@ -67,16 +67,24 @@ describe("debug()", () => {
 		expect(debug([1, [21, 22, 23], 3])).toBe(`[1, [21, 22, 23], 3]`);
 	});
 	test("Return correct debug string for functions", () => {
-		expect(debug(function() {})).toBe("function()");
+		expect(debug(function() {})).toBe("anonymous function()");
 		expect(debug(function dog() {})).toBe("dog()");
 	});
 	test("Return correct debug string for class instances", () => {
 		expect(debug(new class MyClass {}())).toBe("MyClass {}");
-		expect(debug(new class {}())).toBe("anonymous {}");
+		expect(debug(new class {}())).toBe("anonymous object {}");
 	});
 	test("Return correct debug string for errors", () => {
 		expect(debug(TypeError("My error message"))).toBe('TypeError "My error message"');
 		expect(debug(new TypeError("My error message"))).toBe('TypeError "My error message"');
+		class MyError extends Error {}
+		MyError.prototype.name = "MyError";
+		expect(debug(new MyError())).toBe("MyError");
+		expect(debug(new MyError("My error message"))).toBe('MyError "My error message"');
+		class AnonymousError extends Error {}
+		AnonymousError.prototype.name = "";
+		expect(debug(new AnonymousError())).toBe("AnonymousError");
+		expect(debug(new AnonymousError("My error message"))).toBe('AnonymousError "My error message"');
 	});
 	test("Return correct debug string for symbols", () => {
 		expect(debug(Symbol("abc"))).toBe("Symbol(abc)");
@@ -103,5 +111,10 @@ describe("debug()", () => {
 		expect(debug({ a: { a: { a: 1 } } })).toBe('{ "a": { "a": { "a": 1 } } }'); // Three is fine.
 		expect(debug({ a: { a: { a: { a: 1 } } } })).toBe('{ "a": { "a": { "a": {…} } } }'); // Attempting more than three levels shows …
 		expect(debug({ a: { a: { a: { a: { a: 1 } } } } })).toBe('{ "a": { "a": { "a": {…} } } }'); // Attempting more than three levels shows …
+	});
+	test("Return correct debug for arguments objects", () => {
+		(function() {
+			expect(debug(arguments)).toBe('{ "0": "abc", "1": 123, "2": true }');
+		})("abc", 123, true);
 	});
 });
