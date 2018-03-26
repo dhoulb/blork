@@ -297,6 +297,39 @@ check(123, "str?"); // Throws TypeError "Must be string (received 123)"
 check(null, "str?"); // Throws TypeError "Must be string (received null)"
 ```
 
+### Combined string types
+
+You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
+
+`|` is used to create an OR type, meaning any of the values is valid, e.g. `number|string` or `string | null`
+
+```js
+// Pass.
+check(123, "str|num"); // Returns 1
+check("a", "str|num"); // Returns 1
+
+// Fail.
+check(null, "str|num"); // Throws TypeError "Must be string or number (received null)"
+check(null, "str|num|bool|func|obj"); // Throws TypeError "Must be string or number or boolean or function or object (received null)"
+```
+
+`&` is used to create an AND type, meaning the value must pass _all_ of the checks to be valid. This is primarily useful for custom checkers e.g. `lower & username-unique`.
+
+```js
+// Pass.
+check("this cat is crazy!", "lower & catty"); // Returns 1
+check("THIS cat is crazy!", "string & catty"); // Returns 1
+
+// Fail.
+check(null, "str & num"); // Throws TypeError "Must be string and number (received null)"
+```
+
+Note: `&` has a higher precedence than `|`, meaning a type like `string & lower | upper` compiles to `(lower | upper) & string`.
+
+Note: All built in checkers like `lower` or `int+` already check the basic type of a value, so there's no need to use `string & lower` or `number & int+`. These will work but you'll be double checking.
+
+Note: Spaces around the `&` or `|` are not required (but can be more readable).
+
 ### Constructor and constant types
 
 For convenience some constructors (e.g. `String`) and constants (e.g. `null`) can be used as types in `args()` and `check()`. The following built-in objects and constants are supported:
