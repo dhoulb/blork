@@ -485,6 +485,12 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.1.0
+  - Allow custom error to be set for custom checkers via `add()`
+  - Export `debug()` which allows any value to be converted to a string in a clean and clear format.
+  - Export `format()` which takes three arguments (message, value, prefix) and returns a consistently and beautifully formatted error message.
+  - Export `FormattedError` which takes the same three arguments and applies `format()` so it always has beautiful errors.
+  - Export `BlorkError` (which is thrown when you're using Blork wrong) for the purposes of checking thrown errors against it.
 - 4.0.0
   - Major internal rewrite with API kept _almost_ the same.
   - Add support for combining checkers with `|` and `&` syntax.
