@@ -473,7 +473,7 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
-- 3.0.0
+- 4.0.0
   - Major internal rewrite with API kept _almost_ the same.
   - Add support for combining checkers with `|` and `&` syntax.
   - `check()` and `args()` no longer return anything (previously returned the number of passing values).
