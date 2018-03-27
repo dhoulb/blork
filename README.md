@@ -154,11 +154,12 @@ check(
 
 Register your own checker using the `add()` function. This is great if 1) you're going to be applying the same check over and over, or 2) want to integrate your own checks with Blork's built-in types so your code looks clean.
 
-`add()` accepts three arguments:
+`add()` accepts four arguments:
 
 1. `name` The name of the custom checker you'll use to reference it later
 2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
 3. `description=""` An description for the value the checker will accept, e.g. "lowercase string" or "unique username", that is shown in the error message. Defaults to the value of `name`.
+4. `error=undefined` A custom class that is thrown when this checker fails (can be _any_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
 
 ```js
 import { add, check } from "blork";
@@ -183,8 +184,9 @@ check("A dog sits on the chair", "catty"); // Throws TypeError "Must be string c
 
 // Combine a custom checkers with a built-in checker using `&` syntax.
 // The value must pass both checks or an error will be thrown.
-check("A CAT SAT ON THE MAT", "catty & upper+"); // No error.
-check("A DOG SAT ON THE MAT", "catty & upper+"); // Throws TypeError "Must be string containing 'cat' and non-empty uppercase string""
+// This saves you replicating existing logic in your checker.
+check("A CAT SAT ON THE MAT", "upper+ & catty"); // No error.
+check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws TypeError "Must be non-empty uppercase string and string containing 'cat'"
 ```
 
 ```js
