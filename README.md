@@ -51,11 +51,11 @@ myFunc("abc", 123, true); // Throws TypeError "arguments: Too many arguments (ex
 
 The `check()` function allows you to test individual values with more granularity. The `check()` function is more versatile and allows more use cases than validating function input arguments.
 
-`check()` can be passed three arguments:
+`check()` accepts three arguments:
 
-1. `value` | The value to check
-2. `type` | The type to check the value against (list of types is available below)
-3. An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+1. `value` The value to check
+2. `type` The type to check the value against (list of types is available below)
+3. `prefix=""` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
 
 ```js
 import { check } from "blork";
@@ -154,6 +154,12 @@ check(
 
 Register your own checker using the `add()` function. This is great if 1) you're going to be applying the same check over and over, or 2) want to integrate your own checks with Blork's built-in types so your code looks clean.
 
+`add()` accepts three arguments:
+
+1. `name` The name of the custom checker you'll use to reference it later
+2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
+3. `description=""` An description for the value the checker will accept, e.g. "lowercase string" or "unique username", that is shown in the error message. Defaults to the value of `name`.
+
 ```js
 import { add, check } from "blork";
 
@@ -203,7 +209,7 @@ myFunc("A dog sits over there"); // Throws TypeError "arguments[1]: Must be stri
 
 ### throws(): Set a custom error constructor
 
-To change the error object Blork throws when a type doesn't match, use the `throws()` function.
+To change the error object Blork throws when a type doesn't match, use the `throws()` function. It accepts a single argument a custom class (can be _any_ class, not just classes extending `Error`).
 
 ```js
 import { throws, check } from "blork";
@@ -294,14 +300,15 @@ Types are generally accessed via a string reference. This list shows all Blork b
 // Pass.
 check("abc", "str"); // No error.
 check("abc", "lower"); // No error.
-check(100, "whole"); // No error.
+check(100, "integer"); // No error.
 check([1, 2, 3], "array+"); // No error.
 check(new Date(2180, 1, 1), "future"); // No error.
+check(new Map([[1, 1], [2, 2]]), "map+"); // No error.
 
 // Fail.
 check(123, "str"); // Throws TypeError "Must be string (received 123)"
 check({}, "object+"); // Throws TypeError "Must be object with one or more properties (received Object(0))"
-check([], "array+"); // Throws TypeError "Must berray with one or more items (received Array(0))"
+check([], "array+"); // Throws TypeError "Must be array with one or more items (received Array(0))"
 ```
 
 ### Optional string types
@@ -339,12 +346,15 @@ check(null, "str|num|bool|func|obj"); // Throws TypeError "Must be string or num
 `&` is used to create an AND type, meaning the value must pass _all_ of the checks to be valid. This is primarily useful for custom checkers e.g. `lower & username-unique`.
 
 ```js
+add("catty", v => v.toLowerCase().indexOf("cat")); // Checks that cat
+
 // Pass.
 check("this cat is crazy!", "lower & catty"); // No error.
-check("THIS cat is crazy!", "string & catty"); // No error.
+check("THIS CAT IS CRAZY", "upper & catty"); // No error.
 
 // Fail.
-check(null, "str & num"); // Throws TypeError "Must be string and number (received null)"
+check("THIS CAT IS CRAZY", "lower & catty"); // Throws TypeError "Must be lowercase string and catty"
+check("THIS DOG IS CRAZY", "string & catty"); // Throws TypeError "Must be string and catty"
 ```
 
 Note: `&` has a higher precedence than `|`, meaning a type like `string & lower | upper` compiles to `(lower | upper) & string`.
@@ -367,7 +377,7 @@ For convenience some constructors (e.g. `String`) and constants (e.g. `null`) ca
 | `null`      | Same as **'null'** type      |
 | `undefined` | Same as **'undefined'** type |
 
-You can pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match. 
+You can pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
 
 Using `Object` and `Array` constructors will work also and will allow any object that is `instanceof Object` or `instanceof Array`. _Note: this is not the same as e.g. the `'object'` and `'array'` string types, which only allow plain objects an arrays (but will reject objects of custom classes extending `Object` or `Array`)._
 
