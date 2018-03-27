@@ -7,87 +7,87 @@ describe("checkers", () => {
 		expect.assertions(Object.keys(checkers).length);
 
 		// Primatives.
-		expect(check(null, "null")).toBe(1);
-		expect(check(undefined, "undefined")).toBe(1);
-		expect(check(undefined, "void")).toBe(1);
-		expect(check(undefined, "undef")).toBe(1);
-		expect(check(true, "defined")).toBe(1);
-		expect(check(true, "def")).toBe(1);
-		expect(check(true, "boolean")).toBe(1);
-		expect(check(true, "bool")).toBe(1);
-		expect(check(true, "true")).toBe(1);
-		expect(check(false, "false")).toBe(1);
-		expect(check(true, "truthy")).toBe(1);
-		expect(check(false, "falsy")).toBe(1);
+		expect(check(null, "null")).toBe(undefined);
+		expect(check(undefined, "undefined")).toBe(undefined);
+		expect(check(undefined, "void")).toBe(undefined);
+		expect(check(undefined, "undef")).toBe(undefined);
+		expect(check(true, "defined")).toBe(undefined);
+		expect(check(true, "def")).toBe(undefined);
+		expect(check(true, "boolean")).toBe(undefined);
+		expect(check(true, "bool")).toBe(undefined);
+		expect(check(true, "true")).toBe(undefined);
+		expect(check(false, "false")).toBe(undefined);
+		expect(check(true, "truthy")).toBe(undefined);
+		expect(check(false, "falsy")).toBe(undefined);
 
 		// Numbers.
-		expect(check(1.5, "number")).toBe(1);
-		expect(check(1.5, "num")).toBe(1);
-		expect(check(1.5, "number+")).toBe(1);
-		expect(check(0.5, "num+")).toBe(1);
-		expect(check(-1.5, "number-")).toBe(1);
-		expect(check(-1.5, "num-")).toBe(1);
-		expect(check(1, "integer")).toBe(1);
-		expect(check(1, "int")).toBe(1);
-		expect(check(1, "integer+")).toBe(1);
-		expect(check(1, "int+")).toBe(1);
-		expect(check(-1, "integer-")).toBe(1);
-		expect(check(-1, "int-")).toBe(1);
+		expect(check(1.5, "number")).toBe(undefined);
+		expect(check(1.5, "num")).toBe(undefined);
+		expect(check(1.5, "number+")).toBe(undefined);
+		expect(check(0.5, "num+")).toBe(undefined);
+		expect(check(-1.5, "number-")).toBe(undefined);
+		expect(check(-1.5, "num-")).toBe(undefined);
+		expect(check(1, "integer")).toBe(undefined);
+		expect(check(1, "int")).toBe(undefined);
+		expect(check(1, "integer+")).toBe(undefined);
+		expect(check(1, "int+")).toBe(undefined);
+		expect(check(-1, "integer-")).toBe(undefined);
+		expect(check(-1, "int-")).toBe(undefined);
 
 		// Strings.
-		expect(check("a", "string")).toBe(1);
-		expect(check("a", "str")).toBe(1);
-		expect(check("a", "string+")).toBe(1);
-		expect(check("a", "str+")).toBe(1);
-		expect(check("a", "lowercase")).toBe(1);
-		expect(check("a", "lower")).toBe(1);
-		expect(check("a", "lowercase+")).toBe(1);
-		expect(check("a", "lower+")).toBe(1);
-		expect(check("A", "uppercase")).toBe(1);
-		expect(check("A", "upper")).toBe(1);
-		expect(check("A", "uppercase+")).toBe(1);
-		expect(check("A", "upper+")).toBe(1);
+		expect(check("a", "string")).toBe(undefined);
+		expect(check("a", "str")).toBe(undefined);
+		expect(check("a", "string+")).toBe(undefined);
+		expect(check("a", "str+")).toBe(undefined);
+		expect(check("a", "lowercase")).toBe(undefined);
+		expect(check("a", "lower")).toBe(undefined);
+		expect(check("a", "lowercase+")).toBe(undefined);
+		expect(check("a", "lower+")).toBe(undefined);
+		expect(check("A", "uppercase")).toBe(undefined);
+		expect(check("A", "upper")).toBe(undefined);
+		expect(check("A", "uppercase+")).toBe(undefined);
+		expect(check("A", "upper+")).toBe(undefined);
 
 		// Functions.
-		expect(check(function() {}, "function")).toBe(1);
-		expect(check(function() {}, "func")).toBe(1);
+		expect(check(function() {}, "function")).toBe(undefined);
+		expect(check(function() {}, "func")).toBe(undefined);
 
 		// Objects.
-		expect(check({}, "object")).toBe(1);
-		expect(check({ a: 1 }, "obj")).toBe(1);
-		expect(check({ a: 1 }, "object+")).toBe(1);
-		expect(check({ a: 1 }, "obj+")).toBe(1);
-		expect(check({}, "objectlike")).toBe(1);
-		expect(check({ [Symbol.iterator]: () => {} }, "iterable")).toBe(1);
+		expect(check({}, "object")).toBe(undefined);
+		expect(check({ a: 1 }, "obj")).toBe(undefined);
+		expect(check({ a: 1 }, "object+")).toBe(undefined);
+		expect(check({ a: 1 }, "obj+")).toBe(undefined);
+		expect(check({}, "objectlike")).toBe(undefined);
+		expect(check({ [Symbol.iterator]: () => {} }, "iterable")).toBe(undefined);
 
 		// Arrays.
-		expect(check([], "array")).toBe(1);
-		expect(check([], "arr")).toBe(1);
-		expect(check([1], "array+")).toBe(1);
-		expect(check([1], "arr+")).toBe(1);
-		expect(check({ "0": "abc", length: 1 }, "arraylike")).toBe(1);
-		expect(check(arguments, "arguments")).toBe(1);
-		expect(check(arguments, "args")).toBe(1);
+		expect(check([], "array")).toBe(undefined);
+		expect(check([], "arr")).toBe(undefined);
+		expect(check([1], "array+")).toBe(undefined);
+		expect(check([1], "arr+")).toBe(undefined);
+		expect(check({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined);
+		expect(check(arguments, "arguments")).toBe(undefined);
+		expect(check(arguments, "args")).toBe(undefined);
 
 		// Dates.
-		expect(check(new Date(), "date")).toBe(1);
-		expect(check(new Date(2080, 0, 1), "date+")).toBe(1);
-		expect(check(new Date(2080, 0, 1), "future")).toBe(1);
-		expect(check(new Date(1980, 0, 1), "date-")).toBe(1);
-		expect(check(new Date(1980, 0, 1), "past")).toBe(1);
+		expect(check(new Date(), "date")).toBe(undefined);
+		expect(check(new Date(2080, 0, 1), "date+")).toBe(undefined);
+		expect(check(new Date(2080, 0, 1), "future")).toBe(undefined);
+		expect(check(new Date(1980, 0, 1), "date-")).toBe(undefined);
+		expect(check(new Date(1980, 0, 1), "past")).toBe(undefined);
 
 		// Other.
-		expect(check(new Map(), "map")).toBe(1);
-		expect(check(new Map([[1, 1]]), "map+")).toBe(1);
-		expect(check(new WeakMap(), "weakmap")).toBe(1);
-		expect(check(new Set(), "set")).toBe(1);
-		expect(check(new Set([1]), "set+")).toBe(1);
-		expect(check(new WeakSet(), "weakset")).toBe(1);
-		expect(check(Promise.resolve(), "promise")).toBe(1);
-		expect(check(/[abc]+/g, "regexp")).toBe(1);
-		expect(check(/[abc]+/g, "regex")).toBe(1);
-		expect(check(false, "any")).toBe(1);
-		expect(check("abc", "mixed")).toBe(1);
+		expect(check(new Map(), "map")).toBe(undefined);
+		expect(check(new Map([[1, 1]]), "map+")).toBe(undefined);
+		expect(check(new WeakMap(), "weakmap")).toBe(undefined);
+		expect(check(new Set(), "set")).toBe(undefined);
+		expect(check(new Set([1]), "set+")).toBe(undefined);
+		expect(check(new WeakSet(), "weakset")).toBe(undefined);
+		expect(check(Promise.resolve(), "promise")).toBe(undefined);
+		expect(check(/[abc]+/g, "regexp")).toBe(undefined);
+		expect(check(/[abc]+/g, "regex")).toBe(undefined);
+		expect(check(false, "any")).toBe(undefined);
+		expect(check("abc", "mixed")).toBe(undefined);
 	});
 	test("Every named type fails correctly", () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -172,16 +172,16 @@ describe("checkers", () => {
 		expect(() => check(true, "promise")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regexp")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
-		expect(check(false, "any")).toBe(1);
-		expect(check("abc", "mixed")).toBe(1);
+		expect(check(false, "any")).toBe(undefined);
+		expect(check("abc", "mixed")).toBe(undefined);
 	});
 });
 describe("array checker", () => {
 	test("Works with empty arrays", () => {
-		expect(check([1, 2, 3], "array")).toBe(1);
+		expect(check([1, 2, 3], "array")).toBe(undefined);
 	});
 	test("Works with non-empty arrays", () => {
-		expect(check([1, 2, 3], "array")).toBe(1);
+		expect(check([1, 2, 3], "array")).toBe(undefined);
 	});
 	test("Fails for superclasses of Array", () => {
 		class SuperArray extends Array {}
@@ -191,19 +191,19 @@ describe("array checker", () => {
 describe("arraylike/arguments checker", () => {
 	test("Works with empty arguments objects", () => {
 		(function() {
-			expect(check(arguments, "arraylike")).toBe(1);
+			expect(check(arguments, "arraylike")).toBe(undefined);
 		})();
 	});
 	test("Works with non-empty arguments objects", () => {
 		(function() {
-			expect(check(arguments, "arraylike")).toBe(1);
+			expect(check(arguments, "arraylike")).toBe(undefined);
 		})("abc", "abc");
 		(function() {
-			expect(check(arguments, "arraylike")).toBe(1);
+			expect(check(arguments, "arraylike")).toBe(undefined);
 		})("abc", 123, false);
 	});
 	test("Works with arraylike objects", () => {
-		expect(check({ length: 5 }, "arraylike")).toBe(1);
+		expect(check({ length: 5 }, "arraylike")).toBe(undefined);
 	});
 	test("Fails if length is not positive integer", () => {
 		expect(() => check({ length: 1.5 }, "arraylike")).toThrow(TypeError);
@@ -213,10 +213,10 @@ describe("arraylike/arguments checker", () => {
 });
 describe("object checker", () => {
 	test("Works with empty objects", () => {
-		expect(check({}, "object")).toBe(1);
+		expect(check({}, "object")).toBe(undefined);
 	});
 	test("Works with non-empty objects", () => {
-		expect(check({ a: 1, b: 2 }, "object")).toBe(1);
+		expect(check({ a: 1, b: 2 }, "object")).toBe(undefined);
 	});
 	test("Fails for superclasses of object", () => {
 		class SuperObject extends Object {}
@@ -230,19 +230,19 @@ describe("integer checkers", () => {
 		expect(() => check(1.5, "integer+")).toThrow(TypeError);
 	});
 	test("Works with zero integers", () => {
-		expect(check(0, "integer")).toBe(1);
-		expect(check(0, "integer+")).toBe(1);
-		expect(check(0, "integer-")).toBe(1);
+		expect(check(0, "integer")).toBe(undefined);
+		expect(check(0, "integer+")).toBe(undefined);
+		expect(check(0, "integer-")).toBe(undefined);
 	});
 	test("Works with highest allowed integers", () => {
-		expect(check(Number.MAX_SAFE_INTEGER, "integer")).toBe(1);
-		expect(check(Number.MAX_SAFE_INTEGER, "integer+")).toBe(1);
-		expect(check(0, "integer-")).toBe(1);
+		expect(check(Number.MAX_SAFE_INTEGER, "integer")).toBe(undefined);
+		expect(check(Number.MAX_SAFE_INTEGER, "integer+")).toBe(undefined);
+		expect(check(0, "integer-")).toBe(undefined);
 	});
 	test("Works with lowest allowed integers", () => {
-		expect(check(Number.MIN_SAFE_INTEGER, "integer")).toBe(1);
-		expect(check(Number.MIN_SAFE_INTEGER, "integer-")).toBe(1);
-		expect(check(0, "integer+")).toBe(1);
+		expect(check(Number.MIN_SAFE_INTEGER, "integer")).toBe(undefined);
+		expect(check(Number.MIN_SAFE_INTEGER, "integer-")).toBe(undefined);
+		expect(check(0, "integer+")).toBe(undefined);
 	});
 	test("Fails for numbers higher than allowed", () => {
 		expect(() => check(Number.MAX_SAFE_INTEGER + 10, "integer")).toThrow(TypeError);

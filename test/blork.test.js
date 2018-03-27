@@ -29,9 +29,9 @@ describe("blork()", () => {
 	test("Test that instances of Blork don't share checkers", () => {
 		const blork1 = blork();
 		const blork2 = blork();
-		blork1.add("something", () => true);
+		blork1.add("something", () => true, "something");
 		// Blork1 returns 1 because we added the custom "something" checker.
-		expect(blork1.check(123, "something")).toBe(1);
+		expect(blork1.check(123, "something")).toBe(undefined);
 		// Blork2 and global Blork are unaffected (and throw typeerror).
 		expect(() => blork2.check(123, "something")).toThrow(BlorkError);
 		expect(() => check(123, "something")).toThrow(BlorkError);
