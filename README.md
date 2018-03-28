@@ -41,10 +41,10 @@ myFunc("abc", 123); // Returns "It passed!"
 myFunc("abc"); // Returns "It passed!"
 
 // Call with invalid args.
-myFunc(123); // Throws TypeError "arguments[0]: Must be string (received 123)"
-myFunc("abc", "abc"); // Throws TypeError "arguments[1]: Must be number (received "abc")"
-myFunc(); // Throws TypeError "arguments[0]: Must be string (received undefined)"
-myFunc("abc", 123, true); // Throws TypeError "arguments: Too many arguments (expected 2) (received 3)"
+myFunc(123); // Throws ValueError "arguments[0]: Must be string (received 123)"
+myFunc("abc", "abc"); // Throws ValueError "arguments[1]: Must be number (received "abc")"
+myFunc(); // Throws ValueError "arguments[0]: Must be string (received undefined)"
+myFunc("abc", 123, true); // Throws ValueError "arguments: Too many arguments (expected 2) (received 3)"
 ```
 
 ### check(): Check individual values
@@ -65,12 +65,12 @@ check("Sally", "string"); // No error.
 check("Sally", String); // No error.
 
 // Checks that fail.
-check("Sally", "number"); // Throws TypeError "Must be number (received "Sally")"
-check("Sally", Boolean); // Throws TypeError "Must be true or false (received "Sally")"
+check("Sally", "number"); // Throws ValueError "Must be number (received "Sally")"
+check("Sally", Boolean); // Throws ValueError "Must be true or false (received "Sally")"
 
 // Checks that fail (with a prefix/name set).
-check("Sally", "num", "name"); // Throws TypeError "name: Must be number (received "Sally")"
-check(true, "str", "status"); // Throws TypeError "status: Must be string (received true)"
+check("Sally", "num", "name"); // Throws ValueError "name: Must be number (received "Sally")"
+check(true, "str", "status"); // Throws ValueError "status: Must be string (received true)"
 ```
 
 Another common use for `check()` is to validate an options object:
@@ -92,13 +92,13 @@ Appending `?` question mark to any type string makes it optional. This means it 
 
 ```js
 // This check fails because it"s not optional.
-check(undefined, "number"); // Throws TypeError "Must be number (received undefined)"
+check(undefined, "number"); // Throws ValueError "Must be number (received undefined)"
 
 // This check passes because it"s optional.
 check(undefined, "number?"); // No error.
 
 // Null does not count as optional.
-check(null, "number?"); // Throws TypeError "Must be number (received null)"
+check(null, "number?"); // Throws ValueError "Must be number (received null)"
 ```
 
 ### Checking objects and arrays
@@ -119,7 +119,7 @@ check([1029, "Sonia"], ["number", "string"]); // No error.
 check({ name: "Sally" }, { name: "string" }); // No error.
 check(["Sally", "John", "Sonia"], ["str"]); // No error.
 check([1029, "Sonia"], ["number", "string"]); // No error.
-check([1029, "Sonia", true], ["number", "string"]); // Throws TypeError: "Array: Too many array items (expected 2) (received 3)"
+check([1029, "Sonia", true], ["number", "string"]); // Throws ValueError: "Array: Too many array items (expected 2) (received 3)"
 ```
 
 Arrays and objects can be deeply nested within each other and Blork will recursively check the schema _all_ the way down:
@@ -138,7 +138,7 @@ check(
 );
 
 // Deeply nested check (fails).
-// Will throw TypeError "Array[1][status][2]: Must be number (received "not_a_number")"
+// Will throw ValueError "Array[1][status][2]: Must be number (received "not_a_number")"
 check(
 	[
 		{ id: 1028, name: "Sally", status: [1, 2, 3] },
@@ -180,13 +180,13 @@ check("That cat is having fun", "catty"); // No error.
 check("That CAT is having fun", "catty"); // No error.
 
 // Fails.
-check("A dog sits on the chair", "catty"); // Throws TypeError "Must be string containing "cat" (received "A dog sits on the chair")"
+check("A dog sits on the chair", "catty"); // Throws ValueError "Must be string containing "cat" (received "A dog sits on the chair")"
 
 // Combine a custom checkers with a built-in checker using `&` syntax.
 // The value must pass both checks or an error will be thrown.
 // This saves you replicating existing logic in your checker.
 check("A CAT SAT ON THE MAT", "upper+ & catty"); // No error.
-check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws TypeError "Must be non-empty uppercase string and string containing 'cat'"
+check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws ValueError "Must be non-empty uppercase string and string containing 'cat'"
 ```
 
 ```js
@@ -206,7 +206,7 @@ function myFunc(str)
 myFunc("That cat is chasing string"); // Returns "It passed!"
 
 // Fails.
-myFunc("A dog sits over there"); // Throws TypeError "arguments[1]: Must be string containing "cat" (received "A dog sits over there")"
+myFunc("A dog sits over there"); // Throws ValueError "arguments[1]: Must be string containing "cat" (received "A dog sits over there")"
 ```
 
 ### throws(): Set a custom error constructor
@@ -239,7 +239,7 @@ import { blork } from "blork";
 const { check, args, add, throws } = blork();
 
 // Set a new custom error on the new instance.
-throws(class CustomError extends TypeError);
+throws(class CustomError extends ValueError);
 
 // Add a custom checker on the new instance.
 add("mychecker", v => v === "abc", "'abc'");
@@ -308,9 +308,9 @@ check(new Date(2180, 1, 1), "future"); // No error.
 check(new Map([[1, 1], [2, 2]]), "map+"); // No error.
 
 // Fail.
-check(123, "str"); // Throws TypeError "Must be string (received 123)"
-check({}, "object+"); // Throws TypeError "Must be object with one or more properties (received Object(0))"
-check([], "array+"); // Throws TypeError "Must be array with one or more items (received Array(0))"
+check(123, "str"); // Throws ValueError "Must be string (received 123)"
+check({}, "object+"); // Throws ValueError "Must be object with one or more properties (received Object(0))"
+check([], "array+"); // Throws ValueError "Must be array with one or more items (received Array(0))"
 ```
 
 ### Optional string types
@@ -325,8 +325,8 @@ check(undefined, "whole?"); // No error.
 check([undefined, undefined, 123], ["number?"]); // No error.
 
 // Fail.
-check(123, "str?"); // Throws TypeError "Must be string (received 123)"
-check(null, "str?"); // Throws TypeError "Must be string (received null)"
+check(123, "str?"); // Throws ValueError "Must be string (received 123)"
+check(null, "str?"); // Throws ValueError "Must be string (received null)"
 ```
 
 ### Combined string types
@@ -341,8 +341,8 @@ check(123, "str|num"); // No error.
 check("a", "str|num"); // No error.
 
 // Fail.
-check(null, "str|num"); // Throws TypeError "Must be string or number (received null)"
-check(null, "str|num|bool|func|obj"); // Throws TypeError "Must be string or number or boolean or function or object (received null)"
+check(null, "str|num"); // Throws ValueError "Must be string or number (received null)"
+check(null, "str|num|bool|func|obj"); // Throws ValueError "Must be string or number or boolean or function or object (received null)"
 ```
 
 `&` is used to create an AND type, meaning the value must pass _all_ of the checks to be valid. This is primarily useful for custom checkers e.g. `lower & username-unique`.
@@ -355,8 +355,8 @@ check("this cat is crazy!", "lower & catty"); // No error.
 check("THIS CAT IS CRAZY", "upper & catty"); // No error.
 
 // Fail.
-check("THIS CAT IS CRAZY", "lower & catty"); // Throws TypeError "Must be lowercase string and catty"
-check("THIS DOG IS CRAZY", "string & catty"); // Throws TypeError "Must be string and catty"
+check("THIS CAT IS CRAZY", "lower & catty"); // Throws ValueError "Must be lowercase string and catty"
+check("THIS DOG IS CRAZY", "string & catty"); // Throws ValueError "Must be string and catty"
 ```
 
 Note: `&` has a higher precedence than `|`, meaning a type like `string & lower | upper` compiles to `(lower | upper) & string`.
@@ -395,12 +395,12 @@ check([true, true, false], [Boolean]); // No error.
 check({ name: 123 }, { name: Number }); // No error.
 
 // Fail.
-check("abc", Boolean); // Throws TypeError "Must be true or false (received "abc")"
-check("abc", String); // Throws TypeError "Must be string (received "abc")"
-check("abc", String, "myVar"); // Throws TypeError "myVar: Must be string (received "abc")"
-check(new MyClass, OtherClass); // Throws TypeError "Must ben instance of OtherClass (received MyClass)"
-check({ name: 123 }, { name: String }); // Throws TypeError "name: Must be string (received 123)"
-check({ name: 123 }, { name: String }, "myObj"); // Throws TypeError "myObj[name]: Must be string (received 123)"
+check("abc", Boolean); // Throws ValueError "Must be true or false (received "abc")"
+check("abc", String); // Throws ValueError "Must be string (received "abc")"
+check("abc", String, "myVar"); // Throws ValueError "myVar: Must be string (received "abc")"
+check(new MyClass, OtherClass); // Throws ValueError "Must ben instance of OtherClass (received MyClass)"
+check({ name: 123 }, { name: String }); // Throws ValueError "name: Must be string (received 123)"
+check({ name: 123 }, { name: String }, "myObj"); // Throws ValueError "myObj[name]: Must be string (received 123)"
 ```
 
 ### Object literal type
@@ -416,8 +416,8 @@ check({ name: "abc" }, { name: "str?", age: "num?" }); // No error.
 check({ name: "abc", additional: true }, { name: "str" }); // Throws nothing (additional properties are fine).
 
 // Fail.
-check({ age: "apple" }, { age: "num" }); // Throws TypeError "age: Must be number (received "apple")"
-check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "num" } }); // Throws TypeError "size[width]: Must be number (received "abc")"
+check({ age: "apple" }, { age: "num" }); // Throws ValueError "age: Must be number (received "apple")"
+check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "num" } }); // Throws ValueError "size[width]: Must be number (received "abc")"
 ```
 
 ### Object literal type (with additional properties)
@@ -432,7 +432,7 @@ check({ a: 1, b: 2, c: 3 }, { [ANY]: "num" }); // No error.
 check({ name: "Dan", a: 1, b: 2, c: 3 }, { name: "str", [ANY]: "num" }); // No error.
 
 // Fail.
-check({ a: 1, b: 2, c: "abc" }, { [ANY]: "num" }); // Throws TypeError "c: Must be number (received "abc")"
+check({ a: 1, b: 2, c: "abc" }, { [ANY]: "num" }); // Throws ValueError "c: Must be number (received "abc")"
 ```
 
 If you wish you can use this functionality with the `undefined` type to ensure objects **do not** contain additional properties (object literal types by default are allowed to contain additional properties).
@@ -442,7 +442,7 @@ If you wish you can use this functionality with the `undefined` type to ensure o
 check({ name: "Carl" }, { name: "str", [ANY]: "undefined" }); // No error.
 
 // Fail.
-check({ name: "Jess", another: 28 }, { name: "str", [ANY]: "undefined" }); // Throws TypeError "another: Must be undefined (received 28)"
+check({ name: "Jess", another: 28 }, { name: "str", [ANY]: "undefined" }); // Throws ValueError "another: Must be undefined (received 28)"
 ```
 
 ### Array literal type
@@ -456,8 +456,8 @@ check([123, 123], ["num"]); // No error.
 check([{ names: ["Alice", "John"] }], [{ names: ["str"] }]); // No error.
 
 // Fail.
-check(["abc", "abc", 123], ["str"]); // Throws TypeError "Array[2]: Must be number (received 123)"
-check(["abc", "abc", 123], ["number"]); // Throws TypeError "Array[0]: Must be string (received "abc")"
+check(["abc", "abc", 123], ["str"]); // Throws ValueError "Array[2]: Must be number (received 123)"
+check(["abc", "abc", 123], ["number"]); // Throws ValueError "Array[0]: Must be string (received "abc")"
 ```
 
 ### Array tuple type
@@ -470,9 +470,9 @@ check([123, "abc"], ["num", "str"]); // No error.
 check([123, "abc"], ["num", "str", "str?"]); // No error.
 
 // Fail.
-check([123], ["num", "str"]); // Throws TypeError "Array[1]: Must be string (received undefined)"
-check([123, 123], ["num", "str"]); // Throws TypeError "Array[1]: Must be string (received 123)"
-check([123, "abc", true], ["num", "str"]); // Throws TypeError "Array: Too many items (expected 2 but received 3)"
+check([123], ["num", "str"]); // Throws ValueError "Array[1]: Must be string (received undefined)"
+check([123, 123], ["num", "str"]); // Throws ValueError "Array[1]: Must be string (received 123)"
+check([123, "abc", true], ["num", "str"]); // Throws ValueError "Array: Too many items (expected 2 but received 3)"
 ```
 
 ## Contributing
@@ -485,6 +485,9 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.2.0
+  - Rename `FormattedError` to `ValueError`
+  - Make `ValueError` the default error thrown by Blork (not ValueError)
 - 4.1.0
   - Allow custom error to be set for custom checkers via `add()`
   - Export `debug()` which allows any value to be converted to a string in a clean and clear format.
