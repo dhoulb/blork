@@ -486,7 +486,7 @@ Please see (CONTRIBUTING.md)
 ## Changelog
 
 - 4.2.0
-  - Rename `FormattedError` to `ValueError`
+  - Rename `FormattedError` to `ValueError` (more descriptive and reusable name).
   - Make `ValueError` the default error thrown by Blork (not ValueError)
 - 4.1.0
   - Allow custom error to be set for custom checkers via `add()`
