@@ -1,4 +1,4 @@
-const FormattedError = require("../lib/FormattedError");
+const ValueError = require("../lib/ValueError");
 const BlorkError = require("../lib/BlorkError");
 const { check, add } = require("../lib/exports");
 
@@ -40,9 +40,9 @@ describe("add()", () => {
 		expect(() => check(123, "eee400")).toThrow(IsBooleanError);
 		expect(() => check(123, "eee400")).toThrow(/4c685f/); // Must contain description.
 	});
-	test("Add and run a custom checker (with custom FormattedError)", () => {
+	test("Add and run a custom checker (with custom ValueError)", () => {
 		// Create a custom error.
-		class IsNullError extends FormattedError {}
+		class IsNullError extends ValueError {}
 
 		// Define a checker called '013e93'.
 		expect(add("013e93", v => typeof v === "string", "824b7c", IsNullError)).toBeUndefined();
