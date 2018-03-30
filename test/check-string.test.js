@@ -53,14 +53,20 @@ describe("checkString()", () => {
 		expect(check("abc", "string & lower | upper")).toBe(undefined);
 		expect(check("ABC", "string & lower | upper")).toBe(undefined);
 		expect(() => check("ABCabc", "string & lower | upper")).toThrow(TypeError);
-		expect(() => check("ABCabc", "string & lower | upper")).toThrow(
-			/string and lowercase string or uppercase string/
-		);
 		expect(check("abc", "lower | upper & string")).toBe(undefined);
 		expect(check("ABC", "lower | upper & string")).toBe(undefined);
 		expect(() => check("ABCabc", "lower | upper & string")).toThrow(TypeError);
-		expect(() => check("ABCabc", "lower | upper & string")).toThrow(
-			/lowercase string or uppercase string and string/
+	});
+	test("AND and OR combined types have correct error message", () => {
+		expect(() => check("ABCabc", "string & lower | upper")).toThrow(
+			/Must be string and lowercase string or uppercase string/
 		);
+		expect(() => check("ABCabc", "lower | upper & string")).toThrow(
+			/Must be lowercase string or uppercase string and string/
+		);
+	});
+	test("Optional types have correct error message", () => {
+		expect(() => check(true, "string?")).toThrow(/Must be string or empty/);
+		expect(() => check("abc", "boolean?")).toThrow(/Must be true or false or empty/);
 	});
 });
