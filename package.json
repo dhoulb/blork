@@ -26,7 +26,7 @@
 		"lint": "eslint ./",
 		"fix": "eslint --fix ./",
 		"pretest": "npm run lint",
-		"precommit": "npm run test"
+		"prepush": "npm run test"
 	},
 	"eslintConfig": {
 		"parserOptions": {
