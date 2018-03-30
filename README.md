@@ -515,6 +515,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.4.0
+  - Add `json` checker to check for JSON-friendly values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 - 4.3.0
   - Add `circular` checker to check for objects with circular references
   - Add `!` modifier to enable invert checking, e.g. `!num` (don't allow numbers) or `!circular` (don't allow circular references)
