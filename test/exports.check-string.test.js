@@ -1,8 +1,8 @@
-const BlorkError = require("../lib/BlorkError");
+const BlorkError = require("../lib/errors/BlorkError");
 const { check } = require("../lib/exports");
 
 // Tests.
-describe("checkString()", () => {
+describe("exports.check() string types", () => {
 	test("String types pass correctly", () => {
 		expect(check(1, "num")).toBe(undefined);
 		expect(check(1, "number")).toBe(undefined);

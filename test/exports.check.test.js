@@ -1,8 +1,8 @@
-const BlorkError = require("../lib/BlorkError");
+const BlorkError = require("../lib/errors/BlorkError");
 const { check } = require("../lib/exports");
 
 // Tests.
-describe("check()", () => {
+describe("exports.check()", () => {
 	test("Throw BlorkError if type is not object, function, string, or one of our known types", () => {
 		expect(() => check(1, 123)).toThrow(BlorkError);
 	});

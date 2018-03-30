@@ -1,4 +1,4 @@
-const BlorkError = require("../lib/BlorkError");
+const BlorkError = require("../../lib/errors/BlorkError");
 
 // Tests.
 describe("BlorkError()", () => {

@@ -1,9 +1,9 @@
-const ValueError = require("../lib/ValueError");
-const BlorkError = require("../lib/BlorkError");
+const ValueError = require("../lib/errors/ValueError");
+const BlorkError = require("../lib/errors/BlorkError");
 const { check, throws } = require("../lib/exports");
 
 // Tests.
-describe("throws()", () => {
+describe("exports.throws()", () => {
 	test("Set a custom error object and check it throws", () => {
 		// Define a custom error.
 		class MyError extends Error {}

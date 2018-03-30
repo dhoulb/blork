@@ -1,8 +1,8 @@
-const BlorkError = require("../lib/BlorkError");
+const BlorkError = require("../lib/errors/BlorkError");
 const { args } = require("../lib/exports");
 
 // Tests.
-describe("args()", () => {
+describe("exports.args()", () => {
 	test("Return correctly when argument checks pass", () => {
 		const argsObj = { "0": "a", "1": 123, "2": true, length: 3 };
 		expect(args(argsObj, [String, Number, Boolean])).toBe(undefined);

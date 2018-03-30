@@ -1,8 +1,8 @@
 const { blork, check, args } = require("../lib/exports");
-const BlorkError = require("../lib/BlorkError");
+const BlorkError = require("../lib/errors/BlorkError");
 
 // Tests.
-describe("blork()", () => {
+describe("exports.blork()", () => {
 	test("Test that instances of Blork are independent", () => {
 		const blork1 = blork();
 		const blork2 = blork();

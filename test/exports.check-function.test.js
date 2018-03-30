@@ -1,7 +1,7 @@
 const { check } = require("../lib/exports");
 
 // Tests.
-describe("checkFunction()", () => {
+describe("exports.check() function/constructor types", () => {
 	test("Constructor types pass correctly", () => {
 		expect(check(true, Boolean)).toBe(undefined);
 		expect(check(1, Number)).toBe(undefined);
