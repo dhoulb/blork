@@ -27,6 +27,27 @@ describe("exports.check() string types", () => {
 		expect(() => check(1, "string?")).toThrow(TypeError);
 		expect(() => check(1, "object?")).toThrow(TypeError);
 	});
+	test("Optional types have correct error message", () => {
+		expect(() => check(true, "string?")).toThrow(/Must be string or empty/);
+		expect(() => check("abc", "boolean?")).toThrow(/Must be true or false or empty/);
+	});
+	test("Invert types pass correctly", () => {
+		expect(check("abc", "!number")).toBe(undefined);
+		expect(check(123, "!string")).toBe(undefined);
+		expect(check([], "!object")).toBe(undefined);
+		expect(check(NaN, "!number")).toBe(undefined);
+		expect(check(123, "!string")).toBe(undefined);
+		expect(check({}, "!array")).toBe(undefined);
+	});
+	test("Invert types fail correctly", () => {
+		expect(() => check("abc", "!string")).toThrow(TypeError);
+		expect(() => check(123, "!num")).toThrow(TypeError);
+		expect(() => check({}, "!object")).toThrow(TypeError);
+	});
+	test("Invert types have correct error message", () => {
+		expect(() => check("abc", "!string")).toThrow(/Must be not string/);
+		expect(() => check(true, "!boolean")).toThrow(/Must be not true or false/);
+	});
 	test("AND combined types pass correctly", () => {
 		expect(check(1, "number & integer")).toBe(undefined);
 		expect(check(1, "num & int+")).toBe(undefined);
@@ -35,7 +56,7 @@ describe("exports.check() string types", () => {
 	});
 	test("AND combined types fail correctly", () => {
 		expect(() => check("a", "number & string")).toThrow(TypeError);
-		expect(() => check("a", "number & string")).toThrow(/finite number and string/);
+		expect(() => check("a", "number & string")).toThrow(/Must be finite number and string/);
 	});
 	test("OR combined types pass correctly", () => {
 		expect(check(1, "number|string")).toBe(undefined);
@@ -64,9 +85,5 @@ describe("exports.check() string types", () => {
 		expect(() => check("ABCabc", "lower | upper & string")).toThrow(
 			/Must be lowercase string or uppercase string and string/
 		);
-	});
-	test("Optional types have correct error message", () => {
-		expect(() => check(true, "string?")).toThrow(/Must be string or empty/);
-		expect(() => check("abc", "boolean?")).toThrow(/Must be true or false or empty/);
 	});
 });
