@@ -485,6 +485,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.2.2
+  - Use `.` dot notation in error message prefix when recursing into objects
 - 4.2.1
   - Fix bug where optional types were throwing an incorrect error message
 - 4.2.0
