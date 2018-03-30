@@ -1,6 +1,10 @@
 const checkers = require("../lib/checkers");
 const { check } = require("../lib/exports");
 
+// Vars.
+const circular = [];
+circular[0] = circular;
+
 // Tests.
 describe("checkers", () => {
 	test("Every checker passes correctly", () => {
@@ -88,6 +92,9 @@ describe("checkers", () => {
 		expect(check(/[abc]+/g, "regex")).toBe(undefined);
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
+
+		// Circular.
+		expect(check(circular, "circular")).toBe(undefined);
 	});
 	test("Every named type fails correctly", () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -174,6 +181,9 @@ describe("checkers", () => {
 		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
+
+		// Circular.
+		expect(() => check([], "circular")).toThrow(TypeError);
 	});
 });
 describe("array checker", () => {
