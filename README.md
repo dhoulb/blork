@@ -262,50 +262,54 @@ check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123
 
 Types are generally accessed via a string reference. This list shows all Blork built-in checkers:
 
-| Type string reference           | Description
-|---------------------------------|-------------------
-| `null`                          | Value is **null**
-| `undefined`, `undef`, `void`    | Value is **undefined**
-| `defined`, `def`                | Value is **not undefined**
-| `boolean`, `bool`               | Value is **true** or **false**
-| `true`                          | Value is **true**
-| `false`                         | Value is **false**
-| `truthy`                        | Any truthy values (i.e. **== true**)
-| `falsy`                         | Any falsy values (i.e. **== false**)
-| `number`, `num`                 | Numbers excluding NaN/Infinity (using **typeof** and finite check) 
-| `number+`, `num+`               | Numbers more than or equal to zero
-| `number-`, `num-`               | Numbers less than or equal to zero
-| `integer`, `int`                | Integers (using **Number.isInteger()**)
-| `integer+`, `int+`              | Positive integers including zero
-| `integer-`, `int-`              | Negative integers including zero
-| `string`, `str`                 | Strings (using **typeof**)
-| `string+`, `str+`               | Non-empty strings (using **str.length**)
-| `lowercase`, `lower`            | Strings with no uppercase characters
-| `lowercase+`, `lower+`          | Non-empty strings with no uppercase characters
-| `uppercase`, `upper`            | Strings with no lowercase characters
-| `uppercase+`, `upper+`          | Non-empty strings with no lowercase characters
-| `function`, `func`              | Functions (using **instanceof Function**)
-| `object`, `obj`                 | Plain objects (using **instanceof Object** and constructor check)
-| `object+`, `obj+`               | Plain objects with one or more properties (using **Object.keys().length**)
-| `objectlike`                    | Any object-like object (using **instanceof Object**)
-| `iterable`                      | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
-| `circular`                      | Objects with one or more _circular references_
-| `array`, `arr`                  | Plain instances of Array (using **instanceof Array** and constructor check) 
-| `array+`, `arr+`                | Plain instances of **Array** with one or more items
-| `arraylike`                     | Any object, not just arrays, with numeric **.length** property
-| `arguments`, `args`             | Arguments objects (any object, not just arrays, with numeric **.length** property)
-| `map`                           | Instances of **Map**
-| `map+`                          | Instances of **Map** with one or more items
-| `weakmap`                       | Instances of **WeakMap**
-| `set`                           | Instances of **Set**
-| `set+`                          | Instances of **Set** with one or more items
-| `weakset`                       | Instances of **WeakSet**
-| `promise`                       | Instances of **Promise**
-| `date`                          | Instances of **Date**
-| `date+`, `future`               | Instances of **Date** with a value in the future
-| `date-`, `past`                 | Instances of **Date** with a value in the past
-| `regex`, `regexp`               | Instances of **RegExp** (regular expressions)
-| `any`, `mixed`                  | Allow any value (transparently passes through with no error)
+| Type string reference                | Description
+|--------------------------------------|-------------------
+| `null`                               | Value is **null**
+| `undefined`, `undef`, `void`         | Value is **undefined**
+| `defined`, `def`                     | Value is **not undefined**
+| `boolean`, `bool`                    | Value is **true** or **false**
+| `true`                               | Value is **true**
+| `false`                              | Value is **false**
+| `truthy`                             | Any truthy values (i.e. **== true**)
+| `falsy`                              | Any falsy values (i.e. **== false**)
+| `zero`                               | Value is **0**
+| `one`                                | Value is **1**
+| `nan`                                | Value is **NaN**
+| `number`, `num`                      | Numbers excluding NaN/Infinity (using **typeof** and finite check) 
+| `number+`, `num+`,                   | Numbers more than or equal to zero
+| `number-`, `num-`                    | Numbers less than or equal to zero
+| `integer`, `int`                     | Integers (using **Number.isInteger()**)
+| `integer+`, `int+`                   | Positive integers including zero
+| `integer-`, `int-`                   | Negative integers including zero
+| `string`, `str`                      | Strings (using **typeof**)
+| `string+`, `str+`                    | Non-empty strings (using **str.length**)
+| `lowercase`, `lower`                 | Strings with no uppercase characters
+| `lowercase+`, `lower+`               | Non-empty strings with no uppercase characters
+| `uppercase`, `upper`                 | Strings with no lowercase characters
+| `uppercase+`, `upper+`               | Non-empty strings with no lowercase characters
+| `function`, `func`                   | Functions (using **instanceof Function**)
+| `object`, `obj`                      | Plain objects (using **instanceof Object** and constructor check)
+| `object+`, `obj+`                    | Plain objects with one or more properties (using **Object.keys().length**)
+| `objectlike`                         | Any object-like object (using **instanceof Object**)
+| `iterable`                           | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
+| `circular`                           | Objects with one or more _circular references_ (use `!circular` to disallow circular references)
+| `array`, `arr`                       | Plain instances of Array (using **instanceof Array** and constructor check) 
+| `array+`, `arr+`                     | Plain instances of **Array** with one or more items
+| `arraylike`                          | Any object, not just arrays, with numeric **.length** property
+| `arguments`, `args`                  | Arguments objects (any object, not just arrays, with numeric **.length** property)
+| `map`                                | Instances of **Map**
+| `map+`                               | Instances of **Map** with one or more items
+| `weakmap`                            | Instances of **WeakMap**
+| `set`                                | Instances of **Set**
+| `set+`                               | Instances of **Set** with one or more items
+| `weakset`                            | Instances of **WeakSet**
+| `promise`                            | Instances of **Promise**
+| `date`                               | Instances of **Date**
+| `date+`, `future`                    | Instances of **Date** with a value in the future
+| `date-`, `past`                      | Instances of **Date** with a value in the past
+| `regex`, `regexp`                    | Instances of **RegExp** (regular expressions)
+| `any`, `mixed`                       | Allow any value (transparently passes through with no error)
+| `json`, `jsonable`                   | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
 ```js
 // Pass.

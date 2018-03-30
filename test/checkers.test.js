@@ -25,6 +25,9 @@ describe("checkers", () => {
 		expect(check(false, "falsy")).toBe(undefined);
 
 		// Numbers.
+		expect(check(0, "zero")).toBe(undefined);
+		expect(check(1, "one")).toBe(undefined);
+		expect(check(NaN, "nan")).toBe(undefined);
 		expect(check(1.5, "number")).toBe(undefined);
 		expect(check(1.5, "num")).toBe(undefined);
 		expect(check(1.5, "number+")).toBe(undefined);
@@ -93,8 +96,9 @@ describe("checkers", () => {
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
 
-		// Circular.
+		// Advanced.
 		expect(check(circular, "circular")).toBe(undefined);
+		expect(check({ num: 123, str: "abc" }, "json")).toBe(undefined);
 	});
 	test("Every named type fails correctly", () => {
 		expect.assertions(Object.keys(checkers).length);
@@ -114,6 +118,9 @@ describe("checkers", () => {
 		expect(() => check(1, "falsy")).toThrow(TypeError);
 
 		// Numbers.
+		expect(() => check(1, "zero")).toThrow(TypeError);
+		expect(() => check(0, "one")).toThrow(TypeError);
+		expect(() => check(1, "nan")).toThrow(TypeError);
 		expect(() => check("1", "number")).toThrow(TypeError);
 		expect(() => check("1", "num")).toThrow(TypeError);
 		expect(() => check(-1, "number+")).toThrow(TypeError);
@@ -182,7 +189,8 @@ describe("checkers", () => {
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
 
-		// Circular.
+		// Advanced.
 		expect(() => check([], "circular")).toThrow(TypeError);
+		expect(() => check(undefined, "json")).toThrow(TypeError);
 	});
 });
