@@ -86,19 +86,27 @@ function myFunc(options)
 }
 ```
 
-### Checking optional values
-
-Appending `?` question mark to any type string makes it optional. This means it will accept `undefined` in addition to the specified type.
+There are more complex types available: Appending `?` question mark to any type string makes it optional (which means it also allows `undefined`). Prepending a `!` exclaimation mark to any type string makes it inverted. Multiple types can be combined with `|` and `&` for OR and AND conditions.
 
 ```js
-// This check fails because it"s not optional.
+// Optional types.
 check(undefined, "number"); // Throws ValueError "Must be number (received undefined)"
-
-// This check passes because it"s optional.
 check(undefined, "number?"); // No error.
 
-// Null does not count as optional.
+// Note that null does not count as optional.
 check(null, "number?"); // Throws ValueError "Must be number (received null)"
+
+// Inverted types.
+check(123, "!str"); // No error.
+check(123, "!int"); // Throws ValueError "Must be not integer (received 123)"
+
+// Combined OR types.
+check(1234, "num | str"); // No error.
+check(null, "num | str"); // Throws ValueError "Must be number or string (received null)"
+
+// Combined AND types.
+check("abc", "string & !falsy"); // No error.
+check("", "string & !falsy"); // Throws ValueError "Must be string and not falsy (received "")"
 ```
 
 ### Checking objects and arrays
@@ -281,6 +289,7 @@ Types are generally accessed via a string reference. This list shows all Blork b
 | `object+`, `obj+`               | Plain objects with one or more properties (using **Object.keys().length**)
 | `objectlike`                    | Any object-like object (using **instanceof Object**)
 | `iterable`                      | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
+| `circular`                      | Objects with one or more _circular references_
 | `array`, `arr`                  | Plain instances of Array (using **instanceof Array** and constructor check) 
 | `array+`, `arr+`                | Plain instances of **Array** with one or more items
 | `arraylike`                     | Any object, not just arrays, with numeric **.length** property
@@ -315,18 +324,35 @@ check([], "array+"); // Throws ValueError "Must be array with one or more items 
 
 ### Optional string types
 
-Any type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
+Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
 ```js
 // Pass.
 check(undefined, "str?"); // No error.
 check(undefined, "lower?"); // No error.
-check(undefined, "whole?"); // No error.
+check(undefined, "int?"); // No error.
 check([undefined, undefined, 123], ["number?"]); // No error.
 
 // Fail.
 check(123, "str?"); // Throws ValueError "Must be string (received 123)"
 check(null, "str?"); // Throws ValueError "Must be string (received null)"
+```
+
+### Inverted string types
+
+Any string type can be made optional by prepending a `!` question mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
+
+```js
+// Pass.
+check(undefined, "!str"); // No error.
+check("Abc", "!lower"); // No error.
+check(123.456, "!integer"); // No error.
+check([undefined, "abc", true, false], ["!number"]); // No error.
+
+// Fail.
+check(123, "!str"); // Throws ValueError "Must be not string (received "abc")"
+check(true, "!bool"); // Throws ValueError "Must be not true or false (received true)"
+check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError "array[3]: Must be not number (received 123)"
 ```
 
 ### Combined string types
@@ -485,6 +511,9 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.3.0
+  - Add `circular` checker to check for objects with circular references
+  - Add `!` modifier to enable invert checking, e.g. `!num` (don't allow numbers) or `!circular` (don't allow circular references)
 - 4.2.2
   - Use `.` dot notation in error message prefix when recursing into objects
 - 4.2.1
