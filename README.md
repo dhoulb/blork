@@ -515,6 +515,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 4.5.0
+  - Add `checker()` function to return the boolean checker function itself.
 - 4.4.0
   - Add `json` checker to check for JSON-friendly values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 - 4.3.0
