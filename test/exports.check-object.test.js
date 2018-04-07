@@ -35,6 +35,7 @@ describe("exports.check() object types", () => {
 		expect(check({ a: 1, b: 1, c: 1 }, { a: "num", _any: "num" })).toBe(undefined);
 		expect(check({ a: "abc", b: "abc", c: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
 		expect(check({ a: 1, b: 2, c: undefined }, { a: "num", _any: "num?" })).toBe(undefined);
+		expect(check({ a: new Map(), b: new Map(), c: new Map() }, { _any: Map })).toBe(undefined);
 	});
 	test("Object literal types with _any property pass correctly when _any isn't used", () => {
 		expect(check({ a: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
@@ -44,6 +45,9 @@ describe("exports.check() object types", () => {
 	});
 	test("Object literal types with _any property fail correctly", () => {
 		expect(() => check({ a: 1, b: 2, c: "c" }, { a: "num", _any: "num" })).toThrow(TypeError);
+		expect(() => check({ a: 1 }, { _any: "str" })).toThrow(TypeError);
+		expect(() => check({ a: new Map() }, { _any: Set })).toThrow(TypeError);
+		expect(() => check({ a: new Map(), b: new Set(), c: new Set() }, { _any: Set })).toThrow(TypeError);
 	});
 	test("Deep object literal types with _any property pass correctly", () => {
 		expect(check({ a: "a", b: { bb: 22, bc: 23 } }, { a: "str", b: { _any: "num" } })).toBe(undefined);
