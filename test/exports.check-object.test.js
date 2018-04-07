@@ -1,5 +1,5 @@
 const BlorkError = require("../lib/errors/BlorkError");
-const { check, ANY } = require("../lib/exports");
+const { check } = require("../lib/exports");
 
 // Tests.
 describe("exports.check() object types", () => {
@@ -31,22 +31,22 @@ describe("exports.check() object types", () => {
 	test("Object literal types ignore extra parameters", () => {
 		expect(check({ a: "a", z: "extraparam" }, { a: String })).toBe(undefined); // Objects ignore extra params.
 	});
-	test("Object literal types with ANY property pass correctly", () => {
-		expect(check({ a: 1, b: 1, c: 1 }, { a: "num", [ANY]: "num" })).toBe(undefined);
-		expect(check({ a: "abc", b: "abc", c: "abc" }, { a: "str", [ANY]: "str" })).toBe(undefined);
-		expect(check({ a: 1, b: 2, c: undefined }, { a: "num", [ANY]: "num?" })).toBe(undefined);
+	test("Object literal types with _any property pass correctly", () => {
+		expect(check({ a: 1, b: 1, c: 1 }, { a: "num", _any: "num" })).toBe(undefined);
+		expect(check({ a: "abc", b: "abc", c: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
+		expect(check({ a: 1, b: 2, c: undefined }, { a: "num", _any: "num?" })).toBe(undefined);
 	});
-	test("Object literal types with ANY property pass correctly when ANY isn't used", () => {
-		expect(check({ a: "abc" }, { a: "str", [ANY]: "str" })).toBe(undefined);
+	test("Object literal types with _any property pass correctly when _any isn't used", () => {
+		expect(check({ a: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
 	});
 	test("Using undefined as any ", () => {
-		expect(check({ a: "abc" }, { a: "str", [ANY]: "str" })).toBe(undefined);
+		expect(check({ a: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
 	});
-	test("Object literal types with ANY property fail correctly", () => {
-		expect(() => check({ a: 1, b: 2, c: "c" }, { a: "num", [ANY]: "num" })).toThrow(TypeError);
+	test("Object literal types with _any property fail correctly", () => {
+		expect(() => check({ a: 1, b: 2, c: "c" }, { a: "num", _any: "num" })).toThrow(TypeError);
 	});
-	test("Deep object literal types with ANY property pass correctly", () => {
-		expect(check({ a: "a", b: { bb: 22, bc: 23 } }, { a: "str", b: { [ANY]: "num" } })).toBe(undefined);
+	test("Deep object literal types with _any property pass correctly", () => {
+		expect(check({ a: "a", b: { bb: 22, bc: 23 } }, { a: "str", b: { _any: "num" } })).toBe(undefined);
 	});
 	test("No infinite loop when value contains circular references", () => {
 		const value = {};
