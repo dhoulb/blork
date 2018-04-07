@@ -452,27 +452,27 @@ check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "n
 
 ### Object literal type (with additional properties)
 
-To check that the type of **all** properties in an object all conform to a type, use an `ANY` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
+To check that the type of **any** properties conform to a single type, use an `_any` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
 
 ```js
-import { check, ANY } from "blork";
+import { check } from "blork";
 
 // Pass.
-check({ a: 1, b: 2, c: 3 }, { [ANY]: "num" }); // No error.
-check({ name: "Dan", a: 1, b: 2, c: 3 }, { name: "str", [ANY]: "num" }); // No error.
+check({ a: 1, b: 2, c: 3 }, { _any: "num" }); // No error.
+check({ name: "Dan", a: 1, b: 2, c: 3 }, { name: "str", _any: "num" }); // No error.
 
 // Fail.
-check({ a: 1, b: 2, c: "abc" }, { [ANY]: "num" }); // Throws ValueError "c: Must be number (received "abc")"
+check({ a: 1, b: 2, c: "abc" }, { _any: "num" }); // Throws ValueError "c: Must be number (received "abc")"
 ```
 
 If you wish you can use this functionality with the `undefined` type to ensure objects **do not** contain additional properties (object literal types by default are allowed to contain additional properties).
 
 ```js
 // Pass.
-check({ name: "Carl" }, { name: "str", [ANY]: "undefined" }); // No error.
+check({ name: "Carl" }, { name: "str", _any: "undefined" }); // No error.
 
 // Fail.
-check({ name: "Jess", another: 28 }, { name: "str", [ANY]: "undefined" }); // Throws ValueError "another: Must be undefined (received 28)"
+check({ name: "Jess", another: 28 }, { name: "str", _any: "undefined" }); // Throws ValueError "another: Must be undefined (received 28)"
 ```
 
 ### Array literal type
@@ -515,6 +515,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 5.0.0
+  - Change from symbol `[ANY]` key to `_any` key for indexer property (for convenience and better Flow compatibility)
 - 4.5.0
   - Add `checker()` function to return the boolean checker function itself.
 - 4.4.0
