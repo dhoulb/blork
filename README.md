@@ -566,6 +566,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 5.1.0
+  - Add `prop()` function that defines a locked object property that must match a Blork type
 - 5.0.0
   - Change from symbol `[ANY]` key to `_any` key for indexer property (for convenience and better Flow compatibility)
 - 4.5.0
