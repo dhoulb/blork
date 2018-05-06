@@ -93,6 +93,7 @@ describe("checkers", () => {
 		expect(check(Promise.resolve(), "promise")).toBe(undefined);
 		expect(check(/[abc]+/g, "regexp")).toBe(undefined);
 		expect(check(/[abc]+/g, "regex")).toBe(undefined);
+		expect(check(Symbol(), "symbol")).toBe(undefined);
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
 
@@ -186,6 +187,7 @@ describe("checkers", () => {
 		expect(() => check(true, "promise")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regexp")).toThrow(TypeError);
 		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
+		expect(() => check("symbol", "symbol")).toThrow(TypeError);
 		expect(check(false, "any")).toBe(undefined);
 		expect(check("abc", "mixed")).toBe(undefined);
 

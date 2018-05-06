@@ -308,6 +308,7 @@ Types are generally accessed via a string reference. This list shows all Blork b
 | `date+`, `future`                    | Instances of **Date** with a value in the future
 | `date-`, `past`                      | Instances of **Date** with a value in the past
 | `regex`, `regexp`                    | Instances of **RegExp** (regular expressions)
+| `symbol`                             | Value is **Symbol** (using **typeof**)
 | `any`, `mixed`                       | Allow any value (transparently passes through with no error)
 | `json`, `jsonable`                   | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
