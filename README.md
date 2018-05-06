@@ -256,6 +256,56 @@ add("mychecker", v => v === "abc", "'abc'");
 check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123')")
 ```
 
+### prop(): Define a Blork-checked object property
+
+The `prop()` function can define an object property (like `Object.defineProperty()`) that is readable and writable, BUT the written value must match a specified Blork type. 
+
+This allows you to create objects with properties that have a guaranteed type. This makes your object more robust and removes the need to check the type of the property before using it.
+
+`prop()` accepts four arguments:
+
+1. `object` The object to define the property on
+2. `name` The string name of the property to add
+3. `value` The value to set as the initial value for the property
+4. `type` (optional) The Blork type to enforce on the property e.g. `"str"` or `[String]` — if type is not set then it will be inferred from the `value` property.
+
+```js
+import { prop } from "blork";
+
+// Make an object.
+const obj = {};
+
+// Define typed properties on the object.
+prop(obj, "humanName1", "Mel", "string"); // Inferred type of string (typeof "Mel" === "string")
+prop(obj, "humanName2", "Joanne"); // Inferred type of string (typeof "Joanne" === "string")
+prop(obj, "nameOrNumber", "Fido", "string|number");
+prop(obj, "coords", { lat: 0, lng: 0 }, { lat: "num", lng: "num" });
+prop(obj, "map", new Map()); // Infers type to be instanceof Map
+
+// Setting the value to an allowed type is fine.
+obj.humanName1 = "John";
+obj.humanName2 = "Jim";
+obj.nameOrNumber = 123;
+obj.coords = { lat: 28.20, lng: 12.00 };
+obj.map = new Map();
+
+// Setting the value to a disallowed type is not fine.
+obj.humanName1 = 123; // Throws TypeError "humanName1: Must be string (received 123)"
+obj.humanName1 = 123; // Throws TypeError "humanName2: Must be string (received 123)"
+obj.nameOrNumber = true; // Throws TypeError "humanName2: Must be string or number (received true)"
+obj.coords = 123; // Throws TypeError "humanName2: Must be plain object (received 123)"
+obj.coords = { lat: "abc", lng: 0 }; // Throws TypeError "coords.lat: Must be number (received "abc")"
+obj.map = new Set(); // Throws TypeError "map: must be instance of Map (received Set)
+```
+
+```js
+import { prop } from "blork";
+
+// Make an object.
+const obj = {};
+
+```
+
 ## Types
 
 ### String types
