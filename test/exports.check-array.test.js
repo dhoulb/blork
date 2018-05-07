@@ -19,14 +19,19 @@ describe("exports.check() array types", () => {
 	});
 	test("Array literal types fail correctly", () => {
 		expect(() => check([1, 2, "surprisestring"], [Number])).toThrow(TypeError);
+		expect(() => check([1, 2, "surprisestring"], [Number])).toThrow(/\[2\]:/);
+		expect(() => check([1, 2, "surprisestring"], [Number])).toThrow(/number/);
+		expect(() => check([1, 2, "surprisestring"], [Number])).toThrow(/surprisestring/);
 	});
 	test("Array tuples pass correctly", () => {
 		expect(check([1, 2, 3], [Number, Number, Number])).toBe(undefined);
 		expect(check([1, 2, 3], ["num", "num", "num"])).toBe(undefined);
 		expect(check([1, undefined, 3], ["num?", "num?", "num?"])).toBe(undefined); // Arrays don't count undefined optional values.
 	});
-	test("Array tuples fail correctly", () => {
+	test("Array tuples fail correctly with incorrect types", () => {
 		expect(() => check([1, 1], [Number, String])).toThrow(TypeError);
+	});
+	test("Array tuples fail correctly with excess items", () => {
 		expect(() => check([1, "b", "excessitem"], [Number, String])).toThrow(TypeError);
 	});
 	test("No infinite loop when value contains circular references", () => {
@@ -48,7 +53,7 @@ describe("exports.check() array types", () => {
 	test("Throw BlorkError when array type contains deep circular references", () => {
 		const type = [];
 		type.push([[[[type]]]]);
-		expect(() => check([[[[[[[]]]]]]], type)).toThrow(BlorkError);
-		expect(() => check([[[[[[[]]]]]]], type)).toThrow(/circular references/);
+		expect(() => check([[[[[[[[[[]]]]]]]]]], type)).toThrow(BlorkError);
+		expect(() => check([[[[[[[[[[]]]]]]]]]], type)).toThrow(/circular references/);
 	});
 });

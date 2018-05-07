@@ -44,8 +44,13 @@ describe("exports.check() object types", () => {
 		expect(check({ a: "abc" }, { a: "str", _any: "str" })).toBe(undefined);
 	});
 	test("Object literal types with _any property fail correctly", () => {
-		expect(() => check({ a: 1, b: 2, c: "c" }, { a: "num", _any: "num" })).toThrow(TypeError);
 		expect(() => check({ a: 1 }, { _any: "str" })).toThrow(TypeError);
+		expect(() => check({ a: 1 }, { _any: "str" })).toThrow(/a:/);
+		expect(() => check({ a: 1 }, { _any: "str" })).toThrow(/must be string/i);
+		expect(() => check({ a: 1 }, { _any: "str" }, "doc")).toThrow(TypeError);
+		expect(() => check({ a: 1 }, { _any: "str" }, "doc")).toThrow(/doc.a:/);
+		expect(() => check({ a: 1 }, { _any: "str" }, "doc")).toThrow(/must be string/i);
+		expect(() => check({ a: 1, b: 2, c: "c" }, { a: "num", _any: "num" })).toThrow(TypeError);
 		expect(() => check({ a: new Map() }, { _any: Set })).toThrow(TypeError);
 		expect(() => check({ a: new Map(), b: new Set(), c: new Set() }, { _any: Set })).toThrow(TypeError);
 	});
