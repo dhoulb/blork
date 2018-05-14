@@ -562,13 +562,13 @@ You can use this functionality with the `undefined` type to ensure objects **do 
 ```js
 // Pass.
 check(
-	{ name: "Carl" }, 
+	{ name: "Carl" },
 	{ name: "str", [VALUES]: "undefined" }
 ); // No error.
 
 // Fail.
 check(
-	{ name: "Jess", another: 28 }, 
+	{ name: "Jess", another: 28 },
 	{ name: "str", [VALUES]: "undefined" }
 ); // Throws ValueError "another: Must be undefined..."
 ```
@@ -595,7 +595,7 @@ check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
 
 ### Object literal type: custom constructor
 
-Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object, use the `CLASS` symbol and create a `[CLASS]` key. 
+Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object, use the `CLASS` symbol and create a `[CLASS]` key.
 
 ```js
 import { check, CLASS } from "blork";
@@ -609,7 +609,7 @@ class MyClass {
 
 // Pass.
 check(
-	new MyClass, 
+	new MyClass,
 	{ num: 123, [CLASS]: MyClass }
 ); // No error.
 
@@ -660,6 +660,17 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.0.0
+  - Add `VALUES`, `KEYS`, and `CLASS` symbol constants
+  - Remove `_any` key and use `VALUES` to provide the same functionality
+  - Add `KEYS` functionality to check type or case of object keys, e.g. camelCase or kebab-case
+  - Add `CLASS` functionality to check the class of an object
+  - Add string case checkers for e.g. variable names (kebab-case, camelCase, snake_case etc)
+  - `upper` and `lower` checkers work differently (all characters must be UPPERCASE/lowercase)
+  - Rename `int+`, `int-` checkers to `+int` and `-int`
+  - Add '+' modifier to check for non-empty values with any checker
+  - Remove hardcoded '+' checkers like `lower+`, `object+`
+  - Remove `uppercase` and `lowercase` checkers for consistency
 - 6.0.0
   - Remove `prop()` function and add `props()` function instead (`prop()` was impossible to type with Flow)
 - 5.1.0
