@@ -167,7 +167,7 @@ Register your own checker using the `add()` function. This is great if 1) you're
 1. `name` The name of the custom checker (only kebab-case strings allowed).
 2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
 3. `description=""` An description for the value the checker will accept, e.g. "lowercase string" or "unique username", that is shown in the error message. Defaults to the value of `name`.
-4. `error=undefined` A custom class that is thrown when this checker fails (can be _any_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
+4. `error=undefined` A custom class that is thrown when this checker fails (can be [VALUES]_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
 
 ```js
 import { add, check } from "blork";
@@ -219,7 +219,7 @@ myFunc("A dog sits over there"); // Throws ValueError "arguments[1]: Must be str
 
 ### throws(): Set a custom error constructor
 
-To change the error object Blork throws when a type doesn't match, use the `throws()` function. It accepts a single argument a custom class (can be _any_ class, not just classes extending `Error`).
+To change the error object Blork throws when a type doesn't match, use the `throws()` function. It accepts a single argument a custom class (can be [VALUES]_ class, not just classes extending `Error`).
 
 ```js
 import { throws, check } from "blork";
@@ -488,7 +488,7 @@ For convenience some constructors (e.g. `String`) and constants (e.g. `null`) ca
 | `null`      | Same as **'null'** type      |
 | `undefined` | Same as **'undefined'** type |
 
-You can pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
+You can pass in [VALUES]_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
 
 Using `Object` and `Array` constructors will work also and will allow any object that is `instanceof Object` or `instanceof Array`. _Note: this is not the same as e.g. the `'object'` and `'array'` string types, which only allow plain objects an arrays (but will reject objects of custom classes extending `Object` or `Array`)._
 
@@ -529,29 +529,95 @@ check({ age: "apple" }, { age: "num" }); // Throws ValueError "age: Must be numb
 check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "num" } }); // Throws ValueError "size[width]: Must be number (received "abc")"
 ```
 
-### Object literal type (with additional properties)
+### Object literal type: additional values
 
-To check that the type of **any** properties conform to a single type, use an `_any` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
+To check that the type of **any** properties conform to a single type, use the `VALUES` symbol and create a `[VALUES]` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
 
 ```js
-import { check } from "blork";
+import { check, VALUES } from "blork";
 
 // Pass.
-check({ a: 1, b: 2, c: 3 }, { _any: "num" }); // No error.
-check({ name: "Dan", a: 1, b: 2, c: 3 }, { name: "str", _any: "num" }); // No error.
+check(
+	{ a: 1, b: 2, c: 3 },
+	{ [VALUES]: "num" }
+); // No error.
+check(
+	{ name: "Dan", a: 1, b: 2, c: 3 },
+	{ name: "str", [VALUES]: "num" }
+); // No error.
 
 // Fail.
-check({ a: 1, b: 2, c: "abc" }, { _any: "num" }); // Throws ValueError "c: Must be number (received "abc")"
+check(
+	{ a: 1, b: 2, c: "abc" },
+	{ [VALUES]: "num" }
+); // Throws ValueError "c: Must be number..."
+check(
+	{ name: "Dan", a: 1, b: 2, c: 3 },
+	{ name: "str", [VALUES]: "bool" }
+); // Throws ValueError "a: Must be boolean..."
 ```
 
-If you wish you can use this functionality with the `undefined` type to ensure objects **do not** contain additional properties (object literal types by default are allowed to contain additional properties).
+You can use this functionality with the `undefined` type to ensure objects **do not** contain additional properties (object literal types by default are allowed to contain additional properties).
 
 ```js
 // Pass.
-check({ name: "Carl" }, { name: "str", _any: "undefined" }); // No error.
+check(
+	{ name: "Carl" }, 
+	{ name: "str", [VALUES]: "undefined" }
+); // No error.
 
 // Fail.
-check({ name: "Jess", another: 28 }, { name: "str", _any: "undefined" }); // Throws ValueError "another: Must be undefined (received 28)"
+check(
+	{ name: "Jess", another: 28 }, 
+	{ name: "str", [VALUES]: "undefined" }
+); // Throws ValueError "another: Must be undefined..."
+```
+
+### Object literal type: additional keys
+
+To check that the keys of any additional properties conform to a single type, use the `KEYS` symbol and create a `[KEYS]` key. This allows you to ensure that keys conform to a specific string type, e.g. **camelCase**, **kebab-case** or **UPPERCASE** (see string types above).
+
+```js
+import { check, VALUES } from "blork";
+
+// Pass.
+check({ MYVAL: 1 }, { [KEYS]: "upper" }); // UPPERCASE keys — no error.
+check({ myVal: 1 }, { [KEYS]: "camel" }); // camelCase keys — no error.
+check({ MyVal: 1 }, { [KEYS]: "pascal" }); // PascalCase keys — no error.
+check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
+
+// Fail.
+check({ MYVAL: 1 }, { [KEYS]: "upper" }); // UPPERCASE keys — no error.
+check({ myVal: 1 }, { [KEYS]: "camel" }); // camelCase keys — no error.
+check({ MyVal: 1 }, { [KEYS]: "pascal" }); // PascalCase keys — no error.
+check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
+```
+
+### Object literal type: custom constructor
+
+Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object, use the `CLASS` symbol and create a `[CLASS]` key. 
+
+```js
+import { check, CLASS } from "blork";
+
+// Make a fancy new class.
+class MyClass {
+	constructor () {
+		this.num = 123;
+	}
+}
+
+// Pass.
+check(
+	new MyClass, 
+	{ num: 123, [CLASS]: MyClass }
+); // No error.
+
+// Fail.
+check(
+	{ num: 123, },
+	{ num: 123, [CLASS]: MyClass }
+); // Throws ValueError "Must be instance of MyClass..."
 ```
 
 ### Array literal type
@@ -599,7 +665,7 @@ Please see (CONTRIBUTING.md)
 - 5.1.0
   - Add `prop()` function that defines a locked object property that must match a Blork type
 - 5.0.0
-  - Change from symbol `[ANY]` key to `_any` key for indexer property (for convenience and better Flow compatibility)
+  - Change from symbol `[ANY]` key to `[VALUES]` key for indexer property (for convenience and better Flow compatibility)
 - 4.5.0
   - Add `checker()` function to return the boolean checker function itself.
 - 4.4.0

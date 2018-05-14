@@ -22,7 +22,8 @@ describe("exports.args()", () => {
 	test("Throw TypeError when too many arguments", () => {
 		const argsObj = { "0": true, "1": true, "2": true, length: 3 };
 		expect(() => args(argsObj, [Boolean, Boolean])).toThrow(TypeError);
-		expect(() => args(argsObj, [Boolean, Boolean])).toThrow(/too many arguments/i);
+		expect(() => args(argsObj, [Boolean, Boolean])).toThrow(/3/i);
+		expect(() => args(argsObj, [Boolean, Boolean])).toThrow(/arguments/i);
 	});
 	test("Throw BlorkError if passing non-arguments-like object", () => {
 		expect(() => args({}, [Number])).toThrow(BlorkError);
