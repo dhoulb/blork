@@ -2,7 +2,7 @@ const BlorkError = require("../lib/errors/BlorkError");
 const { checker } = require("../lib/exports");
 
 // Tests.
-describe("exports.check()", () => {
+describe("exports.checker()", () => {
 	test("Getting and using a checker works correctly", () => {
 		expect(checker("string")("abc")).toBe(true);
 		expect(checker("string")(123)).toBe(false);
