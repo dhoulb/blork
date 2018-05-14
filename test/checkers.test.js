@@ -8,191 +8,189 @@ circular[0] = circular;
 // Tests.
 describe("checkers", () => {
 	test("Every checker passes correctly", () => {
-		expect.assertions(Object.keys(checkers).length);
+		// Mock check() so we can check we tested everything.
+		const called = [];
+		function mockCheck(v, k) {
+			called.push(k);
+			return check(v, k);
+		}
 
-		// Primatives.
-		expect(check(null, "null")).toBe(undefined);
-		expect(check(undefined, "undefined")).toBe(undefined);
-		expect(check(undefined, "void")).toBe(undefined);
-		expect(check(undefined, "undef")).toBe(undefined);
-		expect(check(true, "defined")).toBe(undefined);
-		expect(check(true, "def")).toBe(undefined);
-		expect(check(true, "boolean")).toBe(undefined);
-		expect(check(true, "bool")).toBe(undefined);
-		expect(check(true, "true")).toBe(undefined);
-		expect(check(false, "false")).toBe(undefined);
-		expect(check(true, "truthy")).toBe(undefined);
-		expect(check(false, "falsy")).toBe(undefined);
+		// Primitives.
+		expect(mockCheck(null, "primitive")).toBe(undefined);
+		expect(mockCheck(null, "null")).toBe(undefined);
+		expect(mockCheck(undefined, "undefined")).toBe(undefined);
+		expect(mockCheck(undefined, "void")).toBe(undefined);
+		expect(mockCheck(undefined, "undef")).toBe(undefined);
+		expect(mockCheck(true, "defined")).toBe(undefined);
+		expect(mockCheck(true, "def")).toBe(undefined);
+
+		// Booleans.
+		expect(mockCheck(true, "boolean")).toBe(undefined);
+		expect(mockCheck(true, "bool")).toBe(undefined);
+		expect(mockCheck(true, "true")).toBe(undefined);
+		expect(mockCheck(false, "false")).toBe(undefined);
+		expect(mockCheck(true, "truthy")).toBe(undefined);
+		expect(mockCheck(false, "falsy")).toBe(undefined);
 
 		// Numbers.
-		expect(check(0, "zero")).toBe(undefined);
-		expect(check(1, "one")).toBe(undefined);
-		expect(check(NaN, "nan")).toBe(undefined);
-		expect(check(1.5, "number")).toBe(undefined);
-		expect(check(1.5, "num")).toBe(undefined);
-		expect(check(1.5, "number+")).toBe(undefined);
-		expect(check(0.5, "num+")).toBe(undefined);
-		expect(check(-1.5, "number-")).toBe(undefined);
-		expect(check(-1.5, "num-")).toBe(undefined);
-		expect(check(1, "integer")).toBe(undefined);
-		expect(check(1, "int")).toBe(undefined);
-		expect(check(1, "integer+")).toBe(undefined);
-		expect(check(1, "int+")).toBe(undefined);
-		expect(check(-1, "integer-")).toBe(undefined);
-		expect(check(-1, "int-")).toBe(undefined);
+		expect(mockCheck(0, "zero")).toBe(undefined);
+		expect(mockCheck(1, "one")).toBe(undefined);
+		expect(mockCheck(NaN, "nan")).toBe(undefined);
+		expect(mockCheck(1.5, "number")).toBe(undefined);
+		expect(mockCheck(1.5, "num")).toBe(undefined);
+		expect(mockCheck(1.5, "+number")).toBe(undefined);
+		expect(mockCheck(0.5, "+num")).toBe(undefined);
+		expect(mockCheck(-1.5, "-number")).toBe(undefined);
+		expect(mockCheck(-1.5, "-num")).toBe(undefined);
+		expect(mockCheck(1, "integer")).toBe(undefined);
+		expect(mockCheck(1, "int")).toBe(undefined);
+		expect(mockCheck(1, "+integer")).toBe(undefined);
+		expect(mockCheck(1, "+int")).toBe(undefined);
+		expect(mockCheck(-1, "-integer")).toBe(undefined);
+		expect(mockCheck(-1, "-int")).toBe(undefined);
 
 		// Strings.
-		expect(check("a", "string")).toBe(undefined);
-		expect(check("a", "str")).toBe(undefined);
-		expect(check("a", "string+")).toBe(undefined);
-		expect(check("a", "str+")).toBe(undefined);
-		expect(check("a", "lowercase")).toBe(undefined);
-		expect(check("a", "lower")).toBe(undefined);
-		expect(check("a", "lowercase+")).toBe(undefined);
-		expect(check("a", "lower+")).toBe(undefined);
-		expect(check("A", "uppercase")).toBe(undefined);
-		expect(check("A", "upper")).toBe(undefined);
-		expect(check("A", "uppercase+")).toBe(undefined);
-		expect(check("A", "upper+")).toBe(undefined);
-
-		// Functions.
-		expect(check(function() {}, "function")).toBe(undefined);
-		expect(check(function() {}, "func")).toBe(undefined);
+		expect(mockCheck("a", "string")).toBe(undefined);
+		expect(mockCheck("a", "str")).toBe(undefined);
+		expect(mockCheck("myvar", "lower")).toBe(undefined);
+		expect(mockCheck("MYVAR", "upper")).toBe(undefined);
+		expect(mockCheck("myVar", "camel")).toBe(undefined);
+		expect(mockCheck("MyVar", "pascal")).toBe(undefined);
+		expect(mockCheck("my_var", "snake")).toBe(undefined);
+		expect(mockCheck("MY_VAR", "screaming")).toBe(undefined);
+		expect(mockCheck("my-var", "kebab")).toBe(undefined);
+		expect(mockCheck("my-var", "slug")).toBe(undefined);
+		expect(mockCheck("My-Var", "train")).toBe(undefined);
 
 		// Objects.
-		expect(check({}, "object")).toBe(undefined);
-		expect(check({ a: 1 }, "obj")).toBe(undefined);
-		expect(check({ a: 1 }, "object+")).toBe(undefined);
-		expect(check({ a: 1 }, "obj+")).toBe(undefined);
-		expect(check({}, "objectlike")).toBe(undefined);
-		expect(check({ [Symbol.iterator]: () => {} }, "iterable")).toBe(undefined);
-
-		// Arrays.
-		expect(check([], "array")).toBe(undefined);
-		expect(check([], "arr")).toBe(undefined);
-		expect(check([1], "array+")).toBe(undefined);
-		expect(check([1], "arr+")).toBe(undefined);
-		expect(check({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined);
-		expect(check(arguments, "arguments")).toBe(undefined);
-		expect(check(arguments, "args")).toBe(undefined);
-
-		// Dates.
-		expect(check(new Date(), "date")).toBe(undefined);
-		expect(check(new Date(2080, 0, 1), "date+")).toBe(undefined);
-		expect(check(new Date(2080, 0, 1), "future")).toBe(undefined);
-		expect(check(new Date(1980, 0, 1), "date-")).toBe(undefined);
-		expect(check(new Date(1980, 0, 1), "past")).toBe(undefined);
+		expect(mockCheck(function() {}, "function")).toBe(undefined);
+		expect(mockCheck(function() {}, "func")).toBe(undefined);
+		expect(mockCheck({}, "object")).toBe(undefined);
+		expect(mockCheck({ a: 1 }, "obj")).toBe(undefined);
+		expect(mockCheck({}, "objectlike")).toBe(undefined);
+		expect(mockCheck({ [Symbol.iterator]: () => {} }, "iterable")).toBe(undefined);
+		expect(mockCheck(circular, "circular")).toBe(undefined);
+		expect(mockCheck([], "array")).toBe(undefined);
+		expect(mockCheck([], "arr")).toBe(undefined);
+		expect(mockCheck({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined);
+		expect(mockCheck(arguments, "arguments")).toBe(undefined);
+		expect(mockCheck(arguments, "args")).toBe(undefined);
+		expect(mockCheck(new Date(), "date")).toBe(undefined);
+		expect(mockCheck(new Date(2080, 0, 1), "future")).toBe(undefined);
+		expect(mockCheck(new Date(1980, 0, 1), "past")).toBe(undefined);
+		expect(mockCheck(new Map(), "map")).toBe(undefined);
+		expect(mockCheck(new WeakMap(), "weakmap")).toBe(undefined);
+		expect(mockCheck(new Set(), "set")).toBe(undefined);
+		expect(mockCheck(new WeakSet(), "weakset")).toBe(undefined);
+		expect(mockCheck(Promise.resolve(), "promise")).toBe(undefined);
+		expect(mockCheck(/[abc]+/g, "regexp")).toBe(undefined);
+		expect(mockCheck(/[abc]+/g, "regex")).toBe(undefined);
+		expect(mockCheck(Symbol(), "symbol")).toBe(undefined);
 
 		// Other.
-		expect(check(new Map(), "map")).toBe(undefined);
-		expect(check(new Map([[1, 1]]), "map+")).toBe(undefined);
-		expect(check(new WeakMap(), "weakmap")).toBe(undefined);
-		expect(check(new Set(), "set")).toBe(undefined);
-		expect(check(new Set([1]), "set+")).toBe(undefined);
-		expect(check(new WeakSet(), "weakset")).toBe(undefined);
-		expect(check(Promise.resolve(), "promise")).toBe(undefined);
-		expect(check(/[abc]+/g, "regexp")).toBe(undefined);
-		expect(check(/[abc]+/g, "regex")).toBe(undefined);
-		expect(check(Symbol(), "symbol")).toBe(undefined);
-		expect(check(false, "any")).toBe(undefined);
-		expect(check("abc", "mixed")).toBe(undefined);
+		expect(mockCheck(false, "any")).toBe(undefined);
+		expect(mockCheck("abc", "mixed")).toBe(undefined);
+		expect(mockCheck({ num: 123, str: "abc" }, "json")).toBe(undefined);
+		expect(mockCheck({ num: 123, str: "abc" }, "jsonable")).toBe(undefined);
 
-		// Advanced.
-		expect(check(circular, "circular")).toBe(undefined);
-		expect(check({ num: 123, str: "abc" }, "json")).toBe(undefined);
+		// Check we called every checker.
+		// Done in this awkward way so we get an error that helps us find the one we're missing.
+		const checkerNames = Object.keys(checkers);
+		checkerNames.forEach(name => expect(called).toContain(name));
+		called.forEach(name => expect(checkerNames).toContain(name));
+		expect(called.length).toBe(checkerNames.length);
 	});
 	test("Every named type fails correctly", () => {
-		expect.assertions(Object.keys(checkers).length);
+		// Mock check() so we can check we tested everything.
+		const called = [];
+		function mockCheck(v, k) {
+			called.push(k);
+			return check(v, k);
+		}
 
 		// Primatives..
-		expect(() => check(0, "null")).toThrow(TypeError);
-		expect(() => check(null, "undefined")).toThrow(TypeError);
-		expect(() => check(null, "void")).toThrow(TypeError);
-		expect(() => check(null, "undef")).toThrow(TypeError);
-		expect(() => check(undefined, "defined")).toThrow(TypeError);
-		expect(() => check(undefined, "def")).toThrow(TypeError);
-		expect(() => check(9, "boolean")).toThrow(TypeError);
-		expect(() => check(9, "bool")).toThrow(TypeError);
-		expect(() => check(1, "true")).toThrow(TypeError);
-		expect(() => check(9, "false")).toThrow(TypeError);
-		expect(() => check(0, "truthy")).toThrow(TypeError);
-		expect(() => check(1, "falsy")).toThrow(TypeError);
+		expect(() => mockCheck(Symbol(), "primitive")).toThrow(TypeError);
+		expect(() => mockCheck(0, "null")).toThrow(TypeError);
+		expect(() => mockCheck(null, "undefined")).toThrow(TypeError);
+		expect(() => mockCheck(null, "void")).toThrow(TypeError);
+		expect(() => mockCheck(null, "undef")).toThrow(TypeError);
+		expect(() => mockCheck(undefined, "defined")).toThrow(TypeError);
+		expect(() => mockCheck(undefined, "def")).toThrow(TypeError);
+
+		// Booleans.
+		expect(() => mockCheck(9, "boolean")).toThrow(TypeError);
+		expect(() => mockCheck(9, "bool")).toThrow(TypeError);
+		expect(() => mockCheck(1, "true")).toThrow(TypeError);
+		expect(() => mockCheck(9, "false")).toThrow(TypeError);
+		expect(() => mockCheck(0, "truthy")).toThrow(TypeError);
+		expect(() => mockCheck(1, "falsy")).toThrow(TypeError);
 
 		// Numbers.
-		expect(() => check(1, "zero")).toThrow(TypeError);
-		expect(() => check(0, "one")).toThrow(TypeError);
-		expect(() => check(1, "nan")).toThrow(TypeError);
-		expect(() => check("1", "number")).toThrow(TypeError);
-		expect(() => check("1", "num")).toThrow(TypeError);
-		expect(() => check(-1, "number+")).toThrow(TypeError);
-		expect(() => check(-1, "num+")).toThrow(TypeError);
-		expect(() => check(1, "number-")).toThrow(TypeError);
-		expect(() => check(1, "num-")).toThrow(TypeError);
-		expect(() => check(1.5, "integer")).toThrow(TypeError);
-		expect(() => check(1.5, "int")).toThrow(TypeError);
-		expect(() => check(1.5, "integer+")).toThrow(TypeError);
-		expect(() => check(2.5, "int+")).toThrow(TypeError);
-		expect(() => check(-1.5, "integer-")).toThrow(TypeError);
-		expect(() => check(-2.5, "int-")).toThrow(TypeError);
+		expect(() => mockCheck(1, "zero")).toThrow(TypeError);
+		expect(() => mockCheck(0, "one")).toThrow(TypeError);
+		expect(() => mockCheck(1, "nan")).toThrow(TypeError);
+		expect(() => mockCheck("1", "number")).toThrow(TypeError);
+		expect(() => mockCheck("1", "num")).toThrow(TypeError);
+		expect(() => mockCheck("1", "+number")).toThrow(TypeError);
+		expect(() => mockCheck("1", "+num")).toThrow(TypeError);
+		expect(() => mockCheck("1", "-number")).toThrow(TypeError);
+		expect(() => mockCheck("1", "-num")).toThrow(TypeError);
+		expect(() => mockCheck(1.5, "integer")).toThrow(TypeError);
+		expect(() => mockCheck(1.5, "int")).toThrow(TypeError);
+		expect(() => mockCheck(-1, "+integer")).toThrow(TypeError);
+		expect(() => mockCheck(-1, "+int")).toThrow(TypeError);
+		expect(() => mockCheck(1, "-integer")).toThrow(TypeError);
+		expect(() => mockCheck(1, "-int")).toThrow(TypeError);
 
 		// Strings.
-		expect(() => check(1, "string")).toThrow(TypeError);
-		expect(() => check(1, "str")).toThrow(TypeError);
-		expect(() => check("", "string+")).toThrow(TypeError);
-		expect(() => check("", "str+")).toThrow(TypeError);
-		expect(() => check("A", "lowercase")).toThrow(TypeError);
-		expect(() => check("A", "lower")).toThrow(TypeError);
-		expect(() => check("A", "lowercase+")).toThrow(TypeError);
-		expect(() => check("A", "lower+")).toThrow(TypeError);
-		expect(() => check("a", "uppercase")).toThrow(TypeError);
-		expect(() => check("a", "upper")).toThrow(TypeError);
-		expect(() => check("a", "uppercase+")).toThrow(TypeError);
-		expect(() => check("a", "upper+")).toThrow(TypeError);
-
-		// Functions.
-		expect(() => check({}, "function")).toThrow(TypeError);
-		expect(() => check({}, "func")).toThrow(TypeError);
+		expect(() => mockCheck(1, "string")).toThrow(TypeError);
+		expect(() => mockCheck(1, "str")).toThrow(TypeError);
+		expect(() => mockCheck("A", "lower")).toThrow(TypeError);
+		expect(() => mockCheck("a", "upper")).toThrow(TypeError);
+		expect(() => mockCheck("my-var", "camel")).toThrow(TypeError);
+		expect(() => mockCheck("my-var", "pascal")).toThrow(TypeError);
+		expect(() => mockCheck("MY_VAR", "snake")).toThrow(TypeError);
+		expect(() => mockCheck("MY-VAR", "screaming")).toThrow(TypeError);
+		expect(() => mockCheck("MY-VAR", "kebab")).toThrow(TypeError);
+		expect(() => mockCheck("my-VAR", "slug")).toThrow(TypeError);
+		expect(() => mockCheck("my-var", "train")).toThrow(TypeError);
 
 		// Objects.
-		expect(() => check(1, "object")).toThrow(TypeError);
-		expect(() => check(1, "obj")).toThrow(TypeError);
-		expect(() => check({}, "object+")).toThrow(TypeError);
-		expect(() => check({}, "obj+")).toThrow(TypeError);
-		expect(() => check("a", "objectlike")).toThrow(TypeError);
-		expect(() => check({}, "iterable")).toThrow(TypeError);
-
-		// Arrays.
-		expect(() => check({}, "array")).toThrow(TypeError);
-		expect(() => check({}, "arr")).toThrow(TypeError);
-		expect(() => check({}, "array+")).toThrow(TypeError);
-		expect(() => check({}, "arr+")).toThrow(TypeError);
-		expect(() => check({}, "arraylike")).toThrow(TypeError);
-		expect(() => check({}, "arguments")).toThrow(TypeError);
-		expect(() => check({}, "args")).toThrow(TypeError);
-
-		// Dates.
-		expect(() => check("2016", "date")).toThrow(TypeError);
-		expect(() => check(new Date(1080, 0, 1), "date+")).toThrow(TypeError);
-		expect(() => check(new Date(1080, 0, 1), "future")).toThrow(TypeError);
-		expect(() => check(new Date(2980, 0, 1), "date-")).toThrow(TypeError);
-		expect(() => check(new Date(2980, 0, 1), "past")).toThrow(TypeError);
+		expect(() => mockCheck({}, "function")).toThrow(TypeError);
+		expect(() => mockCheck({}, "func")).toThrow(TypeError);
+		expect(() => mockCheck(1, "object")).toThrow(TypeError);
+		expect(() => mockCheck(1, "obj")).toThrow(TypeError);
+		expect(() => mockCheck("a", "objectlike")).toThrow(TypeError);
+		expect(() => mockCheck({}, "iterable")).toThrow(TypeError);
+		expect(() => mockCheck([], "circular")).toThrow(TypeError);
+		expect(() => mockCheck({}, "array")).toThrow(TypeError);
+		expect(() => mockCheck({}, "arr")).toThrow(TypeError);
+		expect(() => mockCheck({}, "arraylike")).toThrow(TypeError);
+		expect(() => mockCheck({}, "arguments")).toThrow(TypeError);
+		expect(() => mockCheck({}, "args")).toThrow(TypeError);
+		expect(() => mockCheck("2016", "date")).toThrow(TypeError);
+		expect(() => mockCheck(new Date(1080, 0, 1), "future")).toThrow(TypeError);
+		expect(() => mockCheck(new Date(2980, 0, 1), "past")).toThrow(TypeError);
+		expect(() => mockCheck([], "map")).toThrow(TypeError);
+		expect(() => mockCheck([], "weakmap")).toThrow(TypeError);
+		expect(() => mockCheck([], "set")).toThrow(TypeError);
+		expect(() => mockCheck([], "weakset")).toThrow(TypeError);
+		expect(() => mockCheck(true, "promise")).toThrow(TypeError);
+		expect(() => mockCheck("/[abc]+/g", "regexp")).toThrow(TypeError);
+		expect(() => mockCheck("/[abc]+/g", "regex")).toThrow(TypeError);
+		expect(() => mockCheck("symbol", "symbol")).toThrow(TypeError);
 
 		// Other.
-		expect(() => check([], "map")).toThrow(TypeError);
-		expect(() => check(new Map(), "map+")).toThrow(TypeError);
-		expect(() => check([], "weakmap")).toThrow(TypeError);
-		expect(() => check([], "set")).toThrow(TypeError);
-		expect(() => check(new Set(), "set+")).toThrow(TypeError);
-		expect(() => check([], "weakset")).toThrow(TypeError);
-		expect(() => check(true, "promise")).toThrow(TypeError);
-		expect(() => check("/[abc]+/g", "regexp")).toThrow(TypeError);
-		expect(() => check("/[abc]+/g", "regex")).toThrow(TypeError);
-		expect(() => check("symbol", "symbol")).toThrow(TypeError);
-		expect(check(false, "any")).toBe(undefined);
-		expect(check("abc", "mixed")).toBe(undefined);
+		expect(mockCheck(false, "any")).toBe(undefined);
+		expect(mockCheck("abc", "mixed")).toBe(undefined);
+		expect(() => mockCheck(undefined, "json")).toThrow(TypeError);
+		expect(() => mockCheck({ a: undefined }, "jsonable")).toThrow(TypeError);
 
-		// Advanced.
-		expect(() => check([], "circular")).toThrow(TypeError);
-		expect(() => check(undefined, "json")).toThrow(TypeError);
+		// Check we called every checker.
+		// Done in this awkward way so we get an error that helps us find the one we're missing.
+		const checkerNames = Object.keys(checkers);
+		checkerNames.forEach(name => expect(called).toContain(name));
+		called.forEach(name => expect(checkerNames).toContain(name));
+		expect(called.length).toBe(checkerNames.length);
 	});
 });

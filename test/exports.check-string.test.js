@@ -48,9 +48,33 @@ describe("exports.check() string types", () => {
 		expect(() => check("abc", "!string")).toThrow(/Must be not string/);
 		expect(() => check(true, "!boolean")).toThrow(/Must be not true or false/);
 	});
+	test("Non-empty types pass correctly", () => {
+		expect(check("a", "string+")).toBe(undefined);
+		expect(check("a", "str+")).toBe(undefined);
+		expect(check("a", "lower+")).toBe(undefined);
+		expect(check("A", "upper+")).toBe(undefined);
+		expect(check({ a: 1 }, "object+")).toBe(undefined);
+		expect(check({ a: 1 }, "obj+")).toBe(undefined);
+		expect(check([1], "array+")).toBe(undefined);
+		expect(check([1], "arr+")).toBe(undefined);
+		expect(check(new Map([[1, 1]]), "map+")).toBe(undefined);
+		expect(check(new Set([1]), "set+")).toBe(undefined);
+	});
+	test("Non-empty types fail correctly", () => {
+		expect(() => check("", "string+")).toThrow(TypeError);
+		expect(() => check("", "str+")).toThrow(TypeError);
+		expect(() => check("A", "lower+")).toThrow(TypeError);
+		expect(() => check("a", "upper+")).toThrow(TypeError);
+		expect(() => check({}, "object+")).toThrow(TypeError);
+		expect(() => check({}, "obj+")).toThrow(TypeError);
+		expect(() => check([], "array+")).toThrow(TypeError);
+		expect(() => check([], "arr+")).toThrow(TypeError);
+		expect(() => check(new Map(), "map+")).toThrow(TypeError);
+		expect(() => check(new Set(), "set+")).toThrow(TypeError);
+	});
 	test("AND combined types pass correctly", () => {
 		expect(check(1, "number & integer")).toBe(undefined);
-		expect(check(1, "num & int+")).toBe(undefined);
+		expect(check(1, "num & +int")).toBe(undefined);
 		expect(check("abc", "str & lower+")).toBe(undefined);
 		expect(check("ABC", "str & upper+")).toBe(undefined);
 	});
@@ -79,11 +103,17 @@ describe("exports.check() string types", () => {
 		expect(() => check("ABCabc", "lower | upper & string")).toThrow(TypeError);
 	});
 	test("AND and OR combined types have correct error message", () => {
-		expect(() => check("ABCabc", "string & lower | upper")).toThrow(
-			/Must be string and lowercase string or uppercase string/
-		);
-		expect(() => check("ABCabc", "lower | upper & string")).toThrow(
-			/Must be lowercase string or uppercase string and string/
-		);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/string/);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/and/);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/or/);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/UPPERCASE/);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/lowercase/);
+		expect(() => check("ABCdef", "string & lower | upper")).toThrow(/string/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/string/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/and/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/or/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/UPPERCASE/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/lowercase/);
+		expect(() => check("ABCdef", "lower | upper & string")).toThrow(/string/);
 	});
 });

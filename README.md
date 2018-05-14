@@ -164,7 +164,7 @@ Register your own checker using the `add()` function. This is great if 1) you're
 
 `add()` accepts four arguments:
 
-1. `name` The name of the custom checker you'll use to reference it later
+1. `name` The name of the custom checker (only kebab-case strings allowed).
 2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
 3. `description=""` An description for the value the checker will accept, e.g. "lowercase string" or "unique username", that is shown in the error message. Defaults to the value of `name`.
 4. `error=undefined` A custom class that is thrown when this checker fails (can be _any_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
@@ -175,7 +175,7 @@ import { add, check } from "blork";
 // Register your new checker.
 add(
 	// Name of checker.
-	"catty", 
+	"catty",
 	// Checker to validate a string containing "cat".
 	(v) => typeof v === "string" && v.strToLower().indexOf("cat") >= 0,
 	// Description of what the variable _should_ contain.
@@ -258,7 +258,7 @@ check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123
 
 ### props(): Define Blork-checked object properties
 
-The `props()` function can define an object properties (like `Object.defineProperties()`) that are readable and writable, BUT the value must always match the type it was initially defined with. 
+The `props()` function can define an object properties (like `Object.defineProperties()`) that are readable and writable, BUT the value must always match the type it was initially defined with.
 
 This allows you to create objects with properties that have a guaranteed type. This makes your object more robust and removes the need to check the type of the property before using it.
 
@@ -300,61 +300,78 @@ const obj = {};
 
 ```
 
-## Types
+## Type reference
 
-### String types
+This section lists all types that are available in Blork. A number of different formats can be used for types:
 
-Types are generally accessed via a string reference. This list shows all Blork built-in checkers:
+- **String types** (e.g. `"promise"` and `"integer"`)
+- **String modifiers** that modify those string types (e.g. `"?"` and `"!"`)
+- **Constant** and **constructor** shorthand types (e.g. `null` and `String`)
+- **Object** and **Array** literal types (e.g. `{}` and `[]`)
 
-| Type string reference                | Description
-|--------------------------------------|-------------------
-| `null`                               | Value is **null**
-| `undefined`, `undef`, `void`         | Value is **undefined**
-| `defined`, `def`                     | Value is **not undefined**
-| `boolean`, `bool`                    | Value is **true** or **false**
-| `true`                               | Value is **true**
-| `false`                              | Value is **false**
-| `truthy`                             | Any truthy values (i.e. **== true**)
-| `falsy`                              | Any falsy values (i.e. **== false**)
-| `zero`                               | Value is **0**
-| `one`                                | Value is **1**
-| `nan`                                | Value is **NaN**
-| `number`, `num`                      | Numbers excluding NaN/Infinity (using **typeof** and finite check) 
-| `number+`, `num+`,                   | Numbers more than or equal to zero
-| `number-`, `num-`                    | Numbers less than or equal to zero
-| `integer`, `int`                     | Integers (using **Number.isInteger()**)
-| `integer+`, `int+`                   | Positive integers including zero
-| `integer-`, `int-`                   | Negative integers including zero
-| `string`, `str`                      | Strings (using **typeof**)
-| `string+`, `str+`                    | Non-empty strings (using **str.length**)
-| `lowercase`, `lower`                 | Strings with no uppercase characters
-| `lowercase+`, `lower+`               | Non-empty strings with no uppercase characters
-| `uppercase`, `upper`                 | Strings with no lowercase characters
-| `uppercase+`, `upper+`               | Non-empty strings with no lowercase characters
-| `function`, `func`                   | Functions (using **instanceof Function**)
-| `object`, `obj`                      | Plain objects (using **instanceof Object** and constructor check)
-| `object+`, `obj+`                    | Plain objects with one or more properties (using **Object.keys().length**)
-| `objectlike`                         | Any object-like object (using **instanceof Object**)
-| `iterable`                           | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
-| `circular`                           | Objects with one or more _circular references_ (use `!circular` to disallow circular references)
-| `array`, `arr`                       | Plain instances of Array (using **instanceof Array** and constructor check) 
-| `array+`, `arr+`                     | Plain instances of **Array** with one or more items
-| `arraylike`                          | Any object, not just arrays, with numeric **.length** property
-| `arguments`, `args`                  | Arguments objects (any object, not just arrays, with numeric **.length** property)
-| `map`                                | Instances of **Map**
-| `map+`                               | Instances of **Map** with one or more items
-| `weakmap`                            | Instances of **WeakMap**
-| `set`                                | Instances of **Set**
-| `set+`                               | Instances of **Set** with one or more items
-| `weakset`                            | Instances of **WeakSet**
-| `promise`                            | Instances of **Promise**
-| `date`                               | Instances of **Date**
-| `date+`, `future`                    | Instances of **Date** with a value in the future
-| `date-`, `past`                      | Instances of **Date** with a value in the past
-| `regex`, `regexp`                    | Instances of **RegExp** (regular expressions)
-| `symbol`                             | Value is **Symbol** (using **typeof**)
-| `any`, `mixed`                       | Allow any value (transparently passes through with no error)
-| `json`, `jsonable`                   | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
+### String types: primitives
+
+| `primitive`                  | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
+| `null`                       | Value is **null**
+| `undefined`, `undef`, `void` | Value is **undefined**
+| `defined`, `def`             | Value is **not undefined**
+
+### String types: booleans
+
+| `boolean`, `bool` | Value is **true** or **false**
+| `true`            | Value is **true**
+| `false`           | Value is **false**
+| `truthy`          | Any truthy values (i.e. **== true**)
+| `falsy`           | Any falsy values (i.e. **== false**)
+
+### String types: numbers
+
+| `zero`             | Value is **0**
+| `one`              | Value is **1**
+| `nan`              | Value is **NaN**
+| `number`, `num`    | Any numbers except NaN/Infinity (using **Number.isFinite()**)
+| `+number`, `+num`, | Numbers more than or equal to zero
+| `-number`, `-num`  | Numbers less than or equal to zero
+| `integer`, `int`   | Integers (using **Number.isInteger()**)
+| `+integer`, `+int` | Positive integers including zero
+| `-integer`, `-int` | Negative integers including zero
+
+### String types: strings
+
+| `string`, `str` | Any strings (using **typeof**)
+| `lower`         | lowercase string (non-empty and alphanumeric only)
+| `upper`         | UPPERCASE strings (non-empty and alphanumeric only)
+| `camel`         | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)
+| `pascal`        | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)
+| `snake`         | snake_case strings (non-empty alphanumeric lowercase)
+| `screaming`     | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)
+| `kebab`, `slug` | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)
+| `train`         | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
+
+### String types: objects
+
+| `function`, `func`               | Functions (using **instanceof Function**)
+| `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
+| `objectlike`                     | Any object-like object (using **typeof && !null**)
+| `iterable`                       | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
+| `circular`                       | Objects with one or more _circular references_ (use `!circular` to disallow circular references)
+| `array`, `arr`                   | Plain arrays (using **instanceof Array** and constructor check)
+| `arraylike`, `arguments`, `args` | Array-like objects, e.g. **arguments** (any object with numeric **.length** property, not just arrays)
+| `map`                            | Instances of **Map**
+| `weakmap`                        | Instances of **WeakMap**
+| `set`                            | Instances of **Set**
+| `weakset`                        | Instances of **WeakSet**
+| `promise`                        | Instances of **Promise**
+| `date`                           | Instances of **Date**
+| `future`                         | Instances of **Date** with a value in the future
+| `past`                           | Instances of **Date** with a value in the past
+| `regex`, `regexp`                | Instances of **RegExp** (regular expressions)
+| `symbol`                         | Value is **Symbol** (using **typeof**)
+
+### String types: other
+
+| `any`, `mixed`     | Allow any value (transparently passes through with no error)
+| `json`, `jsonable` | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
 ```js
 // Pass.
@@ -371,7 +388,7 @@ check({}, "object+"); // Throws ValueError "Must be object with one or more prop
 check([], "array+"); // Throws ValueError "Must be array with one or more items (received Array(0))"
 ```
 
-### Optional string types
+### String modifiers: Optional types
 
 Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
@@ -387,7 +404,23 @@ check(123, "str?"); // Throws ValueError "Must be string (received 123)"
 check(null, "str?"); // Throws ValueError "Must be string (received null)"
 ```
 
-### Inverted string types
+### String modifiers: Non-empty types
+
+Any type can be made non-empty by appending a `+` plus sign to the type reference. This means the check will only pass if the value is non-empty and has length.
+
+```js
+// Pass.
+check("abc", "str+"); // No error.
+check([1], "arr+"); // No error.
+check({ a: 1 }, "obj+"); // No error.
+
+// Fail.
+check(123, "str+"); // Throws ValueError "Must be non-empty string (received "")"
+check([], "arr+"); // Throws ValueError "Must be non-empty plain array (received [])"
+check({}, "obj+"); // Throws ValueError "Must be non-empty plain object (received {})"
+```
+
+### String modifiers: Inverted types
 
 Any string type can be made optional by prepending a `!` question mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
 
@@ -404,7 +437,7 @@ check(true, "!bool"); // Throws ValueError "Must be not true or false (received 
 check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError "array[3]: Must be not number (received 123)"
 ```
 
-### Combined string types
+### String modifiers: Combined types
 
 You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
 
@@ -423,7 +456,8 @@ check(null, "str|num|bool|func|obj"); // Throws ValueError "Must be string or nu
 `&` is used to create an AND type, meaning the value must pass _all_ of the checks to be valid. This is primarily useful for custom checkers e.g. `lower & username-unique`.
 
 ```js
-add("catty", v => v.toLowerCase().indexOf("cat")); // Checks that cat
+// Add a checker that confirms a string contains the word "cat"
+add("catty", v => v.toLowerCase().indexOf("cat") >= 0);
 
 // Pass.
 check("this cat is crazy!", "lower & catty"); // No error.
