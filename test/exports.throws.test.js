@@ -29,7 +29,11 @@ describe("exports.throws()", () => {
 	});
 	test("Throw BlorkError if passing a non-function", () => {
 		expect(() => throws(false)).toThrow(BlorkError);
-		expect(() => throws(123)).toThrow(BlorkError);
 		expect(() => throws({})).toThrow(BlorkError);
+		expect(() => throws(123)).toThrow(BlorkError);
+		expect(() => throws(123)).toThrow("throws():");
+		expect(() => throws(123)).toThrow("error:");
+		expect(() => throws(123)).toThrow("function");
+		expect(() => throws(123)).toThrow("123");
 	});
 });
