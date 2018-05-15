@@ -311,6 +311,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: primitives
 
+| Type string                  | Description                  
+|------------------------------|------------
 | `primitive`                  | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
 | `null`                       | Value is **null**
 | `undefined`, `undef`, `void` | Value is **undefined**
@@ -318,6 +320,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: booleans
 
+| Type string       | Description                  
+|-------------------|------------
 | `boolean`, `bool` | Value is **true** or **false**
 | `true`            | Value is **true**
 | `false`           | Value is **false**
@@ -326,6 +330,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: numbers
 
+| Type string        | Description                  
+|--------------------|------------
 | `zero`             | Value is **0**
 | `one`              | Value is **1**
 | `nan`              | Value is **NaN**
@@ -338,6 +344,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: strings
 
+| Type string     | Description                  
+|-----------------|------------
 | `string`, `str` | Any strings (using **typeof**)
 | `lower`         | lowercase string (non-empty and alphanumeric only)
 | `upper`         | UPPERCASE strings (non-empty and alphanumeric only)
@@ -350,6 +358,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: objects
 
+| Type string                      | Description                  
+|----------------------------------|------------
 | `function`, `func`               | Functions (using **instanceof Function**)
 | `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
 | `objectlike`                     | Any object-like object (using **typeof && !null**)
@@ -370,6 +380,8 @@ This section lists all types that are available in Blork. A number of different 
 
 ### String types: other
 
+| Type string        | Description                  
+|--------------------|------------
 | `any`, `mixed`     | Allow any value (transparently passes through with no error)
 | `json`, `jsonable` | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
