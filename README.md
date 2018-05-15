@@ -500,9 +500,9 @@ For convenience some constructors (e.g. `String`) and constants (e.g. `null`) ca
 | `null`      | Same as **'null'** type      |
 | `undefined` | Same as **'undefined'** type |
 
-You can pass in [VALUES]_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
+You can pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
 
-Using `Object` and `Array` constructors will work also and will allow any object that is `instanceof Object` or `instanceof Array`. _Note: this is not the same as e.g. the `'object'` and `'array'` string types, which only allow plain objects an arrays (but will reject objects of custom classes extending `Object` or `Array`)._
+Using `Object` and `Array` constructors will work also and will allow any object that is `instanceof Object` or `instanceof Array`. _Note: this is not the same as e.g. the `'object'` and `'array'` string types, which only allow **plain** objects and arrays._
 
 ```js
 // Pass.
