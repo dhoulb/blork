@@ -55,7 +55,7 @@ The `check()` function allows you to test individual values with more granularit
 
 1. `value` The value to check
 2. `type` The type to check the value against (list of types is available below)
-3. `prefix=""` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
 
 ```js
 import { check } from "blork";
@@ -298,6 +298,60 @@ import { prop } from "blork";
 // Make an object.
 const obj = {};
 
+```
+
+### debug(): Debug any value as a string.
+
+Blork exposes its debugger helper function `debug()`, which it uses to format error messages correctly. `debug()` accepts any argument and will return a clear string interpretation of the value. 
+
+`debug()` deals well with large and nested objects/arrays by inserting linebreaks and tabs if line length would be unreasonable. Output is also kept cleanish by only debugging 3 levels deep, truncating long strings, and not recursing into circular references.
+
+```js
+import debug from "blork";
+
+// Debug primitives.
+debug(undefined); // Returns `undefined`
+debug(null); // Returns `null`
+debug(true); // Returns `true`
+debug(false); // Returns `false`
+debug(123); // Returns `123`
+debug("abc"); // Returns `"abc"`
+debug(Symbol("abc")); // Returns `Symbol("abc")`
+
+// Debug functions.
+debug(function dog() {}); // Returns `dog()`
+debug(function() {}); // Returns `anonymous function()`
+
+// Debug objects.
+debug({}); // Returns `{}`
+debug({ a: 123 }); // Returns `{ "a": 123 }`
+debug(new Promise()); // Returns `Promise {}`
+debug(new MyClass()); // Returns `MyClass {}`
+debug(new class {}()); // Returns `anonymous class {}`
+```
+
+### ValueError: Great debuggable error class
+
+Internally, when there's a problem with a value, Blork will throw a `ValueError`. This value extends `TypeError` and standardises error message formats, so errors are consistent and provide the detail a developer should need to debug the issue error quickly and easily.
+
+It accepts three values:
+
+1. `message` The error message describing the issue with the value, e.g. `"Must be string"`
+2. `value` The actual value that was incorrect so a debugged version of this value can appear in the error message, e.g. `(received 123)`
+3. `prefix` A string prefix for the error that should identify the location the error occurred and the name of the value, e.g. `"myFunction(): name"`
+
+```js
+import { ValueError } from "blork";
+
+// Function that checks its argument.
+function myFunc(name) {
+	// If name isn't a string, throw a ValueError.
+	// (This is essentially what check() does behind the scenes.)
+	if (typeof name !== "string") throw new ValueError("Must be string", name, "myFunc(): name");
+}
+
+// Call with incorrect name.
+myFunc(123); // Throws ValueError "myFunc(): name: Must be a string (received 123)"
 ```
 
 ## Type reference
