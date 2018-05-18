@@ -114,18 +114,8 @@ describe("exports.check() string types", () => {
 			expect(() => check("ABCabc", "lower | upper & string")).toThrow(TypeError);
 		});
 		test("AND and OR combined types have correct error message", () => {
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/string/);
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/and/);
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/or/);
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/UPPERCASE/);
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/lowercase/);
-			expect(() => check("ABCdef", "string & lower | upper")).toThrow(/string/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/string/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/and/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/or/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/UPPERCASE/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/lowercase/);
-			expect(() => check("ABCdef", "lower | upper & string")).toThrow(/string/);
+			expect(() => check(1, "string & string | string")).toThrow(/string and string or string/);
+			expect(() => check(1, "string | string & string")).toThrow(/string or string and string/);
 		});
 	});
 });
