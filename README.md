@@ -454,6 +454,48 @@ check({}, "object+"); // Throws ValueError "Must be object with one or more prop
 check([], "array+"); // Throws ValueError "Must be array with one or more items (received Array(0))"
 ```
 
+### String modifiers: Array types
+
+Any string type can be made into an array of that type by appending `[]` brackets to the type reference. This means the check looks for a plain array whose contents only include the specified type.
+
+```js
+// Pass.
+check(["a", "b"], "str[]"); // No error.
+check([1, 2, 3], "int[]"); // No error.
+check([], "int[]"); // No error (empty is fine).
+check([1], "int[]+"); // No error (non-empty).
+
+// Fail.
+check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing only string (received [1, 2])"
+check(["a"], "int[]"); // Throws ValueError "Must be plain array containing only integer (received ["a"])"
+check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing only integer (received [])"
+```
+
+### String modifiers: Object types
+
+Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional).
+
+```js
+// Pass.
+check({ a: "a", b: "b" }, "{str}"); // No error.
+check({ a: 1, b: 2 }, "{int}"); // No error.
+check({}, "{int}"); // No error (empty is fine).
+check({ a: 1 }, "{int}+"); // No error (non-empty).
+
+// Fail.
+check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object containing only string (received [1, 2])"
+check({ a: "a" }, "{int}"); // Throws ValueError "Must be plain object containing only integer (received ["a"])"
+check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object containing only integer (received [])"
+```
+
+A type for the keys can also be specified by using `key: value` format.
+
+```js
+// Pass.
+check({ myVar: 123 }, "{ camel: integer }");
+check({ "my-var": 123 }, "{ kebab: integer }");
+```
+
 ### String modifiers: Optional types
 
 Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.

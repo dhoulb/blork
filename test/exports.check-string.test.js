@@ -2,6 +2,7 @@ const BlorkError = require("../lib/errors/BlorkError");
 const { check } = require("../lib/exports");
 
 // Tests.
+/* eslint-disable prettier/prettier */
 describe("exports.check() string types", () => {
 	test("String types pass correctly", () => {
 		expect(check(1, "num")).toBe(undefined);
@@ -80,6 +81,45 @@ describe("exports.check() string types", () => {
 			expect(() => check(new Set(), "set+")).toThrow(TypeError);
 			expect(() => check(false, "bool+")).toThrow(TypeError); // Not relevant.
 			expect(() => check(0, "number+")).toThrow(TypeError); // Not relevant.
+		});
+	});
+	describe("Array types", () => {
+		test("Array types pass correctly", () => {
+			expect(check([1, 2, 3], "num[]")).toBe(undefined);
+			expect(check(["a", "b"], "lower[]")).toBe(undefined);
+			expect(check([true, false], "bool[]")).toBe(undefined);
+		});
+		test("Array types fail correctly", () => {
+			expect(() => check(true, "num[]")).toThrow(TypeError);
+			expect(() => check(false, "num[]")).toThrow(TypeError);
+			expect(() => check([1, 2, "c"], "num[]")).toThrow(TypeError);
+			expect(() => check(["a", "b", 3], "str[]")).toThrow(TypeError);
+			expect(() => check([], "str[]+")).toThrow(TypeError);
+			expect(() => check(["a", "b", ""], "str+[]")).toThrow(TypeError);
+		});
+		test("Array types have correct error message", () => {
+			expect(() => check(true, "str[]")).toThrow(/plain array containing only string/);
+			expect(() => check([], "str[]+")).toThrow(/non-empty plain array containing only string/);
+			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/plain array containing only non-empty string/);
+		});
+	});
+	describe("Object types", () => {
+		test("Object types pass correctly", () => {
+			expect(check({ "a": 1, "b": 2, "c": 3 }, "{num}")).toBe(undefined);
+			expect(check({ "a": "A", "b": "A" }, "{ upper }")).toBe(undefined);
+			expect(check({ "aaAA": true, "bbBB": false }, "{ camel: bool }")).toBe(undefined);
+			expect(check({ "aa-aa": true, "bb-bb": false }, "{ slug: bool }")).toBe(undefined);
+		});
+		test("Object types fail correctly", () => {
+			expect(() => check(true, "{num}")).toThrow(TypeError);
+			expect(() => check(false, "{num}")).toThrow(TypeError);
+			expect(() => check([1, 2, 3], "{ num }")).toThrow(TypeError);
+			expect(() => check({ aaAA: true, bbBB: false }, "{ kebab: bool }")).toThrow(TypeError);
+			expect(() => check({ "aa-aa": true, "bb-bb": false }, "{ camel: bool }")).toThrow(TypeError);
+		});
+		test("Object types have correct error message", () => {
+			expect(() => check(true, "{int}")).toThrow(/plain object containing only integer/);
+			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/plain object with UPPERCASE-only string keys containing only integer/);
 		});
 	});
 	describe("Combined types", () => {
