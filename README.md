@@ -768,6 +768,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.1.0
+  - Add object and array string modifiers (using `type[]`, `{type}` and `{ keyType: type }` syntax)
 - 7.0.0
   - Add `VALUES`, `KEYS`, and `CLASS` symbol constants
   - Remove `_any` key and use `VALUES` to provide the same functionality
