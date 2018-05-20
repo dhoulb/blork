@@ -386,8 +386,11 @@ This section lists all types that are available in Blork. A number of different 
 | `+integer`, `+int`               | Positive integers including zero
 | `-integer`, `-int`               | Negative integers including zero
 | `string`, `str`                  | Any strings (using **typeof**)
-| `lower`                          | lowercase string (non-empty and alphanumeric only)
-| `upper`                          | UPPERCASE strings (non-empty and alphanumeric only)
+| `alphabetic`                     | alphabetic string (non-empty and alphabetic only)
+| `numeric`                        | numeric strings (non-empty and numerals 0-9 only)
+| `alphanumeric`                   | alphanumeric strings (non-empty and alphanumeric only)
+| `lower`                          | lowercase strings (non-empty and lowercase alphabetic only)
+| `upper`                          | UPPERCASE strings (non-empty and UPPERCASE alphabetic only)
 | `camel`                          | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)
 | `pascal`                         | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)
 | `snake`                          | snake_case strings (non-empty alphanumeric lowercase)
