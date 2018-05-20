@@ -88,6 +88,7 @@ describe("checkers", () => {
 		expect(mockCheck(Symbol(), "symbol")).toBe(undefined);
 
 		// Other.
+		expect(mockCheck([], "empty")).toBe(undefined);
 		expect(mockCheck(false, "any")).toBe(undefined);
 		expect(mockCheck("abc", "mixed")).toBe(undefined);
 		expect(mockCheck({ num: 123, str: "abc" }, "json")).toBe(undefined);
@@ -181,6 +182,7 @@ describe("checkers", () => {
 		expect(() => mockCheck("symbol", "symbol")).toThrow(TypeError);
 
 		// Other.
+		expect(() => mockCheck([1], "empty")).toThrow(TypeError);
 		expect(mockCheck(false, "any")).toBe(undefined);
 		expect(mockCheck("abc", "mixed")).toBe(undefined);
 		expect(() => mockCheck(undefined, "json")).toThrow(TypeError);
