@@ -121,7 +121,7 @@ describe("exports.check() string types", () => {
 		});
 		test("Object types have correct error message", () => {
 			expect(() => check(true, "{int}")).toThrow(/Must be plain object containing: integer/);
-			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/Must be plain object with UPPERCASE-only string keys containing: integer/);
+			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/Must be plain object with UPPERCASE string keys containing: integer/);
 		});
 	});
 	describe("Combined types", () => {
