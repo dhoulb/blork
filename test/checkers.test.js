@@ -52,6 +52,9 @@ describe("checkers", () => {
 		// Strings.
 		expect(mockCheck("a", "string")).toBe(undefined);
 		expect(mockCheck("a", "str")).toBe(undefined);
+		expect(mockCheck("abc123", "alphanumeric")).toBe(undefined);
+		expect(mockCheck("abc", "alphabetic")).toBe(undefined);
+		expect(mockCheck("123", "numeric")).toBe(undefined);
 		expect(mockCheck("myvar", "lower")).toBe(undefined);
 		expect(mockCheck("MYVAR", "upper")).toBe(undefined);
 		expect(mockCheck("myVar", "camel")).toBe(undefined);
@@ -146,6 +149,9 @@ describe("checkers", () => {
 		// Strings.
 		expect(() => mockCheck(1, "string")).toThrow(TypeError);
 		expect(() => mockCheck(1, "str")).toThrow(TypeError);
+		expect(() => mockCheck("-", "alphanumeric")).toThrow(TypeError);
+		expect(() => mockCheck("1", "alphabetic")).toThrow(TypeError);
+		expect(() => mockCheck("A", "numeric")).toThrow(TypeError);
 		expect(() => mockCheck("A", "lower")).toThrow(TypeError);
 		expect(() => mockCheck("a", "upper")).toThrow(TypeError);
 		expect(() => mockCheck("my-var", "camel")).toThrow(TypeError);
