@@ -743,6 +743,10 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.2.0
+  - Add grouping for string types via parentheses, e.g. `(str | num)`
+  - Add `empty` type to detect emptiness in strings, arrays, Map, Set, and objects
+  - Add `alphabetic`, `numeric` and `alphanumeric` string types for specific strings
 - 7.1.0
   - Add object and array string modifiers (using `type[]`, `{type}` and `{ keyType: type }` syntax)
 - 7.0.0
