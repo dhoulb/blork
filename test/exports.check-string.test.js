@@ -49,8 +49,8 @@ describe("exports.check() string types", () => {
 			expect(() => check({}, "!object")).toThrow(TypeError);
 		});
 		test("Invert types have correct error message", () => {
-			expect(() => check("abc", "!string")).toThrow(/Must be not string/);
-			expect(() => check(true, "!boolean")).toThrow(/Must be not true or false/);
+			expect(() => check("abc", "!string")).toThrow(/Must be anything except string/);
+			expect(() => check(true, "!boolean")).toThrow(/Must be anything except true or false/);
 		});
 	});
 	describe("Non-empty types", () => {
@@ -98,17 +98,19 @@ describe("exports.check() string types", () => {
 			expect(() => check(["a", "b", ""], "str+[]")).toThrow(TypeError);
 		});
 		test("Array types have correct error message", () => {
-			expect(() => check(true, "str[]")).toThrow(/plain array containing only string/);
-			expect(() => check([], "str[]+")).toThrow(/non-empty plain array containing only string/);
-			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/plain array containing only non-empty string/);
+			expect(() => check(true, "str[]")).toThrow(/Must be plain array containing: string/);
+			expect(() => check([], "str[]+")).toThrow(/Must be non-empty plain array containing: string/);
+			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/Must be plain array containing: non-empty string/);
 		});
 	});
 	describe("Object types", () => {
 		test("Object types pass correctly", () => {
-			expect(check({ "a": 1, "b": 2, "c": 3 }, "{num}")).toBe(undefined);
-			expect(check({ "a": "A", "b": "A" }, "{ upper }")).toBe(undefined);
-			expect(check({ "aaAA": true, "bbBB": false }, "{ camel: bool }")).toBe(undefined);
+			expect(check({ a: 1, b: 2, c: 3 }, "{num}")).toBe(undefined);
+			expect(check({ a: "A", b: "A" }, "{ upper }")).toBe(undefined);
+			expect(check({ aaAA: true, bbBB: false }, "{ camel: bool }")).toBe(undefined);
 			expect(check({ "aa-aa": true, "bb-bb": false }, "{ slug: bool }")).toBe(undefined);
+			expect(check({ a: 123, b: false }, "{ bool | num }")).toBe(undefined);
+			expect(check({ aaa: 123, BBB: false }, "{ lower|upper: bool|num }")).toBe(undefined);
 		});
 		test("Object types fail correctly", () => {
 			expect(() => check(true, "{num}")).toThrow(TypeError);
@@ -118,8 +120,8 @@ describe("exports.check() string types", () => {
 			expect(() => check({ "aa-aa": true, "bb-bb": false }, "{ camel: bool }")).toThrow(TypeError);
 		});
 		test("Object types have correct error message", () => {
-			expect(() => check(true, "{int}")).toThrow(/plain object containing only integer/);
-			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/plain object with UPPERCASE-only string keys containing only integer/);
+			expect(() => check(true, "{int}")).toThrow(/Must be plain object containing: integer/);
+			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/Must be plain object with UPPERCASE-only string keys containing: integer/);
 		});
 	});
 	describe("Combined types", () => {
@@ -156,6 +158,34 @@ describe("exports.check() string types", () => {
 		test("AND and OR combined types have correct error message", () => {
 			expect(() => check(1, "string & string | string")).toThrow(/string and string or string/);
 			expect(() => check(1, "string | string & string")).toThrow(/string or string and string/);
+		});
+	});
+	describe('Grouped types', () => {
+		test('Grouped types pass correctly', () => {
+			expect(check("a", "(str | num)")).toBe(undefined);
+			expect(check(123, "(str | num)")).toBe(undefined);
+			expect(check("A", "(str & upper) | (num & int)")).toBe(undefined);
+			expect(check(123, "(str & upper) | (num & int)")).toBe(undefined);
+			expect(check([1, "a"], "(str | num)[]")).toBe(undefined);
+			expect(check({ a: 1, b: "b" }, "{(str|num)}")).toBe(undefined);
+			expect(check({ a: 1, b: "b" }, "({str|num})")).toBe(undefined);
+		});
+		test('Grouped types fail correctly', () => {
+			expect(() => check(true, "(str | num)")).toThrow(TypeError);
+			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(TypeError);
+			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(TypeError);
+		});
+		test('Grouped types have correct error message', () => {
+			expect(() => check(true, "(str | num)")).toThrow(/string or finite number/);
+			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(/Must be string and UPPERCASE string or finite number and integer/);
+			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(/Must be plain array containing: string or finite number/);
+			expect(() => check([1, "a", true], "!(str | num)[]")).toThrow(/Must be plain array containing: anything except string or finite number/);
+		});
+		test('Grouping parentheses cannot be nested', () => {
+			expect(() => check(true, "((string))")).toThrow(BlorkError);
+			expect(() => check(true, "((string))")).toThrow(/nested/);
+			expect(() => check(true, "(num | (string))")).toThrow(BlorkError);
+			expect(() => check(true, "(num | (string) | num)")).toThrow(BlorkError);
 		});
 	});
 });

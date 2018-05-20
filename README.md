@@ -354,7 +354,7 @@ function myFunc(name) {
 myFunc(123); // Throws ValueError "myFunc(): name: Must be a string (received 123)"
 ```
 
-## Type reference
+## Types
 
 This section lists all types that are available in Blork. A number of different formats can be used for types:
 
@@ -363,57 +363,37 @@ This section lists all types that are available in Blork. A number of different 
 - **Constant** and **constructor** shorthand types (e.g. `null` and `String`)
 - **Object** and **Array** literal types (e.g. `{}` and `[]`)
 
-### String types: primitives
-
-| Type string                  | Description                  
-|------------------------------|------------
-| `primitive`                  | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
-| `null`                       | Value is **null**
-| `undefined`, `undef`, `void` | Value is **undefined**
-| `defined`, `def`             | Value is **not undefined**
-
-### String types: booleans
-
-| Type string       | Description                  
-|-------------------|------------
-| `boolean`, `bool` | Value is **true** or **false**
-| `true`            | Value is **true**
-| `false`           | Value is **false**
-| `truthy`          | Any truthy values (i.e. **== true**)
-| `falsy`           | Any falsy values (i.e. **== false**)
-
-### String types: numbers
-
-| Type string        | Description                  
-|--------------------|------------
-| `zero`             | Value is **0**
-| `one`              | Value is **1**
-| `nan`              | Value is **NaN**
-| `number`, `num`    | Any numbers except NaN/Infinity (using **Number.isFinite()**)
-| `+number`, `+num`, | Numbers more than or equal to zero
-| `-number`, `-num`  | Numbers less than or equal to zero
-| `integer`, `int`   | Integers (using **Number.isInteger()**)
-| `+integer`, `+int` | Positive integers including zero
-| `-integer`, `-int` | Negative integers including zero
-
-### String types: strings
-
-| Type string     | Description                  
-|-----------------|------------
-| `string`, `str` | Any strings (using **typeof**)
-| `lower`         | lowercase string (non-empty and alphanumeric only)
-| `upper`         | UPPERCASE strings (non-empty and alphanumeric only)
-| `camel`         | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)
-| `pascal`        | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)
-| `snake`         | snake_case strings (non-empty alphanumeric lowercase)
-| `screaming`     | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)
-| `kebab`, `slug` | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)
-| `train`         | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
-
-### String types: objects
+### String types
 
 | Type string                      | Description                  
 |----------------------------------|------------
+| `primitive`                      | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
+| `null`                           | Value is **null**
+| `undefined`, `undef`, `void`     | Value is **undefined**
+| `defined`, `def`                 | Value is **not undefined**
+| `boolean`, `bool`                | Value is **true** or **false**
+| `true`                           | Value is **true**
+| `false`                          | Value is **false**
+| `truthy`                         | Any truthy values (i.e. **== true**)
+| `falsy`                          | Any falsy values (i.e. **== false**)
+| `zero`                           | Value is **0**
+| `one`                            | Value is **1**
+| `nan`                            | Value is **NaN**
+| `number`, `num`                  | Any numbers except NaN/Infinity (using **Number.isFinite()**)
+| `+number`, `+num`,               | Numbers more than or equal to zero
+| `-number`, `-num`                | Numbers less than or equal to zero
+| `integer`, `int`                 | Integers (using **Number.isInteger()**)
+| `+integer`, `+int`               | Positive integers including zero
+| `-integer`, `-int`               | Negative integers including zero
+| `string`, `str`                  | Any strings (using **typeof**)
+| `lower`                          | lowercase string (non-empty and alphanumeric only)
+| `upper`                          | UPPERCASE strings (non-empty and alphanumeric only)
+| `camel`                          | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)
+| `pascal`                         | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)
+| `snake`                          | snake_case strings (non-empty alphanumeric lowercase)
+| `screaming`                      | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)
+| `kebab`, `slug`                  | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)
+| `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
 | `function`, `func`               | Functions (using **instanceof Function**)
 | `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
 | `objectlike`                     | Any object-like object (using **typeof && !null**)
@@ -431,30 +411,25 @@ This section lists all types that are available in Blork. A number of different 
 | `past`                           | Instances of **Date** with a value in the past
 | `regex`, `regexp`                | Instances of **RegExp** (regular expressions)
 | `symbol`                         | Value is **Symbol** (using **typeof**)
+| `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else)
+| `any`, `mixed`                   | Allow any value (transparently passes through with no error)
+| `json`, `jsonable`               | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
-### String types: other
+### String modifiers
 
-| Type string        | Description                  
-|--------------------|------------
-| `any`, `mixed`     | Allow any value (transparently passes through with no error)
-| `json`, `jsonable` | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
+String modifier types can be applied to any string type from the list above to modify that type's behaviour.
 
-```js
-// Pass.
-check("abc", "str"); // No error.
-check("abc", "lower"); // No error.
-check(100, "integer"); // No error.
-check([1, 2, 3], "array+"); // No error.
-check(new Date(2180, 1, 1), "future"); // No error.
-check(new Map([[1, 1], [2, 2]]), "map+"); // No error.
-
-// Fail.
-check(123, "str"); // Throws ValueError "Must be string (received 123)"
-check({}, "object+"); // Throws ValueError "Must be object with one or more properties (received Object(0))"
-check([], "array+"); // Throws ValueError "Must be array with one or more items (received Array(0))"
-```
-
-### String modifiers: Array types
+| Type modifier       | Description
+|---------------------|------------
+| `(type)`            | Grouped type, e.g. `(num | str)[]`
+| `type1 & type2`     | AND combined type, e.g. `str & upper`
+| `type1 | type2`     | OR combined type, e.g. `num | str`
+| `type[]`            | Array type (all array entries must match type)
+| `{ type }`          | Object value type (all own props must match type
+| `{ keyType: type }` | Object key:value type (keys and own props must match types)
+| `!type`             | Inverted type (opposite is allowed), e.g. `!str`
+| `type?`             | Optional type (allows type or `undefined`), e.g. `str?`
+| `type+`             | Non-empty type, e.g. `str+` or `num[]+`
 
 Any string type can be made into an array of that type by appending `[]` brackets to the type reference. This means the check looks for a plain array whose contents only include the specified type.
 
@@ -471,8 +446,6 @@ check(["a"], "int[]"); // Throws ValueError "Must be plain array containing only
 check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing only integer (received [])"
 ```
 
-### String modifiers: Object types
-
 Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional).
 
 ```js
@@ -488,15 +461,13 @@ check({ a: "a" }, "{int}"); // Throws ValueError "Must be plain object containin
 check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object containing only integer (received [])"
 ```
 
-A type for the keys can also be specified by using `key: value` format.
+A type for the keys can also be specified by using `{ key: value }` format.
 
 ```js
 // Pass.
 check({ myVar: 123 }, "{ camel: integer }");
 check({ "my-var": 123 }, "{ kebab: integer }");
 ```
-
-### String modifiers: Optional types
 
 Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
@@ -512,9 +483,14 @@ check(123, "str?"); // Throws ValueError "Must be string (received 123)"
 check(null, "str?"); // Throws ValueError "Must be string (received null)"
 ```
 
-### String modifiers: Non-empty types
+Any type can be made non-empty by appending a `+` plus sign to the type reference. This means the check will only pass if the value is non-empty. Specifically this works as follows:
 
-Any type can be made non-empty by appending a `+` plus sign to the type reference. This means the check will only pass if the value is non-empty and has length.
+- Strings: `.length` is more than 0
+- Map and Set objects: `.size` is more than 0
+- Objects and arrays: If it has a `.length` property Number of own properties is not zero (using `typeof === "object"` && `Object.keys()`)
+- Booleans and numbers: Use truthyness (e.g. `true` is non-empty, `false` and `0` is empty)
+
+This is equivalent to the inverse of the `empty` type.
 
 ```js
 // Pass.
@@ -527,8 +503,6 @@ check(123, "str+"); // Throws ValueError "Must be non-empty string (received "")
 check([], "arr+"); // Throws ValueError "Must be non-empty plain array (received [])"
 check({}, "obj+"); // Throws ValueError "Must be non-empty plain object (received {})"
 ```
-
-### String modifiers: Inverted types
 
 Any string type can be made optional by prepending a `!` question mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
 
@@ -544,8 +518,6 @@ check(123, "!str"); // Throws ValueError "Must be not string (received "abc")"
 check(true, "!bool"); // Throws ValueError "Must be not true or false (received true)"
 check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError "array[3]: Must be not number (received 123)"
 ```
-
-### String modifiers: Combined types
 
 You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
 
@@ -576,11 +548,17 @@ check("THIS CAT IS CRAZY", "lower & catty"); // Throws ValueError "Must be lower
 check("THIS DOG IS CRAZY", "string & catty"); // Throws ValueError "Must be string and catty"
 ```
 
-Note: `&` has a higher precedence than `|`, meaning a type like `string & lower | upper` compiles to `(lower | upper) & string`.
+Note: Built in checkers like `lower` or `int+` already check the basic type of a value (e.g. string and number), so there's no need to use `string & lower` or `number & int+` — internally the value will be checked twice. Spaces around the `&` or `|` are optional.
 
-Note: All built in checkers like `lower` or `int+` already check the basic type of a value, so there's no need to use `string & lower` or `number & int+`. These will work but you'll be double checking.
+`()` parentheses can be used to create a 'grouped type'. This is useful to specify an array that allows several types, to make an invert/optional type of several types, or to state an explicit precence order for `&` and `|`.
 
-Note: Spaces around the `&` or `|` are not required (but can be more readable).
+```js
+// Pass.
+check([123, "abc"], "(str|num)[]"); // No error.
+check({ a: 123, b: "abc" }, "!(str|num)"); // No error.
+check("", "(int & truthy) | (str & falsy)"); // No error.
+check(12, "(int & truthy) | (str & falsy)"); // No error.
+```
 
 ### Constructor and constant types
 
@@ -637,8 +615,6 @@ check({ age: "apple" }, { age: "num" }); // Throws ValueError "age: Must be numb
 check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "num" } }); // Throws ValueError "size[width]: Must be number (received "abc")"
 ```
 
-### Object literal type: additional values
-
 To check that the type of **any** properties conform to a single type, use the `VALUES` symbol and create a `[VALUES]` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
 
 ```js
@@ -681,8 +657,6 @@ check(
 ); // Throws ValueError "another: Must be undefined..."
 ```
 
-### Object literal type: additional keys
-
 To check that the keys of any additional properties conform to a single type, use the `KEYS` symbol and create a `[KEYS]` key. This allows you to ensure that keys conform to a specific string type, e.g. **camelCase**, **kebab-case** or **UPPERCASE** (see string types above).
 
 ```js
@@ -701,9 +675,7 @@ check({ MyVal: 1 }, { [KEYS]: "pascal" }); // PascalCase keys — no error.
 check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
 ```
 
-### Object literal type: custom constructor
-
-Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object, use the `CLASS` symbol and create a `[CLASS]` key.
+Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object (in order to check specific keys on that object at the same time), use the `CLASS` symbol and create a `[CLASS]` key.
 
 ```js
 import { check, CLASS } from "blork";
