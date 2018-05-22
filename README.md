@@ -743,6 +743,9 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.4.0
+  - Make properties created with `props()` enumerable
+  - Return the original object from `props()` (for chaining)
 - 7.2.0
   - Add grouping for string types via parentheses, e.g. `(str | num)`
   - Add `empty` type to detect emptiness in strings, arrays, Map, Set, and objects
