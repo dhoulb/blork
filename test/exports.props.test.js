@@ -4,7 +4,7 @@ const { props } = require("../lib/exports");
 
 // Tests.
 describe("exports.props()", () => {
-	test("Value is set on property", () => {
+	test("Value is set on object", () => {
 		const obj = {};
 		const arr = [];
 		props(obj, { arr: arr });
@@ -17,6 +17,9 @@ describe("exports.props()", () => {
 		expect(obj.num).toBe(123);
 		expect(obj.str).toBe("ABC");
 		expect(obj.obj).toBe(obj);
+	});
+	test("Object is returned", () => {
+		expect(props({}, { str: "a", num: 123 })).toEqual({ str: "a", num: 123 });
 	});
 	test("Property can be locked to primitive type", () => {
 		const obj = {};
