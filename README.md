@@ -758,6 +758,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.5.0
+  - Enable tuple arrays via `[type1, type2]` syntax
 - 7.4.0
   - Make properties created with `props()` enumerable
   - Return the original object from `props()` (for chaining)
