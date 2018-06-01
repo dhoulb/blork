@@ -103,6 +103,19 @@ describe("exports.check() string types", () => {
 			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/Must be plain array containing: non-empty string/);
 		});
 	});
+	describe("Tuple types", () => {
+		test('Tuple types pass correctly', () => {
+			expect(check(["abc"], "[str]")).toBe(undefined);
+			expect(check([123], "[num]")).toBe(undefined);
+			expect(check([123, "abc", true], "[num, str, bool]")).toBe(undefined);
+		});
+		test('Tuple types fail correctly', () => {
+			expect(() => check([123, 123, false], "[num, num, num]")).toThrow(TypeError);
+			expect(() => check([123, 123], "[num, num, num]")).toThrow(TypeError); // Too few.
+			expect(() => check([123, 123, 123, 123], "[num, num, num]")).toThrow(TypeError); // Too many.
+			expect(() => check(true, "[num]")).toThrow(TypeError); // Not an array.
+		});
+	});
 	describe("Object types", () => {
 		test("Object types pass correctly", () => {
 			expect(check({ a: 1, b: 2, c: 3 }, "{num}")).toBe(undefined);

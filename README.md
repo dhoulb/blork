@@ -428,6 +428,7 @@ String modifier types can be applied to any string type from the list above to m
 | `type1 & type2`     | AND combined type, e.g. `str & upper`
 | `type1 | type2`     | OR combined type, e.g. `num | str`
 | `type[]`            | Array type (all array entries must match type)
+| `[type1, type2]`    | Tuple type (must match tuple exactly)
 | `{ type }`          | Object value type (all own props must match type
 | `{ keyType: type }` | Object key:value type (keys and own props must match types)
 | `!type`             | Inverted type (opposite is allowed), e.g. `!str`
@@ -444,9 +445,23 @@ check([], "int[]"); // No error (empty is fine).
 check([1], "int[]+"); // No error (non-empty).
 
 // Fail.
-check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing only string (received [1, 2])"
-check(["a"], "int[]"); // Throws ValueError "Must be plain array containing only integer (received ["a"])"
-check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing only integer (received [])"
+check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing: string (received [1, 2])"
+check(["a"], "int[]"); // Throws ValueError "Must be plain array containing: integer (received ["a"])"
+check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing: integer (received [])"
+```
+
+Array tuples can be specified by surrounding types in `[]` brackets.
+
+```js
+// Pass.
+check([true, false], "[bool, bool]") // No error.
+check(["a", "b"], "[str, str]") // No error.
+check([1, 2, 3], "[num, num, num]"); // No error.
+
+// Fail.
+check([true, true], "[str, str]") // Throws ValueError "Must be plain array tuple containing: string, string (received [true, true])"
+check([true], "[bool, bool]") // Throws ValueError "Must be plain array tuple containing: boolean, boolean (received [true])"
+check(["a", "b", "c"], "[str, str]") // Throws ValueError "Must be plain array tuple containing: string, string (received ["a", "b", "c"])"
 ```
 
 Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional).
@@ -459,9 +474,9 @@ check({}, "{int}"); // No error (empty is fine).
 check({ a: 1 }, "{int}+"); // No error (non-empty).
 
 // Fail.
-check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object containing only string (received [1, 2])"
-check({ a: "a" }, "{int}"); // Throws ValueError "Must be plain object containing only integer (received ["a"])"
-check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object containing only integer (received [])"
+check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object containing: string (received [1, 2])"
+check({ a: "a" }, "{int}"); // Throws ValueError "Must be plain object containing: integer (received ["a"])"
+check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object containing: integer (received [])"
 ```
 
 A type for the keys can also be specified by using `{ key: value }` format.
