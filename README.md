@@ -18,10 +18,12 @@ npm install blork
 
 ### args(): Check function arguments
 
-The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose, and should be passed two arguments:
+The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose, and can be passed four arguments:
 
 1. `arguments` | The **arguments** object provided automatically to functions in Javascript
 2. `types` | An array identifying the types for the arguments (list of types is available below)
+3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+4. `error` An optional custom error type to throw if the check fails
 
 ```js
 import { args } from "blork";
@@ -51,11 +53,12 @@ myFunc("abc", 123, true); // Throws ValueError "arguments: Too many arguments (e
 
 The `check()` function allows you to test individual values with more granularity. The `check()` function is more versatile and allows more use cases than validating function input arguments.
 
-`check()` accepts three arguments:
+`check()` accepts four arguments:
 
 1. `value` The value to check
 2. `type` The type to check the value against (list of types is available below)
 3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+4. `error` An optional custom error type to throw if the check fails
 
 ```js
 import { check } from "blork";
@@ -68,9 +71,12 @@ check("Sally", String); // No error.
 check("Sally", "number"); // Throws ValueError "Must be number (received "Sally")"
 check("Sally", Boolean); // Throws ValueError "Must be true or false (received "Sally")"
 
-// Checks that fail (with a prefix/name set).
+// Checks that fail (with a prefix set).
 check("Sally", "num", "name"); // Throws ValueError "name: Must be number (received "Sally")"
 check(true, "str", "status"); // Throws ValueError "status: Must be string (received true)"
+
+// Checks that fail (with a custom error thrown).
+check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be string (received 123)"
 ```
 
 Another common use for `check()` is to validate an options object:
@@ -158,6 +164,29 @@ check(
 );
 ```
 
+### assert(): Check a random true/false statement.
+
+Check a random true/false statement using the `assert()` function. This allows you to make other assertions with a similar argument order to `check()`. This is mainly just syntactic sugar, but is neater than messy `if (x) throw new X;` type statements.
+
+Takes up to four arguments:
+
+1. `assertion` The true/false value that is the assertion.
+2. `description` A description of the positive assertion. Must fit the phrase `Must ${description}`, e.g. "be unique" or "be equal to dog".
+3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+4. `error` An optional custom error type to throw if the check fails
+
+```js
+import { assert } from "blork";
+
+// Assertion that passes.
+assert(isUnique(val1), "unique"); // Pass.
+
+// Assertion that fails.
+assert(isUnique(val2), "be unique"); // Throws ValueError "Must be unique"
+assert(isUnique(val2), "be unique", "val2"); // Throws ValueError "val2: Must be unique"
+assert(isUnique(val2), "be unique", "val2", ReferenceError); // Throws ReferenceError "val2: Must be unique"
+```
+
 ### add(): Add a custom checker type
 
 Register your own checker using the `add()` function. This is great if 1) you're going to be applying the same check over and over, or 2) want to integrate your own checks with Blork's built-in types so your code looks clean.
@@ -166,7 +195,7 @@ Register your own checker using the `add()` function. This is great if 1) you're
 
 1. `name` The name of the custom checker (only kebab-case strings allowed).
 2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
-3. `description=""` An description for the value the checker will accept, e.g. "lowercase string" or "unique username", that is shown in the error message. Defaults to the value of `name`.
+3. `description` A description of the type of value that's valid. Must fit the phrase `Must be ${description}`, e.g. "positive number" or "unique string". Defaults to name.
 4. `error=undefined` A custom class that is thrown when this checker fails (can be [VALUES]_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
 
 ```js
@@ -758,6 +787,9 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 7.6.0
+  - Allow `prefix` and `error` arguments for `check()` and `args()`
+  - Add `assert()` function
 - 7.5.0
   - Enable tuple arrays via `[type1, type2]` syntax
 - 7.4.0
