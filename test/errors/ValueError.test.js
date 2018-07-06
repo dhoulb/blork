@@ -1,4 +1,4 @@
-const ValueError = require("../../lib/errors/ValueError");
+const { ValueError, EMPTY } = require("../../lib/exports");
 
 // Tests.
 describe("ValueError()", () => {
@@ -29,5 +29,9 @@ describe("ValueError()", () => {
 		expect(new ValueError("Message", 123, "Prefix")).toHaveProperty("prefix", "Prefix");
 		expect(new ValueError("Message", 123, "Prefix")).toHaveProperty("reason", "Message");
 		expect(new ValueError("Message", 123, "Prefix")).toHaveProperty("value", 123);
+	});
+	test("Does not show value in message if value is EMPTY", () => {
+		expect(new ValueError("Message", EMPTY).hasOwnProperty("value")).toBe(false);
+		expect(new ValueError("Message", EMPTY).message).not.toMatch(/received/);
 	});
 });

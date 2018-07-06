@@ -14,6 +14,10 @@ describe("exports.assert()", () => {
 			expect(() => assert(true, 123)).toThrow(BlorkError);
 			expect(() => assert(true, true)).toThrow(BlorkError);
 		});
+		test("Error doesn't include `(received etc)`", () => {
+			expect(() => assert(false, "be assertively true")).toThrow(ValueError);
+			expect(() => assert(false, "be assertively true")).not.toThrow(/received/);
+		});
 	});
 	describe("prefix", () => {
 		test("Error prefix defaults to no prefix", () => {
