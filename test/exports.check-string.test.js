@@ -30,8 +30,9 @@ describe("exports.check() string types", () => {
 			expect(() => check(1, "object?")).toThrow(TypeError);
 		});
 		test("Optional types have correct error message", () => {
-			expect(() => check(true, "string?")).toThrow(/Must be \(string or empty\)/);
-			expect(() => check("abc", "boolean?")).toThrow(/Must be \(boolean or empty\)/);
+			expect(() => check(true, "string?")).toThrow(/Must be string or empty/);
+			expect(() => check("abc", "boolean?")).toThrow(/Must be boolean or empty/);
+			expect(() => check([true], "string?[]")).toThrow(/Must be plain array containing \(string or empty\)/);
 		});
 	});
 	describe("Invert types", () => {
@@ -100,6 +101,7 @@ describe("exports.check() string types", () => {
 		test("Array types have correct error message", () => {
 			expect(() => check(true, "str[]")).toThrow(/Must be plain array containing string/);
 			expect(() => check([], "str[]+")).toThrow(/Must be non-empty plain array containing string/);
+			expect(() => check([], "str[]+|null")).toThrow(/Must be \(non-empty plain array containing string\) or null/);
 			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/Must be plain array containing non-empty string/);
 		});
 	});
@@ -146,7 +148,7 @@ describe("exports.check() string types", () => {
 		});
 		test("AND combined types fail correctly", () => {
 			expect(() => check("a", "number & string")).toThrow(TypeError);
-			expect(() => check("a", "number & string")).toThrow(/Must be \(finite number and string\)/);
+			expect(() => check("a", "number & string")).toThrow(/Must be finite number and string/);
 		});
 		test("OR combined types pass correctly", () => {
 			expect(check(1, "number|string")).toBe(undefined);
@@ -157,7 +159,7 @@ describe("exports.check() string types", () => {
 		test("OR combined types fail correctly", () => {
 			expect(() => check(true, "number|string")).toThrow(TypeError);
 			expect(() => check(Symbol(), "number|string")).toThrow(TypeError);
-			expect(() => check(Symbol(), "number|string")).toThrow(/Must be \(finite number or string\)/);
+			expect(() => check(Symbol(), "number|string")).toThrow(/Must be finite number or string/);
 		});
 		test("AND and OR combined types combine correctly", () => {
 			// `&` has higher precedence than `|`
@@ -169,8 +171,8 @@ describe("exports.check() string types", () => {
 			expect(() => check("ABCabc", "lower | upper & string")).toThrow(TypeError);
 		});
 		test("AND and OR combined types have correct error message", () => {
-			expect(() => check(1, "string & string | string")).toThrow(/Must be \(string and \(string or string\)\)/);
-			expect(() => check(1, "string | string & string")).toThrow(/Must be \(\(string or string\) and string\)/);
+			expect(() => check(1, "string & string | string")).toThrow(/Must be string and \(string or string\)/);
+			expect(() => check(1, "string | string & string")).toThrow(/Must be \(string or string\) and string/);
 		});
 	});
 	describe('Grouped types', () => {
@@ -189,11 +191,11 @@ describe("exports.check() string types", () => {
 			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(TypeError);
 		});
 		test('Grouped types have correct error message', () => {
-			expect(() => check(true, "(str | num)")).toThrow(/string or finite number/);
-			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(/Must be \(\(string and UPPERCASE string\) or \(finite number and integer\)\)/);
+			expect(() => check(true, "(str | num)")).toThrow(/Must be string or finite number/);
+			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(/Must be \(string and UPPERCASE string\) or \(finite number and integer\)/);
 			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(/Must be plain array containing \(string or finite number\)/);
 			expect(() => check([1, "a", true], "!(str | num)[]")).toThrow(/Must be plain array containing anything except \(string or finite number\)/);
-			expect(() => check([1, "a", true], "(!str | num)[]")).toThrow(/Must be plain array containing \(anything except string or finite number\)/);
+			expect(() => check([1, "a", true], "(!str | num)[]")).toThrow(/Must be plain array containing \(\(anything except string\) or finite number\)/);
 		});
 		test('Grouping parentheses cannot be nested', () => {
 			expect(() => check(true, "((string))")).toThrow(BlorkError);
