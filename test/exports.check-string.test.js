@@ -33,6 +33,7 @@ describe("exports.check() string types", () => {
 			expect(() => check(true, "string?")).toThrow(/Must be string or empty/);
 			expect(() => check("abc", "boolean?")).toThrow(/Must be boolean or empty/);
 			expect(() => check([true], "string?[]")).toThrow(/Must be plain array containing \(string or empty\)/);
+			expect(() => check([true], "(str | int)?")).toThrow(/Must be \(string or integer\) or empty/);
 		});
 	});
 	describe("Invert types", () => {
@@ -52,6 +53,8 @@ describe("exports.check() string types", () => {
 		test("Invert types have correct error message", () => {
 			expect(() => check("abc", "!string")).toThrow(/Must be anything except string/);
 			expect(() => check(true, "!boolean")).toThrow(/Must be anything except boolean/);
+			expect(() => check("abc", "!str+")).toThrow(/Must be anything except non-empty string/);
+			expect(() => check(123, "!(int | str)")).toThrow(/Must be anything except \(integer or string\)/);
 		});
 	});
 	describe("Non-empty types", () => {
@@ -103,6 +106,7 @@ describe("exports.check() string types", () => {
 			expect(() => check([], "str[]+")).toThrow(/Must be non-empty plain array containing string/);
 			expect(() => check([], "str[]+|null")).toThrow(/Must be \(non-empty plain array containing string\) or null/);
 			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/Must be plain array containing non-empty string/);
+			expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow(/Must be plain array containing \(\(non-empty string\) or \(non-empty plain array\)\)/);
 		});
 	});
 	describe("Tuple types", () => {
@@ -137,6 +141,7 @@ describe("exports.check() string types", () => {
 		test("Object types have correct error message", () => {
 			expect(() => check(true, "{int}")).toThrow(/Must be plain object containing integer/);
 			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/Must be plain object with UPPERCASE string keys containing integer/);
+			expect(() => check({ "ABC": true }, "{ upper: int | str }")).toThrow(/Must be plain object with UPPERCASE string keys containing \(integer or string\)/);
 		});
 	});
 	describe("Combined types", () => {
