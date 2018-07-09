@@ -178,6 +178,7 @@ describe("exports.check() string types", () => {
 		test("AND and OR combined types have correct error message", () => {
 			expect(() => check(1, "string & string | string")).toThrow(/Must be string and \(string or string\)/);
 			expect(() => check(1, "string | string & string")).toThrow(/Must be \(string or string\) and string/);
+			expect(() => check(1, "{ string } | null")).toThrow(/Must be \(plain object containing string\) or null/);
 		});
 	});
 	describe('Grouped types', () => {
