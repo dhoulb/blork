@@ -67,7 +67,7 @@ describe("debug()", () => {
 		expect(debug([1, [21, 22, 23], 3])).toBe(`[1, [21, 22, 23], 3]`);
 	});
 	test("Return correct debug string for functions", () => {
-		expect(debug(function() {})).toBe("anonymous function()");
+		expect(debug(function() {})).toBe("function ()");
 		expect(debug(function dog() {})).toBe("dog()");
 	});
 	test("Return correct debug string for class instances", () => {
