@@ -749,6 +749,10 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 8.0.0
+  - Remove `props()` functionality (bloat)
+  - Prepend function name to `ValueError` errors, e.g. `MyClass.myFunc(): Must be string...`
+  - Add `destack()` method that parses `Error.stack` across major browsers
 - 7.6.0
   - Allow `prefix` and `error` arguments for `check()` and `args()`
   - Add `assert()` function
