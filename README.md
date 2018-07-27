@@ -285,50 +285,6 @@ add("mychecker", v => v === "abc", "'abc'");
 check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123')")
 ```
 
-### props(): Define Blork-checked object properties
-
-The `props()` function can define an object properties (like `Object.defineProperties()`) that are readable and writable, BUT the value must always match the type it was initially defined with.
-
-This allows you to create objects with properties that have a guaranteed type. This makes your object more robust and removes the need to check the type of the property before using it.
-
-`props()` accepts two arguments:
-
-1. `object` The object to define the property on
-2. `props` A set of properties to define on the object and lock down
-
-```js
-import { prop } from "blork";
-
-// Make an object.
-const obj = {};
-
-// Define typed properties on the object.
-props(obj, {
-	"name": "Mel",
-	"coords": { lat: 0, lng: 0 },
-	"map": new Map()
-});
-
-// Setting the value to an allowed type is fine.
-obj.name = "John";
-obj.coords = { lat: 28.20, lng: 12.00 };
-obj.map = new Map();
-
-// Setting the value to a disallowed type is not fine.
-obj.name = 123; // Throws TypeError "name: Must be string (received 123)"
-obj.coords = 123; // Throws TypeError "coords: Must be plain object (received 123)"
-obj.coords = { lat: "abc", lng: 0 }; // Throws TypeError "coords.lat: Must be number (received "abc")"
-obj.map = new Set(); // Throws TypeError "map: must be instance of Map (received Set)
-```
-
-```js
-import { prop } from "blork";
-
-// Make an object.
-const obj = {};
-
-```
-
 ### debug(): Debug any value as a string.
 
 Blork exposes its debugger helper function `debug()`, which it uses to format error messages correctly. `debug()` accepts any argument and will return a clear string interpretation of the value. 
