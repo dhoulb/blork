@@ -19,7 +19,7 @@ describe("destack()", () => {
 		]);
 		expect(destack("Error\n    at <anonymous> (file.js:1:2)")).toEqual([
 			{
-				function: "function ()",
+				function: "",
 				file: "file.js",
 				line: 1,
 				column: 2,
@@ -27,22 +27,22 @@ describe("destack()", () => {
 			}
 		]);
 		expect(destack("Error\n    at file.js:1:2")).toEqual([
-			{ function: "function ()", file: "file.js", line: 1, column: 2, original: "    at file.js:1:2" }
+			{ function: "", file: "file.js", line: 1, column: 2, original: "    at file.js:1:2" }
 		]);
 		expect(destack("Error\n    at file.js:1")).toEqual([
-			{ function: "function ()", file: "file.js", line: 1, column: null, original: "    at file.js:1" }
+			{ function: "", file: "file.js", line: 1, column: null, original: "    at file.js:1" }
 		]);
 		expect(destack("Error\n    at file.js")).toEqual([
-			{ function: "function ()", file: "file.js", line: null, column: null, original: "    at file.js" }
+			{ function: "", file: "file.js", line: null, column: null, original: "    at file.js" }
 		]);
 		expect(destack("Error\n    at <anonymous>:1:2")).toEqual([
-			{ function: "function ()", file: "", line: 1, column: 2, original: "    at <anonymous>:1:2" }
+			{ function: "", file: "", line: 1, column: 2, original: "    at <anonymous>:1:2" }
 		]);
 		expect(destack("Error\n    at <anonymous>:1")).toEqual([
-			{ function: "function ()", file: "", line: 1, column: null, original: "    at <anonymous>:1" }
+			{ function: "", file: "", line: 1, column: null, original: "    at <anonymous>:1" }
 		]);
 		expect(destack("Error\n    at <anonymous>")).toEqual([
-			{ function: "function ()", file: "", line: null, column: null, original: "    at <anonymous>" }
+			{ function: "", file: "", line: null, column: null, original: "    at <anonymous>" }
 		]);
 		const stack2 = [
 			"Error",
@@ -57,9 +57,9 @@ describe("destack()", () => {
 			{ function: "abc()", file: "", line: 1, column: 30, original: "    at abc (<anonymous>:1:30)" },
 			{ function: "def()", file: "", line: 1, column: 18, original: "    at def (<anonymous>:1:18)" },
 			{ function: "GHI.ghi()", file: "", line: 2, column: 9, original: "    at GHI.ghi (<anonymous>:2:9)" },
-			{ function: "function ()", file: "", line: 1, column: 3, original: "    at <anonymous>:1:3" },
-			{ function: "function ()", file: "", line: 1, column: null, original: "    at <anonymous>:1" },
-			{ function: "function ()", file: "", line: null, column: null, original: "    at <anonymous>" }
+			{ function: "", file: "", line: 1, column: 3, original: "    at <anonymous>:1:3" },
+			{ function: "", file: "", line: 1, column: null, original: "    at <anonymous>:1" },
+			{ function: "", file: "", line: null, column: null, original: "    at <anonymous>" }
 		]);
 		const stack3 = [
 			"Error",
@@ -115,7 +115,7 @@ describe("destack()", () => {
 				column: 39,
 				original: "    at promise.then (/jest-jasmine2/build/queue_runner.js:83:39)"
 			},
-			{ function: "function ()", file: "", line: null, column: null, original: "    at <anonymous>" },
+			{ function: "", file: "", line: null, column: null, original: "    at <anonymous>" },
 			{
 				function: "process._tickCallback()",
 				file: "internal/process/next_tick.js",
@@ -138,7 +138,7 @@ describe("destack()", () => {
 		]);
 		expect(destack("@file:///C:/example.html:16:13")).toEqual([
 			{
-				function: "function ()",
+				function: "",
 				file: "file:///C:/example.html",
 				line: 16,
 				column: 13,
@@ -155,7 +155,7 @@ describe("destack()", () => {
 			}
 		]);
 		expect(destack("@debugger eval code:21:9")).toEqual([
-			{ function: "function ()", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" }
+			{ function: "", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" }
 		]);
 		const stack1 = [
 			"trace@file:///C:/example.html:9:17",
@@ -172,7 +172,7 @@ describe("destack()", () => {
 				original: "trace@file:///C:/example.html:9:17"
 			},
 			{
-				function: "function ()",
+				function: "",
 				file: "file:///C:/example.html",
 				line: 16,
 				column: 13,
@@ -185,7 +185,7 @@ describe("destack()", () => {
 				column: null,
 				original: "a@file:///C:/example.html:19"
 			},
-			{ function: "function ()", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" }
+			{ function: "", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" }
 		]);
 		// Safari.
 		expect(destack("def")).toEqual([{ function: "def()", file: "", line: null, column: null, original: "def" }]);
@@ -198,7 +198,7 @@ describe("destack()", () => {
 		];
 		expect(destack(stack2.join("\n"))).toEqual([
 			{ function: "def()", file: "", line: null, column: null, original: "def" },
-			{ function: "function ()", file: "", line: null, column: null, original: "global code" },
+			{ function: "", file: "", line: null, column: null, original: "global code" },
 			{
 				function: "evaluateWithScopeExtension()",
 				file: "",
