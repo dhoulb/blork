@@ -6,7 +6,7 @@
 
 A mini type checker for locking down the external edges of your code. Mainly for use in modules when you don"t know who'll be using the code. Minimal boilerplate code keeps your functions hyper readable and lets them be their beautiful minimal best selves (...or something?)
 
-Blork is fully unit tested and 100% covered (if you're into that!).
+Blork is fully unit tested and 100% covered (if you're into that!). Heaps of love has been put into the _niceness_ and consistency of error messages, so hopefully you'll enjoy that too.
 
 ## Installation
 
@@ -43,10 +43,10 @@ myFunc("abc", 123); // Returns "It passed!"
 myFunc("abc"); // Returns "It passed!"
 
 // Call with invalid args.
-myFunc(123); // Throws ValueError "arguments[0]: Must be string (received 123)"
-myFunc("abc", "abc"); // Throws ValueError "arguments[1]: Must be number (received "abc")"
-myFunc(); // Throws ValueError "arguments[0]: Must be string (received undefined)"
-myFunc("abc", 123, true); // Throws ValueError "arguments: Too many arguments (expected 2) (received 3)"
+myFunc(123); // Throws ValueError "myFunc(): arguments[0]: Must be string (received 123)"
+myFunc("abc", "abc"); // Throws ValueError "myFunc(): arguments[1]: Must be number (received "abc")"
+myFunc(); // Throws ValueError "myFunc(): arguments[0]: Must be string (received undefined)"
+myFunc("abc", 123, true); // Throws ValueError "myFunc(): arguments: Too many arguments (expected 2) (received 3)"
 ```
 
 ### check(): Check individual values
@@ -88,8 +88,14 @@ import { check } from "blork";
 function myFunc(options)
 {
 	// Check all the options with a literal type (note that keepAlive is optional).
-	check(options, { name: "string", required: "boolean", keepAlive: "number?" });
+	check(options, { name: "string", required: "boolean", keepAlive: "number?" }, "options");
 }
+
+// Checks that pass.
+myFunc({ name: "Dog", required: true }); // No error.
+
+// Checks that fail.
+myFunc({ name: 123, required: false }); // Throws ValueError "myFunc(): options.name: Must be string (received 123)"
 ```
 
 There are more complex types available: Appending `?` question mark to any type string makes it optional (which means it also allows `undefined`). Prepending a `!` exclaimation mark to any type string makes it inverted. Multiple types can be combined with `|` and `&` for OR and AND conditions.
@@ -243,7 +249,7 @@ function myFunc(str)
 myFunc("That cat is chasing string"); // Returns "It passed!"
 
 // Fails.
-myFunc("A dog sits over there"); // Throws ValueError "arguments[1]: Must be string containing "cat" (received "A dog sits over there")"
+myFunc("A dog sits over there"); // Throws ValueError "myFunc(): arguments[1]: Must be string containing "cat" (received "A dog sits over there")"
 ```
 
 ### throws(): Set a custom error constructor
