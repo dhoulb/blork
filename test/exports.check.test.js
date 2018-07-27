@@ -29,10 +29,12 @@ describe("exports.check()", () => {
 
 	describe("prefix", () => {
 		test("Error prefix defaults to no prefix", () => {
-			expect(() => check(123, String)).toThrow(/^Must/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => check(123, String)).toThrow(/^expect\(\): Must/);
 		});
 		test("Error prefix can be altered by setting prefix argument", () => {
-			expect(() => check(123, String, "myprefix")).toThrow(/^myprefix/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => check(123, String, "myprefix")).toThrow(/^expect\(\): myprefix/);
 		});
 	});
 	describe("error", () => {

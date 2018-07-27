@@ -21,10 +21,12 @@ describe("exports.assert()", () => {
 	});
 	describe("prefix", () => {
 		test("Error prefix defaults to no prefix", () => {
-			expect(() => assert(false, "be assertively true")).toThrow(/^Must/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => assert(false, "be assertively true")).toThrow(/^expect\(\): Must/);
 		});
 		test("Error prefix can be altered by setting prefix argument", () => {
-			expect(() => assert(false, "be assertively true", "myprefix")).toThrow(/^myprefix/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => assert(false, "be assertively true", "myprefix")).toThrow(/^expect\(\): myprefix/);
 		});
 	});
 	describe("error", () => {

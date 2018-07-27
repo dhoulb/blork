@@ -42,13 +42,15 @@ describe("exports.args()", () => {
 	describe("prefix", () => {
 		test("Error prefix defaults to `arguments`", () => {
 			const argsObj = { "0": true, "1": true, "2": true, length: 3 };
-			expect(() => args(argsObj, [Boolean, Boolean])).toThrow(/^arguments/);
-			expect(() => args(argsObj, [String, String, String])).toThrow(/^arguments/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => args(argsObj, [Boolean, Boolean])).toThrow(/^expect\(\): arguments:/);
+			expect(() => args(argsObj, [String, String, String])).toThrow(/^expect\(\): arguments\[0\]:/);
 		});
 		test("Error prefix can be altered by setting prefix argument", () => {
 			const argsObj = { "0": true, "1": true, "2": true, length: 3 };
-			expect(() => args(argsObj, [Boolean, Boolean], "myprefix")).toThrow(/^myprefix/);
-			expect(() => args(argsObj, [String, String, String], "myprefix")).toThrow(/^myprefix/);
+			// Still includes "expect(): " because we use the stack to calculate the function prefix
+			expect(() => args(argsObj, [Boolean, Boolean], "myprefix")).toThrow(/^expect\(\): myprefix:/);
+			expect(() => args(argsObj, [String, String, String], "myprefix")).toThrow(/^expect\(\): myprefix\[0\]:/);
 		});
 	});
 	describe("error", () => {
