@@ -3,8 +3,8 @@ const destack = require("../../lib/functions/destack");
 // Tests.
 describe("destack()", () => {
 	test("First argument must be string", () => {
-		expect(destack(123)).toBe(undefined);
-		expect(destack(true)).toBe(undefined);
+		expect(destack(123)).toEqual([]);
+		expect(destack(true)).toEqual([]);
 	});
 	test("Chrome, Node, IE, Edge", () => {
 		expect(destack("Error\n    at abc (file.js:1:2)")).toEqual([
@@ -104,7 +104,7 @@ describe("destack()", () => {
 		]);
 		// Safari.
 		expect(destack("def")).toEqual([{ function: "def()", file: "", line: null, column: null }]);
-		expect(destack("global code")).toBe(undefined);
+		expect(destack("global code")).toEqual([]);
 		const stack2 = [
 			"def",
 			"global code", // This is stripped.
