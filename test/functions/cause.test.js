@@ -2,7 +2,7 @@ const cause = require("../../lib/functions/cause");
 
 // Tests.
 describe("cause()", () => {
-	test("Cause is correctly found (Chrome etc)", () => {
+	test("Correct frame is returned (Chrome, Node, IE, Edge)", () => {
 		// Full stack from a random Blork error.
 		const stack = [
 			"ValueError: Must be finite string (received 123)",
@@ -20,6 +20,7 @@ describe("cause()", () => {
 			file: "MyClass.js",
 			line: 8,
 			column: 4,
+			original: "    at MyClass.name (MyClass.js:8:4)",
 			stack: [
 				"ValueError: Must be finite string (received 123)",
 				"    at MyClass.name (MyClass.js:8:4)",
@@ -27,7 +28,7 @@ describe("cause()", () => {
 			].join("\n")
 		});
 	});
-	test("Cause is correctly found (Firefox etc)", () => {
+	test("Correct frame is returned (Firefox, Safari)", () => {
 		// Full stack from a random Blork error.
 		const stack = [
 			"throwError@classes/Blorker.js:41:83",
@@ -44,10 +45,11 @@ describe("cause()", () => {
 			file: "MyClass.js",
 			line: 8,
 			column: 4,
+			original: "MyClass.name@MyClass.js:8:4",
 			stack: ["MyClass.name@MyClass.js:8:4", "myFunc@helpers/myFunc.js:129:432"].join("\n")
 		});
 	});
-	test("Undefined is returned if no Blorker call is in the stack", () => {
+	test("First frame is returned if no Blorker call is in the stack", () => {
 		// Full stack from a random Blork error.
 		const stack = [
 			"Error",
@@ -62,6 +64,17 @@ describe("cause()", () => {
 		];
 
 		// Get the cause stack frame from the frames.
-		expect(cause(stack.join("\n"))).toBe(undefined);
+		expect(cause(stack.join("\n"))).toEqual({
+			function: "Object.test()",
+			file: "functions/cause.test.js",
+			line: 8,
+			column: 4,
+			original: "    at Object.test (functions/cause.test.js:8:4)",
+			stack: stack.join("\n")
+		});
+	});
+	test("Undefined is returned if stack is not valid", () => {
+		expect(cause(123)).toBe(undefined);
+		expect(cause("")).toBe(undefined);
 	});
 });
