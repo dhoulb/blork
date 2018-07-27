@@ -104,16 +104,16 @@ describe("destack()", () => {
 		]);
 		// Safari.
 		expect(destack("def")).toEqual([{ function: "def()", file: "", line: null, column: null }]);
-		expect(destack("global code")).toEqual([]);
 		const stack2 = [
 			"def",
-			"global code", // This is stripped.
+			"global code",
 			"evaluateWithScopeExtension@[native code]",
 			"_evaluateOn",
 			"_evaluateAndWrap"
 		];
 		expect(destack(stack2.join("\n"))).toEqual([
 			{ function: "def()", file: "", line: null, column: null },
+			{ function: "function ()", file: "", line: null, column: null },
 			{ function: "evaluateWithScopeExtension()", file: "", line: null, column: null },
 			{ function: "_evaluateOn()", file: "", line: null, column: null },
 			{ function: "_evaluateAndWrap()", file: "", line: null, column: null }
