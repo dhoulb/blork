@@ -2,7 +2,8 @@ const destack = require("../../lib/functions/destack");
 
 // Tests.
 describe("destack()", () => {
-	test("First argument must be string", () => {
+	test("First argument must be nonempty string", () => {
+		expect(destack("")).toEqual([]);
 		expect(destack(123)).toEqual([]);
 		expect(destack(true)).toEqual([]);
 	});
