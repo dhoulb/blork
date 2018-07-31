@@ -12,6 +12,10 @@ describe("exports.check() array types", () => {
 		arr.push("abc");
 		expect(() => check(arr, [String])).toThrow(TypeError);
 	});
+	test("Throw BlorkError if array type is empty", () => {
+		const arr = ["abc"];
+		expect(() => check(arr, [])).toThrow(BlorkError);
+	});
 	test("Array literal types pass correctly", () => {
 		expect(check([1, 2, 3], [Number])).toBe(undefined);
 		expect(check([1, 2, 3], ["num"])).toBe(undefined);
