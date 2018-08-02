@@ -776,6 +776,8 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 8.1.0
+  - Add min/max size constraints on types via e.g. `{4,8}` suffix
 - 8.0.0
   - Remove `props()` functionality (bloat)
   - Prepend function name to `ValueError` errors, e.g. `MyClass.myFunc(): Must be string...`
