@@ -16,47 +16,14 @@ npm install blork
 
 ## Usage
 
-### args(): Check function arguments
-
-The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose, and can be passed four arguments:
-
-1. `arguments` | The **arguments** object provided automatically to functions in Javascript
-2. `types` | An array identifying the types for the arguments (list of types is available below)
-3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
-4. `error` An optional custom error type to throw if the check fails
-
-```js
-import { args } from "blork";
-
-// An exported function other (untrusted) developers may use.
-export default function myFunc(definitelyString, optionalNumber)
-{
-	// Check the args.
-	args(arguments, ["string", "number?"]);
-
-	// Rest of the function.
-	return "It passed!";
-}
-
-// Call with good args.
-myFunc("abc", 123); // Returns "It passed!"
-myFunc("abc"); // Returns "It passed!"
-
-// Call with invalid args.
-myFunc(123); // Throws ValueError "myFunc(): arguments[0]: Must be string (received 123)"
-myFunc("abc", "abc"); // Throws ValueError "myFunc(): arguments[1]: Must be number (received "abc")"
-myFunc(); // Throws ValueError "myFunc(): arguments[0]: Must be string (received undefined)"
-myFunc("abc", 123, true); // Throws ValueError "myFunc(): arguments: Too many arguments (expected 2) (received 3)"
-```
-
 ### check(): Check individual values
 
-The `check()` function allows you to test individual values with more granularity. The `check()` function is more versatile and allows more use cases than validating function input arguments.
+The `check()` function allows you to test that individual values correspond to a type, and throw a `TypeError` if not. This is primarily designed for checking function arguments but can be used for any purpose.
 
 `check()` accepts four arguments:
 
 1. `value` The value to check
-2. `type` The type to check the value against (list of types is available below)
+2. `type` The type to check the value against (full reference list of types is available below)
 3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
 4. `error` An optional custom error type to throw if the check fails
 
@@ -79,51 +46,62 @@ check(true, "str", "status"); // Throws ValueError "status: Must be string (rece
 check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be string (received 123)"
 ```
 
-Another common use for `check()` is to validate an options object:
+## Type modifiers
 
-```js
-import { check } from "blork";
+`type` will mostly be specified with a type string (a full list of string types is available below), and these string types can also be modified using other characters:
 
-// Make a custom function.
-function myFunc(options)
-{
-	// Check all the options with a literal type (note that keepAlive is optional).
-	check(options, { name: "string", required: "boolean", keepAlive: "number?" }, "options");
-}
+- Appending `?` question mark to any type string makes it optional (which means it also allows `undefined`). 
+- Prepending a `!` exclaimation mark to any type string makes it inverted (e.g. `!string` means anything except string).
+- Multiple types can be combined with `|` and `&` for OR and AND conditions (optionally grouped with `()` parens to resolve ambiguity).
+- Appending a `+` means non-empty (e.g. `arr+` `str+` means non-empty arrays and strings respectively).
 
-// Checks that pass.
-myFunc({ name: "Dog", required: true }); // No error.
-
-// Checks that fail.
-myFunc({ name: 123, required: false }); // Throws ValueError "myFunc(): options.name: Must be string (received 123)"
-```
-
-There are more complex types available: Appending `?` question mark to any type string makes it optional (which means it also allows `undefined`). Prepending a `!` exclaimation mark to any type string makes it inverted. Multiple types can be combined with `|` and `&` for OR and AND conditions.
 
 ```js
 // Optional types.
-check(undefined, "number"); // Throws ValueError "Must be number (received undefined)"
+check(undefined, "number"); // Throws ValueError "Must be finite number (received undefined)"
 check(undefined, "number?"); // No error.
 
 // Note that null does not count as optional.
-check(null, "number?"); // Throws ValueError "Must be number (received null)"
+check(null, "number?"); // Throws ValueError "Must be finite number (received null)"
 
 // Inverted types.
 check(123, "!str"); // No error.
 check(123, "!int"); // Throws ValueError "Must be not integer (received 123)"
 
 // Combined OR types.
-check(1234, "num | str"); // No error.
-check(null, "num | str"); // Throws ValueError "Must be number or string (received null)"
+check(1234, "int | str"); // No error.
+check(null, "int | str"); // Throws ValueError "Must be integer or string (received null)"
 
 // Combined AND types.
 check("abc", "string & !falsy"); // No error.
 check("", "string & !falsy"); // Throws ValueError "Must be string and not falsy (received "")"
+
+// Non-empty types.
+check("abc", "str+"); // No error.
+check("", "str+"); // Throws ValueError "Must be non-empty string (received "")"
+
+// Size types.
+check([1, 2, 3], "arr{2,4}"); // No error.
+check([1], "arr{2,3}"); // Throws ValueError "Must be plain array (minimum 2) (maximum 3) (received [1])"
+check([1, 3, 3, 4], "arr{,3}"); // Throws ValueError "Must be plain array (maximum 3) (received [1])"
+check([1, 2], "arr{3,}"); // Throws ValueError "Must be plain array (minimum 2) (received [1])"
+
+// Array types.
+check([1, 2, 3], "num[]"); // No error.
+check(["a", "b"], "num[]"); // Throws ValueError "Must be plain array containing finite number (received ["a", "b"])"
+
+// Tuple types.
+check([1, "a"], "[int, str]"); // No error.
+check([1, false], "[int, str]"); // Throws ValueError "Must be plain array tuple containing integer, string (received [1, false])"
+
+// Object types.
+check({ a: 1 }, "{ camel: integer }"); // No error.
+check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError "Must be plain object with camelCase string keys containing integer (received { "$": 1 })"
 ```
 
 ### Checking objects and arrays
 
-Blork can perform deep checks on objects and arrays to ensure the schema is correct. To do object or array checks pass literal arrays or literal objects to `check()` or `args()`:
+Blork can also perform deep checks on objects and arrays to ensure the schema is correct deeply. You can use literal arrays or literal objects with `check()` or `args()` to do so:
 
 ```js
 // Check object properties.
@@ -168,6 +146,39 @@ check(
 		{ id: Number, name: String, status: [Number] }
 	]
 );
+```
+
+### args(): Check function arguments
+
+The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose and can be passed four arguments:
+
+1. `arguments` | The **arguments** object provided automatically to functions in Javascript
+2. `types` | An array identifying the types for the arguments (list of types is available below)
+3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
+4. `error` An optional custom error type to throw if the check fails
+
+```js
+import { args } from "blork";
+
+// An exported function other (untrusted) developers may use.
+export default function myFunc(definitelyString, optionalNumber)
+{
+	// Check the args.
+	args(arguments, ["string", "number?"]);
+
+	// Rest of the function.
+	return "It passed!";
+}
+
+// Call with good args.
+myFunc("abc", 123); // Returns "It passed!"
+myFunc("abc"); // Returns "It passed!"
+
+// Call with invalid args.
+myFunc(123); // Throws ValueError "myFunc(): arguments[0]: Must be string (received 123)"
+myFunc("abc", "abc"); // Throws ValueError "myFunc(): arguments[1]: Must be number (received "abc")"
+myFunc(); // Throws ValueError "myFunc(): arguments[0]: Must be string (received undefined)"
+myFunc("abc", 123, true); // Throws ValueError "myFunc(): arguments: Too many arguments (expected 2) (received 3)"
 ```
 
 ### assert(): Check a random true/false statement.
@@ -513,7 +524,23 @@ check([], "arr+"); // Throws ValueError "Must be non-empty plain array (received
 check({}, "obj+"); // Throws ValueError "Must be non-empty plain object (received {})"
 ```
 
-Any string type can be made optional by prepending a `!` question mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
+To specify a size for the type, you can prepend minimum/maximum with e.g. `{12}`, `{4,8}`, `{4,}` or `{,8}` (e.g. RegExp style quantifiers). This allows you to specify e.g. a string with 12 characters, an array with between 10 and 20 items, or an integer with a minimum value of 4.
+
+```js
+// Pass.
+check("abc", "str{3}"); // No error (string with exact length 3 characters).
+check(4, "num{,4}"); // No error (number with maximum value 4).
+check(["a", "b"], "arr{1,}"); // No error (array with more than 1 item).
+check([1, 2, 3], "num[]{2,4}"); // No error (array of numbers with between 2 and 4 items).
+
+// Fail.
+check("ab", "str{3}"); // Throws ValueError "Must be string with size 3"
+check(4, "num{,4}"); // Throws ValueError "Must be finite number with maximum size 4"
+check(["a", "b"], "arr{1,}"); // Throws ValueError "Must be array with minimum size 1"
+check([1, 2, 3], "num[]{2,4}"); // Throws ValueError "Must be plain array containing finite number with size between 2 and 4"
+```
+
+Any string type can inverted by prepending a `!` exclamation mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
 
 ```js
 // Pass.
