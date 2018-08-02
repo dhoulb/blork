@@ -418,7 +418,7 @@ This section lists all types that are available in Blork. A number of different 
 | `symbol`                         | Value is **Symbol** (using **typeof**)
 | `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else)
 | `any`, `mixed`                   | Allow any value (transparently passes through with no error)
-| `json`, `jsonable`               | **JSON-friendly** values (null, true, false, finite numbers, strings, plain objects, plain arrays)
+| `json`, `jsonable`               | Values that can be successfully converted to JSON _and back again!_ (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
 ### String modifiers
 
