@@ -1,4 +1,4 @@
-const { format, EMPTY } = require("../lib/exports");
+const { format, EMPTY } = require("../../lib/exports");
 
 // Tests.
 describe("format()", () => {

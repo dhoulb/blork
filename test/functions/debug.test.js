@@ -1,4 +1,4 @@
-const { debug } = require("../lib/exports");
+const { debug } = require("../../lib/exports");
 
 // Tests.
 describe("debug()", () => {
