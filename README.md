@@ -786,6 +786,11 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 8.2.0
+  - Add string string type, e.g. `"abc"`
+  - Add number string type, e.g. `1234`
+  - Object string type now accepts multiple props (separated by `,` commas)
+  - Add robust nested parenthesis handling in string types (no longer breaks on nested groups, objects, tuples)
 - 8.1.0
   - Add min/max size constraints on types via e.g. `{4,8}` suffix
 - 8.0.0
