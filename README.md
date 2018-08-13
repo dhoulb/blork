@@ -14,7 +14,42 @@ Blork is fully unit tested and 100% covered (if you're into that!). Heaps of lov
 npm install blork
 ```
 
-## Usage
+## Canonical example
+
+The perfect use case for Blork is where you need to validate the input for a library function in a neat and clear way — with error messages that actually help developers fix the mistake!
+
+```js
+// findStrings.js
+import { check } from "blork";
+
+// 1. Make a function that needs its arguments validated.
+function findStrings(haystack, needles, startIndex = 0, caseSensitive = false) {
+	// Check the args.
+	check(haystack, "str", "haystack"); // Must be string.
+	check(needles, "str+|str+[]+", "needles"); // Must be non-empty string or non-empty array of non-empty strings.
+	check(startIndex, "int{1,}", "startIndex"); // Must be integer greater than 1.
+	check(caseSensitive, "bool", "caseSensitive"); // Must be boolean true or false.
+
+	// ...etc
+	return etc;
+}
+
+// 2. Call the function we made with valid arguments.
+const sentence = "These dogs and cats are the best.";
+const finds = findStrings(sentence, ["dogs", "cats", "best"], 6, true);
+
+// 3. Call the function with invalid arguments.
+// This will throw TypeError "findStrings(): haystack: Must be string (received 1234)"
+const nope1 = findStrings(1234);
+// This will throw TypeError "findStrings(): needles: Must be non-empty array containing non-empty string (received ["dogs", 1234])"
+const nope1 = findStrings("Nopes", ["dogs", 1234]);
+// This will throw TypeError "findStrings(): startIndex: Must be integer (minimum 1) (received 0)"
+const nope2 = findStrings("Nopes", ["dogs"], 0); 
+// This will throw TypeError "findStrings(): caseSensitive: Must be boolean (received null)"
+const nope2 = findStrings("Nopes", ["dogs"], 0, null); 
+```
+
+## Usage guide
 
 ### check(): Check individual values
 
@@ -54,6 +89,7 @@ check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be
 - Prepending a `!` exclaimation mark to any type string makes it inverted (e.g. `!string` means anything except string).
 - Multiple types can be combined with `|` and `&` for OR and AND conditions (optionally grouped with `()` parens to resolve ambiguity).
 - Appending a `+` means non-empty (e.g. `arr+` `str+` means non-empty arrays and strings respectively).
+- ...and many more
 
 ```js
 // Optional types.
@@ -91,11 +127,11 @@ check(["a", "b"], "num[]"); // Throws ValueError "Must be plain array containing
 
 // Tuple types.
 check([1, "a"], "[int, str]"); // No error.
-check([1, false], "[int, str]"); // Throws ValueError "Must be plain array tuple containing integer, string (received [1, false])"
+check([1, false], "[int, str]"); // Throws ValueError "Must be plain array tuple like [integer, string] (received [1, false])"
 
 // Object types.
 check({ a: 1 }, "{ camel: integer }"); // No error.
-check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError "Must be plain object with camelCase string keys containing integer (received { "$": 1 })"
+check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError "Must be plain object like { camelCase string: integer } (received { "$": 1 })"
 
 // String literal types.
 check("abc", "'abc'"); // No error.
@@ -447,6 +483,8 @@ String modifier types can be applied to any string type from the list above to m
 | `"type"`            | String string type, e.g. `"Dave"` or `'Lucy'`
 | `1234`              | Number string type, e.g. `1234` or `123.456`
 
+### String modifiers - array type
+
 Any string type can be made into an array of that type by appending `[]` brackets to the type reference. This means the check looks for a plain array whose contents only include the specified type.
 
 ```js
@@ -457,10 +495,12 @@ check([], "int[]"); // No error (empty is fine).
 check([1], "int[]+"); // No error (non-empty).
 
 // Fail.
-check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing: string (received [1, 2])"
-check(["a"], "int[]"); // Throws ValueError "Must be plain array containing: integer (received ["a"])"
-check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing: integer (received [])"
+check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing string (received [1, 2])"
+check(["a"], "int[]"); // Throws ValueError "Must be plain array containing integer (received ["a"])"
+check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing integer (received [])"
 ```
+
+### String modifiers - tuple type
 
 Array tuples can be specified by surrounding types in `[]` brackets.
 
@@ -471,33 +511,66 @@ check(["a", "b"], "[str, str]") // No error.
 check([1, 2, 3], "[num, num, num]"); // No error.
 
 // Fail.
-check([true, true], "[str, str]") // Throws ValueError "Must be plain array tuple containing: string, string (received [true, true])"
-check([true], "[bool, bool]") // Throws ValueError "Must be plain array tuple containing: boolean, boolean (received [true])"
-check(["a", "b", "c"], "[str, str]") // Throws ValueError "Must be plain array tuple containing: string, string (received ["a", "b", "c"])"
+check([true, true], "[str, str]") // Throws ValueError "Must be plain array tuple like [string, string] (received [true, true])"
+check([true], "[bool, bool]") // Throws ValueError "Must be plain array tuple like [boolean, boolean] (received [true])"
+check(["a", "b", "c"], "[str, str]") // Throws ValueError "Must be plain array tuple like [string, string] (received ["a", "b", "c"])"
 ```
 
-Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional).
+### String modifiers - object type
+
+Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional). If you specify multiple props (separated by commas) they are treated like `OR` conditions.
 
 ```js
 // Pass.
 check({ a: "a", b: "b" }, "{str}"); // No error.
-check({ a: 1, b: 2 }, "{int}"); // No error.
+check({ a: 1, b: 2 }, "{ int }"); // No error.
 check({}, "{int}"); // No error (empty is fine).
 check({ a: 1 }, "{int}+"); // No error (non-empty).
+check({ a: 1, b: "B" }, "{ int, str }"); // No error (integers or strings are fine).
 
 // Fail.
-check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object containing: string (received [1, 2])"
-check({ a: "a" }, "{int}"); // Throws ValueError "Must be plain object containing: integer (received ["a"])"
-check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object containing: integer (received [])"
+check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object like { string: string } (received { a: 1, b: 2 })"
+check({ a: "a" }, "{ int }"); // Throws ValueError "Must be plain object like { string: integer } (received { a: "a" })"
+check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object like { string: integer } (received {})"
 ```
 
-A type for the keys can also be specified by using `{ key: value }` format.
+A type for the keys can also be specified by using `{ key: value }` format. Again multiple props can be specified separated by commas.
 
 ```js
 // Pass.
-check({ myVar: 123 }, "{ camel: integer }");
-check({ "my-var": 123 }, "{ kebab: integer }");
+check({ myVar: 123 }, "{ camel: int }"); // No error (key is camelCase).
+check({ "my-var": 123 }, "{ kebab: int }"); // No error (key is kebab-case).
+check({ "YAS": 123 }, "{ upper: bool }"); // No error (key is UPPERCASE).
+check({ a: 1, B: true }, "{ lower: int, upper: bool }"); // No error (a is lowercase and integer, B is UPPERCASE and boolean).
+
+// Fail.
+check({ "myVar": 123 }, "{ kebab: int }"); // Throws ValueError "Must be plain object like { kebab-case string: integer } (received { "myVar": 123 })"
+check({ "nope": true }, "{ upper: bool }"); // Throws ValueError "Must be plain object like { UPPERCASE string: boolean } (received { "nope": true })"
 ```
+
+Exact props can be specified by wrapping the key string in quotes (single or double).
+
+```js
+// Pass.
+check({ name: "Dave" }, '{ "name": str }');
+check({ name: "Dave", age: 48 }, '{ "name": str, "age": int }');
+
+// Fail.
+check({ name: 123 }, '{ "name": str }'); // Throws ValueError "Must be plain object like { "name": string } (received etc)"...
+check({ name: "Dave", age: "123" }, '{ "name": str, "age": int }'); // Throws ValueError "Must be plain object like { "name": string, "age": integer } (received etc)"
+```
+
+Exact prop checkers and normal checkers can be mixed in the same string type. If an exact key is specified it will be favoured.
+
+```js
+// Pass.
+check({ name: "Dave", a: 1, b: 2 }, '{ "name": str, lower: int }');
+
+// Fail.
+check({ name: "Dave", a: 1, b: false }, '{ "name": str, lower: int }'); // Throws ValueError "Must be plain object like { "name": string, lowercase string: integer } (received etc)"
+```
+
+### String modifiers - optional type
 
 Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
@@ -512,6 +585,8 @@ check([undefined, undefined, 123], ["number?"]); // No error.
 check(123, "str?"); // Throws ValueError "Must be string (received 123)"
 check(null, "str?"); // Throws ValueError "Must be string (received null)"
 ```
+
+### String modifiers - non-empty type
 
 Any type can be made non-empty by appending a `+` plus sign to the type reference. This means the check will only pass if the value is non-empty. Specifically this works as follows:
 
@@ -534,6 +609,8 @@ check([], "arr+"); // Throws ValueError "Must be non-empty plain array (received
 check({}, "obj+"); // Throws ValueError "Must be non-empty plain object (received {})"
 ```
 
+### String modifiers - size type
+
 To specify a size for the type, you can prepend minimum/maximum with e.g. `{12}`, `{4,8}`, `{4,}` or `{,8}` (e.g. RegExp style quantifiers). This allows you to specify e.g. a string with 12 characters, an array with between 10 and 20 items, or an integer with a minimum value of 4.
 
 ```js
@@ -550,6 +627,8 @@ check(["a", "b"], "arr{1,}"); // Throws ValueError "Must be array with minimum s
 check([1, 2, 3], "num[]{2,4}"); // Throws ValueError "Must be plain array containing finite number with size between 2 and 4"
 ```
 
+### String modifiers - inverted type
+
 Any string type can inverted by prepending a `!` exclamation mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
 
 ```js
@@ -564,6 +643,8 @@ check(123, "!str"); // Throws ValueError "Must be not string (received "abc")"
 check(true, "!bool"); // Throws ValueError "Must be not true or false (received true)"
 check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError "array[3]: Must be not number (received 123)"
 ```
+
+### String modifiers - OR and AND combined types and grouped types
 
 You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
 
@@ -596,7 +677,7 @@ check("THIS DOG IS CRAZY", "string & catty"); // Throws ValueError "Must be stri
 
 Note: Built in checkers like `lower` or `int+` already check the basic type of a value (e.g. string and number), so there's no need to use `string & lower` or `number & int+` — internally the value will be checked twice. Spaces around the `&` or `|` are optional.
 
-`()` parentheses can be used to create a 'grouped type'. This is useful to specify an array that allows several types, to make an invert/optional type of several types, or to state an explicit precence order for `&` and `|`.
+`()` parentheses can be used to create a 'grouped type' which is useful to specify an array that allows several types, to make an invert/optional type of several types, or to state an explicit precence order for `&` and `|`.
 
 ```js
 // Pass.
@@ -763,7 +844,7 @@ check(["abc", "abc", 123], ["number"]); // Throws ValueError "Array[0]: Must be 
 
 ### Array tuple type
 
-Similarly, to check the format of tuples, pass an array with two or more items as the type. _If two or more types are in an type array, it is considered a tuple type and will be rejected if it does not conform exactly to the tuple._
+Similarly to check the format of tuples pass an array with two or more items as the type. _If two or more types are in an type array, it is considered a tuple type and will be rejected if it does not conform exactly to the tuple._
 
 ```js
 // Pass.
@@ -780,9 +861,10 @@ check([123, "abc", true], ["num", "str"]); // Throws ValueError "Array: Too many
 
 Please see (CONTRIBUTING.md)
 
-## Roadmap
+## Roadmap and ideas
 
-- [ ] Support `@decorator` syntax for class methods (PRs welcome)
+- [ ] Support `@decorator` syntax for class methods
+- [ ] Allow `args()` to accept a string type e.g. in the format `"str, num, bool"`
 
 ## Changelog
 
