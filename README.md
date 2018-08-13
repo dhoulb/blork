@@ -55,7 +55,6 @@ check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be
 - Multiple types can be combined with `|` and `&` for OR and AND conditions (optionally grouped with `()` parens to resolve ambiguity).
 - Appending a `+` means non-empty (e.g. `arr+` `str+` means non-empty arrays and strings respectively).
 
-
 ```js
 // Optional types.
 check(undefined, "number"); // Throws ValueError "Must be finite number (received undefined)"
@@ -97,6 +96,14 @@ check([1, false], "[int, str]"); // Throws ValueError "Must be plain array tuple
 // Object types.
 check({ a: 1 }, "{ camel: integer }"); // No error.
 check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError "Must be plain object with camelCase string keys containing integer (received { "$": 1 })"
+
+// String literal types.
+check("abc", "'abc'"); // No error.
+check("def", "'abc'"); // Throws ValueError "Must be "abc" (received "def")"
+
+// Number literal types.
+check(1234, "1234"); // No error.
+check(5678, "1234"); // Throws ValueError "Must be 1234 (received 5678)"
 ```
 
 ### Checking objects and arrays
@@ -436,6 +443,9 @@ String modifier types can be applied to any string type from the list above to m
 | `!type`             | Inverted type (opposite is allowed), e.g. `!str`
 | `type?`             | Optional type (allows type or `undefined`), e.g. `str?`
 | `type+`             | Non-empty type, e.g. `str+` or `num[]+`
+| `type{1,2}`         | Size type, e.g. `str{5}` or `arr{1,6}` or `map{12,}` or `set{,6}`
+| `"type"`            | String string type, e.g. `"Dave"` or `'Lucy'`
+| `1234`              | Number string type, e.g. `1234` or `123.456`
 
 Any string type can be made into an array of that type by appending `[]` brackets to the type reference. This means the check looks for a plain array whose contents only include the specified type.
 
