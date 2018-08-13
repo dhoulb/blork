@@ -1,8 +1,7 @@
 const BlorkError = require("../lib/errors/BlorkError");
-const { check } = require("../lib/exports");
+const { check, checker } = require("../lib/exports");
 
 // Tests.
-/* eslint-disable prettier/prettier */
 describe("exports.check() string types", () => {
 	test("String types pass correctly", () => {
 		expect(check(1, "num")).toBe(undefined);
@@ -37,10 +36,10 @@ describe("exports.check() string types", () => {
 		});
 	});
 	describe("String literal types", () => {
-		
 		test("String literal types pass correctly", () => {
-			expect(check("abc", "'abc'")).toBe(undefined);
+			checker("'a'");
 			expect(check("abc", '"abc"')).toBe(undefined);
+			expect(check("abc", "'abc'")).toBe(undefined);
 		});
 		test("String literal types fail correctly", () => {
 			expect(() => check("def", "'abc'")).toThrow(TypeError);
@@ -51,8 +50,8 @@ describe("exports.check() string types", () => {
 			expect(() => check(false, '"abc"')).toThrow(TypeError);
 		});
 		test("Correct error message", () => {
-			expect(() => check("def", "'abc'")).toThrow(/Must be 'abc'/);
 			expect(() => check(true, '"123"')).toThrow(/Must be "123"/);
+			expect(() => check("def", "'abc'")).toThrow(/Must be "abc"/);
 		});
 	});
 	describe("Invert types", () => {
@@ -258,47 +257,94 @@ describe("exports.check() string types", () => {
 		test("Correct error message", () => {
 			expect(() => check(true, "str[]")).toThrow(/Must be plain array containing string/);
 			expect(() => check([], "str[]+")).toThrow(/Must be non-empty plain array containing string/);
-			expect(() => check([], "str[]+|null")).toThrow(/Must be \(non-empty plain array containing string\) or null/);
+			expect(() => check([], "str[]+|null")).toThrow(
+				/Must be \(non-empty plain array containing string\) or null/
+			);
 			expect(() => check(["a", "b", ""], "str+[]")).toThrow(/Must be plain array containing non-empty string/);
-			expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow(/Must be plain array containing \(\(non-empty string\) or \(non-empty plain array\)\)/);
+			expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow(
+				/Must be plain array containing \(\(non-empty string\) or \(non-empty plain array\)\)/
+			);
 		});
 	});
 	describe("Tuple types", () => {
-		test('Tuple types pass correctly', () => {
+		test("Tuple types pass correctly", () => {
 			expect(check(["abc"], "[str]")).toBe(undefined);
 			expect(check([123], "[num]")).toBe(undefined);
 			expect(check([123, "abc", true], "[num, str, bool]")).toBe(undefined);
 		});
-		test('Tuple types fail correctly', () => {
+		test("Tuple types fail correctly", () => {
 			expect(() => check([123, 123, false], "[num, num, num]")).toThrow(TypeError);
 			expect(() => check([123, 123], "[num, num, num]")).toThrow(TypeError); // Too few.
 			expect(() => check([123, 123, 123, 123], "[num, num, num]")).toThrow(TypeError); // Too many.
 			expect(() => check(true, "[num]")).toThrow(TypeError); // Not an array.
 		});
 		test("Correct error message", () => {
-			expect(() => check(true, "[num, str]")).toThrow(/Must be plain array tuple containing finite number, string/);
+			expect(() => check(true, "[num, str]")).toThrow(/Must be plain array tuple like \[finite number, string\]/);
 		});
 	});
 	describe("Object types", () => {
-		test("Object types pass correctly", () => {
-			expect(check({ a: 1, b: 2, c: 3 }, "{num}")).toBe(undefined);
-			expect(check({ a: "A", b: "A" }, "{ upper }")).toBe(undefined);
-			expect(check({ aaAA: true, bbBB: false }, "{ camel: bool }")).toBe(undefined);
-			expect(check({ "aa-aa": true, "bb-bb": false }, "{ slug: bool }")).toBe(undefined);
-			expect(check({ a: 123, b: false }, "{ bool | num }")).toBe(undefined);
-			expect(check({ aaa: 123, BBB: false }, "{ lower|upper: bool|num }")).toBe(undefined);
+		describe("Any checkers", () => {
+			test("Object types with any checkers pass correctly", () => {
+				expect(check({ a: 1, b: 2, c: 3 }, "{num}")).toBe(undefined);
+				expect(check({ a: "A", b: "A" }, "{ upper }")).toBe(undefined);
+				expect(check({ aaAA: true, bbBB: false }, "{ camel: bool }")).toBe(undefined);
+				expect(check({ "aa-aa": true, "bb-bb": false }, "{ slug: bool }")).toBe(undefined);
+				expect(check({ a: 123, b: false }, "{ bool | num }")).toBe(undefined);
+				expect(check({ aaa: 123, BBB: false }, "{ lower|upper: bool|num }")).toBe(undefined);
+			});
+			test("Object types with any checkers fail correctly", () => {
+				expect(() => check(true, "{num}")).toThrow(TypeError);
+				expect(() => check(false, "{num}")).toThrow(TypeError);
+				expect(() => check([1, 2, 3], "{ num }")).toThrow(TypeError);
+				expect(() => check({ aaAA: true, bbBB: false }, "{ kebab: bool }")).toThrow(TypeError);
+				expect(() => check({ "aa-aa": true, "bb-bb": false }, "{ camel: bool }")).toThrow(TypeError);
+			});
+			test("Correct error message", () => {
+				expect(() => check(true, "{int}")).toThrow(/Must be plain object like { string: integer }/);
+				expect(() => check({ ABC: true }, "{ upper: int }")).toThrow(
+					/Must be plain object like \{ UPPERCASE string: integer \}/
+				);
+				expect(() => check({ ABC: true }, "{ upper: int | str }")).toThrow(
+					/Must be plain object like \{ UPPERCASE string: \(integer or string\) }/
+				);
+			});
 		});
-		test("Object types fail correctly", () => {
-			expect(() => check(true, "{num}")).toThrow(TypeError);
-			expect(() => check(false, "{num}")).toThrow(TypeError);
-			expect(() => check([1, 2, 3], "{ num }")).toThrow(TypeError);
-			expect(() => check({ aaAA: true, bbBB: false }, "{ kebab: bool }")).toThrow(TypeError);
-			expect(() => check({ "aa-aa": true, "bb-bb": false }, "{ camel: bool }")).toThrow(TypeError);
+		describe("Named checkers", () => {
+			test("Object types with named checkers pass correctly", () => {
+				expect(check({ name: "abc" }, '{ "name": str }')).toBe(undefined);
+				expect(check({ name: "abc", age: 123 }, '{ "name": str, "age": int }')).toBe(undefined);
+				expect(check({ name: "abc", age: 123 }, '{ "name": str }')).toBe(undefined); // Extra props are allowed.
+			});
+			test("Object types with any checkers fail correctly", () => {
+				expect(() => check({ name: 123 }, '{ "name": str }')).toThrow(TypeError); // Name is wrong.
+				expect(() => check({}, '{ "name": str }')).toThrow(TypeError); // Name is missing.
+				expect(() => check({ age: 123 }, '{ "name": str, "age": int }')).toThrow(TypeError); // Name is missing.
+			});
+			test("Correct error message", () => {
+				expect(() => check(true, '{ "name": str }')).toThrow(/Must be plain object like \{ "name": string \}/);
+				expect(() => check({ ABC: true }, '{ "name": str, "age": int }')).toThrow(
+					/Must be plain object like \{ "name": string, "age": integer \}/
+				);
+			});
 		});
-		test("Correct error message", () => {
-			expect(() => check(true, "{int}")).toThrow(/Must be plain object containing integer/);
-			expect(() => check({ "ABC": true }, "{ upper: int }")).toThrow(/Must be plain object with UPPERCASE string keys containing integer/);
-			expect(() => check({ "ABC": true }, "{ upper: int | str }")).toThrow(/Must be plain object with UPPERCASE string keys containing \(integer or string\)/);
+		describe("Mixed checkers (any checkers and named checkers together)", () => {
+			test("Object types with mixed checkers pass correctly", () => {
+				expect(check({ name: "abc", AAA: 1, BBB: 1 }, '{ "name": str, upper: int }')).toBe(undefined);
+				expect(check({ NAME: 6, aaa: 1, bbb: 1 }, '{ "NAME": int{5,7}, camel: int }')).toBe(undefined);
+			});
+			test("Object types with any checkers fail correctly", () => {
+				expect(() => check({ name: 123, AAA: 1, BBB: 1 }, '{ "name": str, upper: int }')).toThrow(TypeError); // Name is wrong type.
+				expect(() => check({ name: "abc", AAA: "abc" }, '{ "name": int{5,7}, camel: int }')).toThrow(TypeError); // AAA is wrong type.
+				expect(() => check({ AAA: "abc" }, '{ "name": int, camel: int }')).toThrow(TypeError); // Name is missing.
+			});
+			test("Correct error message", () => {
+				expect(() => check({}, '{ "name": str, upper: int }')).toThrow(
+					/Must be plain object like { "name": string, UPPERCASE string: integer \}/
+				);
+				expect(() => check({}, '{ "name": int, camel: int }')).toThrow(
+					/Must be plain object like { "name": integer, camelCase string: integer \}/
+				);
+			});
 		});
 	});
 	describe("Combined types", () => {
@@ -335,11 +381,13 @@ describe("exports.check() string types", () => {
 		test("Correct error message", () => {
 			expect(() => check(1, "string & string | string")).toThrow(/Must be string and \(string or string\)/);
 			expect(() => check(1, "string | string & string")).toThrow(/Must be \(string or string\) and string/);
-			expect(() => check(1, "{ string } | null")).toThrow(/Must be \(plain object containing string\) or null/);
+			expect(() => check(1, "{ string } | null")).toThrow(
+				/Must be \(plain object like { string: string }\) or null/
+			);
 		});
 	});
-	describe('Grouped types', () => {
-		test('Grouped types pass correctly', () => {
+	describe("Grouped types", () => {
+		test("Grouped types pass correctly", () => {
 			expect(check("a", "(str | num)")).toBe(undefined);
 			expect(check(123, "(str | num)")).toBe(undefined);
 			expect(check("A", "(str & upper) | (num & int)")).toBe(undefined);
@@ -348,23 +396,30 @@ describe("exports.check() string types", () => {
 			expect(check({ a: 1, b: "b" }, "{(str|num)}")).toBe(undefined);
 			expect(check({ a: 1, b: "b" }, "({str|num})")).toBe(undefined);
 		});
-		test('Grouped types fail correctly', () => {
+		test("Grouped types fail correctly", () => {
 			expect(() => check(true, "(str | num)")).toThrow(TypeError);
 			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(TypeError);
 			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(TypeError);
 		});
-		test('Correct error message', () => {
+		test("Correct error message", () => {
 			expect(() => check(true, "(str | num)")).toThrow(/Must be string or finite number/);
-			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(/Must be \(string and UPPERCASE string\) or \(finite number and integer\)/);
-			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(/Must be plain array containing \(string or finite number\)/);
-			expect(() => check([1, "a", true], "!(str | num)[]")).toThrow(/Must be plain array containing anything except \(string or finite number\)/);
-			expect(() => check([1, "a", true], "(!str | num)[]")).toThrow(/Must be plain array containing \(\(anything except string\) or finite number\)/);
+			expect(() => check(true, "(str & upper) | (num & int)")).toThrow(
+				/Must be \(string and UPPERCASE string\) or \(finite number and integer\)/
+			);
+			expect(() => check([1, "a", true], "(str | num)[]")).toThrow(
+				/Must be plain array containing \(string or finite number\)/
+			);
+			expect(() => check([1, "a", true], "!(str | num)[]")).toThrow(
+				/Must be plain array containing anything except \(string or finite number\)/
+			);
+			expect(() => check([1, "a", true], "(!str | num)[]")).toThrow(
+				/Must be plain array containing \(\(anything except string\) or finite number\)/
+			);
 		});
-		test('Grouping parentheses cannot be nested', () => {
-			expect(() => check(true, "((string))")).toThrow(BlorkError);
-			expect(() => check(true, "((string))")).toThrow(/nested/);
-			expect(() => check(true, "(num | (string))")).toThrow(BlorkError);
-			expect(() => check(true, "(num | (string) | num)")).toThrow(BlorkError);
+		test("Grouping parentheses can be nested", () => {
+			expect(check("abc", "((string))")).toBe(undefined);
+			expect(check(123, "(num | (string))")).toBe(undefined);
+			expect(check("abc", "(num | (string) | num)")).toBe(undefined);
 		});
 	});
 });

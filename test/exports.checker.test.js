@@ -13,8 +13,8 @@ describe("exports.checker()", () => {
 	});
 	test("Throw BlorkError if asking for non-existant checker", () => {
 		expect(() => checker("abc")).toThrow(BlorkError);
-		expect(() => checker("abc")).toThrow(/checker\(\):/);
-		expect(() => checker("abc")).toThrow(/not found/);
+		expect(() => checker("abc")).toThrow(/expect\(\):/);
+		expect(() => checker("abc")).toThrow(/Checker not found/);
 		expect(() => checker("abc")).toThrow(/"abc"/);
 	});
 });
