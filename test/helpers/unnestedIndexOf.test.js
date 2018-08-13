@@ -1,3 +1,4 @@
+const { BlorkError } = require("../../lib/exports");
 const unnestedIndexOf = require("../../lib/helpers/unnestedIndexOf");
 
 // Tests.
@@ -18,5 +19,10 @@ describe("unnestedIndexOf()", () => {
 		expect(unnestedIndexOf("num | '&' | str", "&")).toBe(-1);
 		expect(unnestedIndexOf('num | "&" | str', "&")).toBe(-1);
 		expect(unnestedIndexOf("num | {str & truthy} | str", "&")).toBe(-1);
+	});
+	test("Throws BlorkError if nesting is invalid", () => {
+		expect(() => unnestedIndexOf("{ ( & } )", "&")).toThrow(BlorkError);
+		expect(() => unnestedIndexOf("[ { & ] }", "&")).toThrow(BlorkError);
+		expect(() => unnestedIndexOf("( [ & ) ]", "&")).toThrow(BlorkError);
 	});
 });

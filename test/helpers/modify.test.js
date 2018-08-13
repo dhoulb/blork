@@ -83,4 +83,15 @@ describe("modify()", () => {
 		expect(callback).toHaveBeenCalledWith("abc<123>".match(match), checker);
 		expect(result).toBe("Yep");
 	});
+	test("Checkers without any matchy props do nothing", () => {
+		const callback = jest.fn(() => "Yep");
+		const checker = () => {};
+		const modifiers = [
+			{
+				callback
+			}
+		];
+		const result = modify(modifiers, "abc<123>", checker);
+		expect(result).toBe(undefined);
+	});
 });
