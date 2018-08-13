@@ -1,7 +1,7 @@
-const { assert, BlorkError, ValueError } = require("../lib/exports");
+const { assert, BlorkError, ValueError } = require("../../lib/exports");
 
 // Tests.
-describe("exports.assert()", () => {
+describe("Blorker.assert()", () => {
 	describe("assertion, description", () => {
 		test("Do nothing if assertion is true", () => {
 			expect(() => assert(true, "be assertively true")).not.toThrow();

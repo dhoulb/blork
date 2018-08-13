@@ -1,4 +1,4 @@
-const cause = require("../../lib/functions/cause");
+const cause = require("../../lib/helpers/cause");
 
 // Tests.
 describe("cause()", () => {

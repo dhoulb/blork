@@ -1,4 +1,4 @@
-const modify = require("../../lib/functions/modify");
+const modify = require("../../lib/helpers/modify");
 
 // Tests.
 describe("modify()", () => {

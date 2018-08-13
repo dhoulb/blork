@@ -1,4 +1,4 @@
-const { check, BlorkError, ValueError } = require("../lib/exports");
+const { check, BlorkError, ValueError } = require("../../lib/exports");
 
 // Tests.
 describe("exports.check()", () => {

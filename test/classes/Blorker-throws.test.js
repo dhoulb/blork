@@ -1,6 +1,6 @@
-const ValueError = require("../lib/errors/ValueError");
-const BlorkError = require("../lib/errors/BlorkError");
-const { check, throws } = require("../lib/exports");
+const ValueError = require("../../lib/errors/ValueError");
+const BlorkError = require("../../lib/errors/BlorkError");
+const { check, throws } = require("../../lib/exports");
 
 // Tests.
 describe("exports.throws()", () => {

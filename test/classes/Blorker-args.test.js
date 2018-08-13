@@ -1,7 +1,7 @@
-const { args, BlorkError, ValueError } = require("../lib/exports");
+const { args, BlorkError, ValueError } = require("../../lib/exports");
 
 // Tests.
-describe("exports.args()", () => {
+describe("Blorker.args()", () => {
 	describe("args, arguments", () => {
 		test("Return correctly when argument checks pass", () => {
 			const argsObj = { "0": "a", "1": 123, "2": true, length: 3 };

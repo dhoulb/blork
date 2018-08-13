@@ -1,4 +1,4 @@
-const destack = require("../../lib/functions/destack");
+const { destack } = require("../../lib/exports");
 
 // Tests.
 describe("destack()", () => {

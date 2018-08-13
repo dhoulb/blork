@@ -1,5 +1,5 @@
-const checkers = require("../lib/checkers");
-const { check } = require("../lib/exports");
+const checkers = require("../../lib/checkers/checkers");
+const { check } = require("../../lib/exports");
 
 // Vars.
 const circular = [];

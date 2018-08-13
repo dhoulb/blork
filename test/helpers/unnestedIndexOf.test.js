@@ -1,4 +1,4 @@
-const unnestedIndexOf = require("../../lib/functions/unnestedIndexOf");
+const unnestedIndexOf = require("../../lib/helpers/unnestedIndexOf");
 
 // Tests.
 describe("unnestedIndexOf()", () => {

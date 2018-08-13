@@ -1,5 +1,5 @@
-const BlorkError = require("../lib/errors/BlorkError");
-const { check, checker } = require("../lib/exports");
+const BlorkError = require("../../lib/errors/BlorkError");
+const { check, checker } = require("../../lib/exports");
 
 // Tests.
 describe("exports.check() string types", () => {

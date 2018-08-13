@@ -1,4 +1,4 @@
-const { check } = require("../lib/exports");
+const { check } = require("../../lib/exports");
 
 // Tests.
 describe("object checker", () => {

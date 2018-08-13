@@ -1,8 +1,8 @@
-const BlorkError = require("../lib/errors/BlorkError");
-const { check } = require("../lib/exports");
+const BlorkError = require("../../lib/errors/BlorkError");
+const { check } = require("../../lib/exports");
 
 // Tests.
-describe("exports.check() array types", () => {
+describe("Blorker.checkArray()", () => {
 	test("Throw TypeError if value is not array", () => {
 		expect(() => check({ a: 123 }, [String])).toThrow(TypeError);
 	});

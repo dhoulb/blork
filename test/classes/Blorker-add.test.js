@@ -1,9 +1,9 @@
-const ValueError = require("../lib/errors/ValueError");
-const BlorkError = require("../lib/errors/BlorkError");
-const { check, add } = require("../lib/exports");
+const ValueError = require("../../lib/errors/ValueError");
+const BlorkError = require("../../lib/errors/BlorkError");
+const { check, add } = require("../../lib/exports");
 
 // Tests.
-describe("exports.add()", () => {
+describe("Blorker.add()", () => {
 	test("Add and run a custom checker (no description)", () => {
 		// Define a checker called 'a11218'.
 		expect(add("a11218", v => typeof v === "string")).toBeUndefined();

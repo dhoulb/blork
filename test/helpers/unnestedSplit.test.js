@@ -1,4 +1,4 @@
-const unnestedSplit = require("../../lib/functions/unnestedSplit");
+const unnestedSplit = require("../../lib/helpers/unnestedSplit");
 
 // Tests.
 describe("unnestedSplit()", () => {
