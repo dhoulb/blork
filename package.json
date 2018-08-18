@@ -22,6 +22,7 @@
 	},
 	"scripts": {
 		"watch": "jest --watchAll",
+		"jest": "jest --coverage",
 		"test": "jest --coverage",
 		"lint": "eslint ./",
 		"fix": "eslint --fix ./",
