@@ -88,6 +88,8 @@ describe("checkers", () => {
 		expect(mockCheck(Promise.resolve(), "promise")).toBe(undefined);
 		expect(mockCheck(/[abc]+/g, "regexp")).toBe(undefined);
 		expect(mockCheck(/[abc]+/g, "regex")).toBe(undefined);
+		expect(mockCheck(new Error("abc"), "err")).toBe(undefined);
+		expect(mockCheck(new TypeError("abc"), "error")).toBe(undefined);
 		expect(mockCheck(Symbol(), "symbol")).toBe(undefined);
 
 		// Other.
@@ -185,6 +187,8 @@ describe("checkers", () => {
 		expect(() => mockCheck(true, "promise")).toThrow(TypeError);
 		expect(() => mockCheck("/[abc]+/g", "regexp")).toThrow(TypeError);
 		expect(() => mockCheck("/[abc]+/g", "regex")).toThrow(TypeError);
+		expect(() => mockCheck("abc", "err")).toThrow(TypeError);
+		expect(() => mockCheck(false, "error")).toThrow(TypeError);
 		expect(() => mockCheck("symbol", "symbol")).toThrow(TypeError);
 
 		// Other.

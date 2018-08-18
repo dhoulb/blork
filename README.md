@@ -458,6 +458,7 @@ This section lists all types that are available in Blork. A number of different 
 | `future`                         | Instances of **Date** with a value in the future
 | `past`                           | Instances of **Date** with a value in the past
 | `regex`, `regexp`                | Instances of **RegExp** (regular expressions)
+| `error`, `err`                   | Instances of **Error**
 | `symbol`                         | Value is **Symbol** (using **typeof**)
 | `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else)
 | `any`, `mixed`                   | Allow any value (transparently passes through with no error)
