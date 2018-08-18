@@ -869,6 +869,11 @@ Please see (CONTRIBUTING.md)
 
 ## Changelog
 
+- 8.3.0
+  - Add an error string checker, e.g. `check(new TypeError(), "error")`
+  - When ValueError auto-prefixes the name of the calling function, it skips anonymous functions in the stack
+  - When ValueError auto-prefixes the name of the calling function, it doesn't if the prefix already includes a ': ' colon space.
+  - Add return string type modifier, e.g. `check(123, `return num`)` (changes error message to e.g. `Must return X`)
 - 8.2.0
   - Add string string type, e.g. `"abc"`
   - Add number string type, e.g. `1234`
