@@ -82,7 +82,7 @@ describe("ValueError()", () => {
 			}
 			abc();
 		});
-		test("Return correct error with reason, value, and prefix (named function but with prefix including ': ' colon space)", () => {
+		test("Return correct error with reason, value, and prefix (named function with prefix including 'myFunc(): ' etc at the start)", () => {
 			function abc() {
 				const e = new ValueError("Reason", 123, "myFunc(): Prefix");
 				expect(e).toHaveProperty("name", "ValueError");
