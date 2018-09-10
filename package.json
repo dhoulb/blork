@@ -1,7 +1,7 @@
 {
 	"name": "blork",
 	"description": "Blork! Mini runtime type checking in Javascript",
-	"version": "8.3.2",
+	"version": "8.3.3",
 	"license": "0BSD",
 	"author": "Dave Houlbrooke <dave@shax.com>",
 	"main": "lib/exports.js",
