@@ -452,5 +452,8 @@ describe("exports.check() string types", () => {
 			expect(() => check(123, "return string")).toThrow(/Must return string/);
 			expect(() => check("a", "return number")).toThrow(/Must return finite number/);
 		});
+		test("Return type has highest precedence", () => {
+			expect(() => check(123, "return str+ | boolean")).toThrow(/Must return \(non-empty string\) or boolean/);
+		});
 	});
 });
