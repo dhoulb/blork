@@ -526,6 +526,7 @@ Please see (CONTRIBUTING.md)
   - Remove ability to use constructors (e.g. `Number`) as a type in `check()`
   - Remove `blork()` function that created an independent instance of Blork
   - Remove `throws()` function (use third argument of `check()` instead)
+  - Add Flow type declarations
 - 8.3.0
   - Add an error string checker, e.g. `check(new TypeError(), "error")`
   - When ValueError auto-prefixes the name of the calling function, it skips anonymous functions in the stack
