@@ -14,7 +14,7 @@ Blork is fully unit tested and 100% covered (if you're into that!). Heaps of lov
 npm install blork
 ```
 
-## Usage
+## Basic usage
 
 ### check(): Check individual values
 
@@ -41,15 +41,7 @@ check("Sally", Boolean); // Throws ValueError 'Must be true or false (received "
 check(123, "str", ReferenceError); // Throws ReferenceError "Must be string (received 123)"
 ```
 
-## Type modifiers
-
-`type` will mostly be specified with a type string (a full list of string types is available below), and these string types can also be modified using other characters:
-
-- Appending `?` question mark to any type string makes it optional (which means it also allows `undefined`). 
-- Prepending a `!` exclaimation mark to any type string makes it inverted (e.g. `!string` means anything except string).
-- Multiple types can be combined with `|` and `&` for OR and AND conditions (optionally grouped with `()` parens to resolve ambiguity).
-- Appending a `+` means non-empty (e.g. `arr+` `str+` means non-empty arrays and strings respectively).
-- ...and many more
+`type` will mostly be specified with a type string (a full list of string types is available below) made up of a type identifier (e.g. `integer`) and one or more modifiers (e.g. `str?` which will allow string or undefined, `!num` will allow anything except number, and `bool[]` will allow an array of booleans).
 
 ```js
 // Optional types.
@@ -100,6 +92,14 @@ check("def", "'abc'"); // Throws ValueError 'Must be "abc" (received "def")'
 // Number literal types.
 check(1234, "1234"); // No error.
 check(5678, "1234"); // Throws ValueError 'Must be 1234 (received 5678)'
+
+// Return type.
+function get123() { return 123; }
+check(get123(), "return string"); // Throws ValueError 'Must return string (received 123)'
+
+// Prefix type.
+const name = 123;
+check(name, "name: string"); // Throws ValueError 'name: Must be string (received 123)'
 ```
 
 ### add(): Add a custom checker type
@@ -118,10 +118,10 @@ import { add, check } from "blork";
 // Register a new checker.
 add("myapp-dog-name", "str{1,20}", "valid name for a dog");
 
-// Passes.
+// Pass.
 check("Fido", "myapp-dog-name"); // No error
 
-// Fails.
+// Fail.
 check("", "myapp-dog-name"); // Throws ValueError 'Must be valid name for a dog (received "")'
 ```
 
@@ -141,11 +141,11 @@ add(
 	"string containing 'cat'"
 );
 
-// Passes.
+// Pass.
 check("That cat is having fun", "myapp-catty"); // No error.
 check("That CAT is having fun", "myapp-catty"); // No error.
 
-// Fails.
+// Fail.
 check("A dog sits on the chair", "myapp-catty"); // Throws ValueError 'Must be string containing "cat" (received "A dog sits on the chair")'
 
 // Combine a custom checkers with a built-in checker using `&` syntax.
@@ -288,7 +288,7 @@ This section lists all types that are available in Blork. Types are strings made
 
 String modifier types can be applied to any string identifier from the list above to modify that type's behaviour, e.g. `num?` for an optional number (also accepts undefined), `str[]` for an array of strings, or `["abc", 12|13]` for an array tuple containing the string "abc" and the number 12 or 13.
 
-| Type modifier       | Description
+| Format              | Description
 |---------------------|------------
 | `(type)`            | Grouped type, e.g. `(num | str)[]`
 | `type1 & type2`     | AND combined type, e.g. `str & upper`
@@ -301,9 +301,10 @@ String modifier types can be applied to any string identifier from the list abov
 | `type?`             | Optional type (allows type or `undefined`), e.g. `str?`
 | `type+`             | Non-empty type, e.g. `str+` or `num[]+`
 | `type{1,2}`         | Size type, e.g. `str{5}` or `arr{1,6}` or `map{12,}` or `set{,6}`
-| `"type"`            | String string type, e.g. `"Dave"` or `'Lucy'`
-| `1234`              | Number string type, e.g. `1234` or `123.456`
-| `return true`       | Changes error message from e.g. `Must be true` to `Must return true`
+| `"type"`            | String literal type, e.g. `"Dave"` or `'Lucy'`
+| `1234`              | Number literal type, e.g. `1234` or `123.456`
+| `return type`       | Changes error message from e.g. `Must be true` to `Must return true`
+| `prefix: type`      | Prepend prefix to error message, e.g. `name: Must be string` or `age: Must be integer`
 
 ### Array type modifier
 
@@ -466,6 +467,33 @@ check(true, "!bool"); // Throws ValueError 'Must be not true or false (received 
 check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError 'array[3]: Must be not number (received 123)'
 ```
 
+### Prefix and return type modifiers
+
+Both of these modifiers modify the message of the error message that is thrown if the check doesn't pass. This allows you to ensure that your error messages are consistent and helpful.
+
+Prefix types like `name: X` are used when you need to indicate the name of an argument or parameter in the thrown error if the value doesn't pass the check. Prefix types will modify the error message from `Must be X` to `name: Must be X` allowing the developer to understand which argument caused an error.
+
+The `return X` return type will change the error message from `Must be X` to `Must return X`. It's designed to be when you're using `check()` to check a value returned from a callback function, or similar.
+
+```js
+// Create a function that uses both prefix and return type modifiers to check the return type of a callback.
+function myFunc(callback) {
+	// Check initial args.
+	check(callback, "callback: func");
+
+	// Call the callback and check the returned value.
+	const result = callback();
+	check(result, "callback: return false");
+}
+
+// Pass.
+myFunc(() => false); // No error.
+
+// Fail.
+myFunc(123); // Throws ValueError 'myFunc(): callback: Must be function (received 123)'
+myFunc(() => true); // Throws ValueError 'myFunc(): callback: Must return false (received true)'
+```
+
 ### OR and AND type modifiers
 
 You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
@@ -521,6 +549,7 @@ Please see (CONTRIBUTING.md)
 
 - 9.0.0
   - [Significant major changes](https://github.com/dhoulb/blork/releases/tag/8.3.2) primarily to reduce bundle size
+  - Add prefix string type and remove `prefix` parameter in `check()`, e.g. `check(name, "name: string")`
   - Remove ability to use a literal array or object as the type in `check()`
   - Remove ability to use a literal function (as an `instanceof` check) in `check()`
   - Remove ability to use constructors (e.g. `Number`) as a type in `check()`
