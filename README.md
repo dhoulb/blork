@@ -14,53 +14,17 @@ Blork is fully unit tested and 100% covered (if you're into that!). Heaps of lov
 npm install blork
 ```
 
-## Canonical example
-
-The perfect use case for Blork is where you need to validate the input for a library function in a neat and clear way — with error messages that actually help developers fix the mistake!
-
-```js
-// findStrings.js
-import { check } from "blork";
-
-// 1. Make a function that needs its arguments validated.
-function findStrings(haystack, needles, startIndex = 0, caseSensitive = false) {
-	// Check the args.
-	check(haystack, "str", "haystack"); // Must be string.
-	check(needles, "str+|str+[]+", "needles"); // Must be non-empty string or non-empty array of non-empty strings.
-	check(startIndex, "int{1,}", "startIndex"); // Must be integer greater than 1.
-	check(caseSensitive, "bool", "caseSensitive"); // Must be boolean true or false.
-
-	// ...etc
-	return etc;
-}
-
-// 2. Call the function we made with valid arguments.
-const sentence = "These dogs and cats are the best.";
-const finds = findStrings(sentence, ["dogs", "cats", "best"], 6, true);
-
-// 3. Call the function with invalid arguments.
-// This will throw TypeError "findStrings(): haystack: Must be string (received 1234)"
-const nope1 = findStrings(1234);
-// This will throw TypeError "findStrings(): needles: Must be non-empty array containing non-empty string (received ["dogs", 1234])"
-const nope1 = findStrings("Nopes", ["dogs", 1234]);
-// This will throw TypeError "findStrings(): startIndex: Must be integer (minimum 1) (received 0)"
-const nope2 = findStrings("Nopes", ["dogs"], 0); 
-// This will throw TypeError "findStrings(): caseSensitive: Must be boolean (received null)"
-const nope2 = findStrings("Nopes", ["dogs"], 0, null); 
-```
-
-## Usage guide
+## Usage
 
 ### check(): Check individual values
 
 The `check()` function allows you to test that individual values correspond to a type, and throw a `TypeError` if not. This is primarily designed for checking function arguments but can be used for any purpose.
 
-`check()` accepts four arguments:
+`check()` accepts three arguments:
 
 1. `value` The value to check
 2. `type` The type to check the value against (full reference list of types is available below)
-3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
-4. `error` An optional custom error type to throw if the check fails
+3. `error` An optional custom error type to throw if the check fails
 
 ```js
 import { check } from "blork";
@@ -70,15 +34,11 @@ check("Sally", "string"); // No error.
 check("Sally", String); // No error.
 
 // Checks that fail.
-check("Sally", "number"); // Throws ValueError "Must be number (received "Sally")"
-check("Sally", Boolean); // Throws ValueError "Must be true or false (received "Sally")"
-
-// Checks that fail (with a prefix set).
-check("Sally", "num", "name"); // Throws ValueError "name: Must be number (received "Sally")"
-check(true, "str", "status"); // Throws ValueError "status: Must be string (received true)"
+check("Sally", "number"); // Throws ValueError 'Must be number (received "Sally")'
+check("Sally", Boolean); // Throws ValueError 'Must be true or false (received "Sally")'
 
 // Checks that fail (with a custom error thrown).
-check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be string (received 123)"
+check(123, "str", ReferenceError); // Throws ReferenceError "Must be string (received 123)"
 ```
 
 ## Type modifiers
@@ -93,178 +53,87 @@ check(123, "str", "num", ReferenceError); // Throws ReferenceError "num: Must be
 
 ```js
 // Optional types.
-check(undefined, "number"); // Throws ValueError "Must be finite number (received undefined)"
+check(undefined, "number"); // Throws ValueError 'Must be finite number (received undefined)'
 check(undefined, "number?"); // No error.
 
 // Note that null does not count as optional.
-check(null, "number?"); // Throws ValueError "Must be finite number (received null)"
+check(null, "number?"); // Throws ValueError 'Must be finite number (received null)'
 
 // Inverted types.
 check(123, "!str"); // No error.
-check(123, "!int"); // Throws ValueError "Must be not integer (received 123)"
+check(123, "!int"); // Throws ValueError 'Must be not integer (received 123)'
 
 // Combined OR types.
 check(1234, "int | str"); // No error.
-check(null, "int | str"); // Throws ValueError "Must be integer or string (received null)"
+check(null, "int | str"); // Throws ValueError 'Must be integer or string (received null)'
 
 // Combined AND types.
 check("abc", "string & !falsy"); // No error.
-check("", "string & !falsy"); // Throws ValueError "Must be string and not falsy (received "")"
+check("", "string & !falsy"); // Throws ValueError 'Must be string and not falsy (received "")'
 
 // Non-empty types.
 check("abc", "str+"); // No error.
-check("", "str+"); // Throws ValueError "Must be non-empty string (received "")"
+check("", "str+"); // Throws ValueError 'Must be non-empty string (received "")'
 
 // Size types.
 check([1, 2, 3], "arr{2,4}"); // No error.
-check([1], "arr{2,3}"); // Throws ValueError "Must be plain array (minimum 2) (maximum 3) (received [1])"
-check([1, 3, 3, 4], "arr{,3}"); // Throws ValueError "Must be plain array (maximum 3) (received [1])"
-check([1, 2], "arr{3,}"); // Throws ValueError "Must be plain array (minimum 2) (received [1])"
+check([1], "arr{2,3}"); // Throws ValueError 'Must be plain array (minimum 2) (maximum 3) (received [1])'
+check([1, 3, 3, 4], "arr{,3}"); // Throws ValueError 'Must be plain array (maximum 3) (received [1])'
+check([1, 2], "arr{3,}"); // Throws ValueError 'Must be plain array (minimum 2) (received [1])'
 
 // Array types.
 check([1, 2, 3], "num[]"); // No error.
-check(["a", "b"], "num[]"); // Throws ValueError "Must be plain array containing finite number (received ["a", "b"])"
+check(["a", "b"], "num[]"); // Throws ValueError 'Must be plain array containing finite number (received ["a", "b"])'
 
 // Tuple types.
 check([1, "a"], "[int, str]"); // No error.
-check([1, false], "[int, str]"); // Throws ValueError "Must be plain array tuple like [integer, string] (received [1, false])"
+check([1, false], "[int, str]"); // Throws ValueError 'Must be plain array tuple like [integer, string] (received [1, false])'
 
 // Object types.
 check({ a: 1 }, "{ camel: integer }"); // No error.
-check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError "Must be plain object like { camelCase string: integer } (received { "$": 1 })"
+check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError 'Must be plain object like { camelCase string: integer } (received { "$": 1 })'
 
 // String literal types.
 check("abc", "'abc'"); // No error.
-check("def", "'abc'"); // Throws ValueError "Must be "abc" (received "def")"
+check("def", "'abc'"); // Throws ValueError 'Must be "abc" (received "def")'
 
 // Number literal types.
 check(1234, "1234"); // No error.
-check(5678, "1234"); // Throws ValueError "Must be 1234 (received 5678)"
-```
-
-### Checking objects and arrays
-
-Blork can also perform deep checks on objects and arrays to ensure the schema is correct deeply. You can use literal arrays or literal objects with `check()` or `args()` to do so:
-
-```js
-// Check object properties.
-check({ name: "Sally" }, { name: "string" }); // No error.
-
-// Check all array items.
-check(["Sally", "John", "Sonia"], ["str"]); // No error.
-
-// Check tuple-style array.
-check([1029, "Sonia"], ["number", "string"]); // No error.
-
-// Failing checks.
-check({ name: "Sally" }, { name: "string" }); // No error.
-check(["Sally", "John", "Sonia"], ["str"]); // No error.
-check([1029, "Sonia"], ["number", "string"]); // No error.
-check([1029, "Sonia", true], ["number", "string"]); // Throws ValueError: "Array: Too many array items (expected 2) (received 3)"
-```
-
-Arrays and objects can be deeply nested within each other and Blork will recursively check the schema _all_ the way down:
-
-```js
-// Deeply nested check (passes).
-// Will return 1
-check(
-	[
-		{ id: 1028, name: "Sally", status: [1, 2, 3] },
-		{ id: 1062, name: "Bobby", status: [1, 2, 3] }
-	],
-	[
-		{ id: Number, name: String, status: [Number] }
-	]
-);
-
-// Deeply nested check (fails).
-// Will throw ValueError "Array[1][status][2]: Must be number (received "not_a_number")"
-check(
-	[
-		{ id: 1028, name: "Sally", status: [1, 2, 3] },
-		{ id: 1062, name: "Bobby", status: [1, 2, "not_a_number"] }
-	],
-	[
-		{ id: Number, name: String, status: [Number] }
-	]
-);
-```
-
-### args(): Check function arguments
-
-The primary use case of Blork is validating function input arguments. The `args()` function is provided for this purpose and can be passed four arguments:
-
-1. `arguments` | The **arguments** object provided automatically to functions in Javascript
-2. `types` | An array identifying the types for the arguments (list of types is available below)
-3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
-4. `error` An optional custom error type to throw if the check fails
-
-```js
-import { args } from "blork";
-
-// An exported function other (untrusted) developers may use.
-export default function myFunc(definitelyString, optionalNumber)
-{
-	// Check the args.
-	args(arguments, ["string", "number?"]);
-
-	// Rest of the function.
-	return "It passed!";
-}
-
-// Call with good args.
-myFunc("abc", 123); // Returns "It passed!"
-myFunc("abc"); // Returns "It passed!"
-
-// Call with invalid args.
-myFunc(123); // Throws ValueError "myFunc(): arguments[0]: Must be string (received 123)"
-myFunc("abc", "abc"); // Throws ValueError "myFunc(): arguments[1]: Must be number (received "abc")"
-myFunc(); // Throws ValueError "myFunc(): arguments[0]: Must be string (received undefined)"
-myFunc("abc", 123, true); // Throws ValueError "myFunc(): arguments: Too many arguments (expected 2) (received 3)"
-```
-
-### assert(): Check a random true/false statement.
-
-Check a random true/false statement using the `assert()` function. This allows you to make other assertions with a similar argument order to `check()`. This is mainly just syntactic sugar, but is neater than messy `if (x) throw new X;` type statements.
-
-Takes up to four arguments:
-
-1. `assertion` The true/false value that is the assertion.
-2. `description` A description of the positive assertion. Must fit the phrase `Must ${description}`, e.g. "be unique" or "be equal to dog".
-3. `prefix` An optional string name/prefix for the value, which is prepended to any error message thrown to help debugging
-4. `error` An optional custom error type to throw if the check fails
-
-```js
-import { assert } from "blork";
-
-// Assertion that passes.
-assert(isUnique(val1), "unique"); // Pass.
-
-// Assertion that fails.
-assert(isUnique(val2), "be unique"); // Throws ValueError "Must be unique"
-assert(isUnique(val2), "be unique", "val2"); // Throws ValueError "val2: Must be unique"
-assert(isUnique(val2), "be unique", "val2", ReferenceError); // Throws ReferenceError "val2: Must be unique"
+check(5678, "1234"); // Throws ValueError 'Must be 1234 (received 5678)'
 ```
 
 ### add(): Add a custom checker type
 
 Register your own checker using the `add()` function. This is great if 1) you're going to be applying the same check over and over, or 2) want to integrate your own checks with Blork's built-in types so your code looks clean.
 
-`add()` accepts four arguments:
+`add()` accepts three arguments:
 
-1. `name` The name of the custom checker (only kebab-case strings allowed).
-2. `checker` A function that accepts a single argument, `value`, and returns `true` or `false`.
-3. `description` A description of the type of value that's valid. Must fit the phrase `Must be ${description}`, e.g. "positive number" or "unique string". Defaults to name.
-4. `error=undefined` A custom class that is thrown when this checker fails (can be [VALUES]_ class, not just classes extending `Error`). An error set with `add() takes precedence for this checker over the error set through `throws()`.
+1. `name` The name of the custom checker (only kebab-case strings allowed and usually prefixed with a unique identifier).
+2. `checker` A Blork type string, or a custom function that accepts a single argument (the value) and returns `true` or `false`.
+3. `description` A description of the type of value that's valid. Must fit the phrase `Must be ${description}`, e.g. "positive number" or "unique string". Defaults to the value of the `name` parameter.
 
 ```js
 import { add, check } from "blork";
 
-// Register your new checker.
+// Register a new checker.
+add("myapp-dog-name", "str{1,20}", "valid name for a dog");
+
+// Passes.
+check("Fido", "myapp-dog-name"); // No error
+
+// Fails.
+check("", "myapp-dog-name"); // Throws ValueError 'Must be valid name for a dog (received "")'
+```
+
+This example shows using a custom function as a Blork checker:
+
+```js
+import { add, check } from "blork";
+
+// Register your new fussy checker.
 add(
 	// Name of checker.
-	"catty",
+	"myapp-catty",
 	// Checker to validate a string containing "cat".
 	(v) => typeof v === "string" && v.strToLower().indexOf("cat") >= 0,
 	// Description of what the variable _should_ contain.
@@ -273,86 +142,43 @@ add(
 );
 
 // Passes.
-check("That cat is having fun", "catty"); // No error.
-check("That CAT is having fun", "catty"); // No error.
+check("That cat is having fun", "myapp-catty"); // No error.
+check("That CAT is having fun", "myapp-catty"); // No error.
 
 // Fails.
-check("A dog sits on the chair", "catty"); // Throws ValueError "Must be string containing "cat" (received "A dog sits on the chair")"
+check("A dog sits on the chair", "myapp-catty"); // Throws ValueError 'Must be string containing "cat" (received "A dog sits on the chair")'
 
 // Combine a custom checkers with a built-in checker using `&` syntax.
 // The value must pass both checks or an error will be thrown.
 // This saves you replicating existing logic in your checker.
 check("A CAT SAT ON THE MAT", "upper+ & catty"); // No error.
-check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws ValueError "Must be non-empty uppercase string and string containing 'cat'"
+check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws ValueError 'Must be non-empty uppercase string and string containing 'cat''
 ```
+
+### checker(): Return a checker function
+
+Retrieve any Blork checker that can be used elsewhere to check the boolean truthyness of a value.
 
 ```js
-import { add, args } from "blork";
+import { checker } from "blork";
 
-// Use your checker to check function args.
-function myFunc(str)
-{
-	// Validate the function's args!
-	args(arguments, ["catty"]);
+// Get a checker function
+const isNonEmptyString = checker("str+");
 
-	// Big success.
-	return "It passed!";
-}
-
-// Passes.
-myFunc("That cat is chasing string"); // Returns "It passed!"
-
-// Fails.
-myFunc("A dog sits over there"); // Throws ValueError "myFunc(): arguments[1]: Must be string containing "cat" (received "A dog sits over there")"
+// Use the checker.
+isNonEmptyString("abc"); // true
+isNonEmptyString(""); // false
+isNonEmptyString(84); // false
 ```
 
-### throws(): Set a custom error constructor
-
-To change the error object Blork throws when a type doesn't match, use the `throws()` function. It accepts a single argument a custom class (can be [VALUES]_ class, not just classes extending `Error`).
-
-```js
-import { throws, check } from "blork";
-
-// Make a custom error type for yourself.
-class MyError extends Error {};
-
-// Register your custom error type.
-throws(MyError);
-
-// Test a value.
-check(true, "false"); // Throws MyError "Must be false (received true)"
-```
-
-### blork(): Create an independent instance of Blork
-
-To create an instance of Blork with an independent set of checkers (added with `add()`) and an independently set `throws()` error object, use the `blork()` function.
-
-This functionality is provided so you can ensure multiple versions of Blork in submodules of the same project don't interfere with each other, even if they have been (possibly purposefully) deduped in npm. This is how you can ensure if you've set a custom error for a set of checks, that custom error type is always thrown.
-
-```js
-import { blork } from "blork";
-
-// Create a new set of functions from Blork.
-const { check, args, add, throws } = blork();
-
-// Set a new custom error on the new instance.
-throws(class CustomError extends ValueError);
-
-// Add a custom checker on the new instance.
-add("mychecker", v => v === "abc", "'abc'");
-
-// Try to use the custom checker.
-check("123", "mychecker"); // Throws CustomChecker("Must be 'abc' (received '123')")
-```
-
-### debug(): Debug any value as a string.
+### debug(): Debug any value as a string
 
 Blork exposes its debugger helper function `debug()`, which it uses to format error messages correctly. `debug()` accepts any argument and will return a clear string interpretation of the value. 
 
 `debug()` deals well with large and nested objects/arrays by inserting linebreaks and tabs if line length would be unreasonable. Output is also kept cleanish by only debugging 3 levels deep, truncating long strings, and not recursing into circular references.
 
 ```js
-import debug from "blork";
+import { debug } from "blork";
 
 // Debug primitives.
 debug(undefined); // Returns `undefined`
@@ -375,7 +201,7 @@ debug(new MyClass()); // Returns `MyClass {}`
 debug(new class {}()); // Returns `anonymous class {}`
 ```
 
-### ValueError: Great debuggable error class
+### ValueError: extensible TypeError designed for debugging
 
 Internally, when there's a problem with a value, Blork will throw a `ValueError`. This value extends `TypeError` and standardises error message formats, so errors are consistent and provide the detail a developer should need to debug the issue error quickly and easily.
 
@@ -383,7 +209,6 @@ It accepts three values:
 
 1. `message` The error message describing the issue with the value, e.g. `"Must be string"`
 2. `value` The actual value that was incorrect so a debugged version of this value can appear in the error message, e.g. `(received 123)`
-3. `prefix` A string prefix for the error that should identify the location the error occurred and the name of the value, e.g. `"myFunction(): name"`
 
 ```js
 import { ValueError } from "blork";
@@ -396,21 +221,16 @@ function myFunc(name) {
 }
 
 // Call with incorrect name.
-myFunc(123); // Throws ValueError "myFunc(): name: Must be a string (received 123)"
+myFunc(123); // Throws ValueError 'myFunc(): name: Must be a string (received 123)'
 ```
 
-## Types
+## Reference
 
-This section lists all types that are available in Blork. A number of different formats can be used for types:
+### Type identifiers
 
-- **String types** (e.g. `"promise"` and `"integer"`)
-- **String modifiers** that modify those string types (e.g. `"?"` and `"!"`)
-- **Constant** and **constructor** shorthand types (e.g. `null` and `String`)
-- **Object** and **Array** literal types (e.g. `{}` and `[]`)
+This section lists all types that are available in Blork. Types are strings made up of a type identifier (e.g. `"promise"` or `"integer"`) possibly combined with a modifier (e.g. `"?"` or `"!"`).
 
-### String types
-
-| Type string                      | Description                  
+| Type string                      | Description
 |----------------------------------|------------
 | `primitive`                      | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
 | `null`                           | Value is **null**
@@ -444,11 +264,11 @@ This section lists all types that are available in Blork. A number of different 
 | `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
 | `function`, `func`               | Functions (using **instanceof Function**)
 | `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
-| `objectlike`                     | Any object-like object (using **typeof && !null**)
+| `objectlike`                     | Any object (using **typeof && !null**)
 | `iterable`                       | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
 | `circular`                       | Objects with one or more _circular references_ (use `!circular` to disallow circular references)
 | `array`, `arr`                   | Plain arrays (using **instanceof Array** and constructor check)
-| `arraylike`, `arguments`, `args` | Array-like objects, e.g. **arguments** (any object with numeric **.length** property, not just arrays)
+| `arraylike`, `arguments`, `args` | Array-like objects (any object with numeric **.length** property, e.g. the **arguments** object)
 | `map`                            | Instances of **Map**
 | `weakmap`                        | Instances of **WeakMap**
 | `set`                            | Instances of **Set**
@@ -464,9 +284,9 @@ This section lists all types that are available in Blork. A number of different 
 | `any`, `mixed`                   | Allow any value (transparently passes through with no error)
 | `json`, `jsonable`               | Values that can be successfully converted to JSON _and back again!_ (null, true, false, finite numbers, strings, plain objects, plain arrays)
 
-### String modifiers
+### Type modifiers
 
-String modifier types can be applied to any string type from the list above to modify that type's behaviour.
+String modifier types can be applied to any string identifier from the list above to modify that type's behaviour, e.g. `num?` for an optional number (also accepts undefined), `str[]` for an array of strings, or `["abc", 12|13]` for an array tuple containing the string "abc" and the number 12 or 13.
 
 | Type modifier       | Description
 |---------------------|------------
@@ -483,8 +303,9 @@ String modifier types can be applied to any string type from the list above to m
 | `type{1,2}`         | Size type, e.g. `str{5}` or `arr{1,6}` or `map{12,}` or `set{,6}`
 | `"type"`            | String string type, e.g. `"Dave"` or `'Lucy'`
 | `1234`              | Number string type, e.g. `1234` or `123.456`
+| `return true`       | Changes error message from e.g. `Must be true` to `Must return true`
 
-### String modifiers - array type
+### Array type modifier
 
 Any string type can be made into an array of that type by appending `[]` brackets to the type reference. This means the check looks for a plain array whose contents only include the specified type.
 
@@ -496,12 +317,12 @@ check([], "int[]"); // No error (empty is fine).
 check([1], "int[]+"); // No error (non-empty).
 
 // Fail.
-check([1, 2], "str[]"); // Throws ValueError "Must be plain array containing string (received [1, 2])"
-check(["a"], "int[]"); // Throws ValueError "Must be plain array containing integer (received ["a"])"
-check([], "int[]+"); // Throws ValueError "Must be non-empty plain array containing integer (received [])"
+check([1, 2], "str[]"); // Throws ValueError 'Must be plain array containing string (received [1, 2])'
+check(["a"], "int[]"); // Throws ValueError 'Must be plain array containing integer (received ["a"])'
+check([], "int[]+"); // Throws ValueError 'Must be non-empty plain array containing integer (received [])'
 ```
 
-### String modifiers - tuple type
+### Tuple type modifier
 
 Array tuples can be specified by surrounding types in `[]` brackets.
 
@@ -512,12 +333,12 @@ check(["a", "b"], "[str, str]") // No error.
 check([1, 2, 3], "[num, num, num]"); // No error.
 
 // Fail.
-check([true, true], "[str, str]") // Throws ValueError "Must be plain array tuple like [string, string] (received [true, true])"
-check([true], "[bool, bool]") // Throws ValueError "Must be plain array tuple like [boolean, boolean] (received [true])"
-check(["a", "b", "c"], "[str, str]") // Throws ValueError "Must be plain array tuple like [string, string] (received ["a", "b", "c"])"
+check([true, true], "[str, str]") // Throws ValueError 'Must be plain array tuple like [string, string] (received [true, true])'
+check([true], "[bool, bool]") // Throws ValueError 'Must be plain array tuple like [boolean, boolean] (received [true])'
+check(["a", "b", "c"], "[str, str]") // Throws ValueError 'Must be plain array tuple like [string, string] (received ["a", "b", "c"])'
 ```
 
-### String modifiers - object type
+### Object type modifier
 
 Check for objects only containing strings of a specified type by surrounding the type in `{}` braces. This means the check looks for a plain object whose contents only include the specified type (whitespace is optional). If you specify multiple props (separated by commas) they are treated like `OR` conditions.
 
@@ -530,9 +351,9 @@ check({ a: 1 }, "{int}+"); // No error (non-empty).
 check({ a: 1, b: "B" }, "{ int, str }"); // No error (integers or strings are fine).
 
 // Fail.
-check({ a: 1, b: 2 }, "{str}"); // Throws ValueError "Must be plain object like { string: string } (received { a: 1, b: 2 })"
-check({ a: "a" }, "{ int }"); // Throws ValueError "Must be plain object like { string: integer } (received { a: "a" })"
-check({}, "{int}+"); // Throws ValueError "Must be non-empty plain object like { string: integer } (received {})"
+check({ a: 1, b: 2 }, "{str}"); // Throws ValueError 'Must be plain object like { string: string } (received { a: 1, b: 2 })'
+check({ a: "a" }, "{ int }"); // Throws ValueError 'Must be plain object like { string: integer } (received { a: "a" })'
+check({}, "{int}+"); // Throws ValueError 'Must be non-empty plain object like { string: integer } (received {})'
 ```
 
 A type for the keys can also be specified by using `{ key: value }` format. Again multiple props can be specified separated by commas.
@@ -545,8 +366,8 @@ check({ "YAS": 123 }, "{ upper: bool }"); // No error (key is UPPERCASE).
 check({ a: 1, B: true }, "{ lower: int, upper: bool }"); // No error (a is lowercase and integer, B is UPPERCASE and boolean).
 
 // Fail.
-check({ "myVar": 123 }, "{ kebab: int }"); // Throws ValueError "Must be plain object like { kebab-case string: integer } (received { "myVar": 123 })"
-check({ "nope": true }, "{ upper: bool }"); // Throws ValueError "Must be plain object like { UPPERCASE string: boolean } (received { "nope": true })"
+check({ "myVar": 123 }, "{ kebab: int }"); // Throws ValueError 'Must be plain object like { kebab-case string: integer } (received { "myVar": 123 })'
+check({ "nope": true }, "{ upper: bool }"); // Throws ValueError 'Must be plain object like { UPPERCASE string: boolean } (received { "nope": true })'
 ```
 
 Exact props can be specified by wrapping the key string in quotes (single or double).
@@ -557,8 +378,8 @@ check({ name: "Dave" }, '{ "name": str }');
 check({ name: "Dave", age: 48 }, '{ "name": str, "age": int }');
 
 // Fail.
-check({ name: 123 }, '{ "name": str }'); // Throws ValueError "Must be plain object like { "name": string } (received etc)"...
-check({ name: "Dave", age: "123" }, '{ "name": str, "age": int }'); // Throws ValueError "Must be plain object like { "name": string, "age": integer } (received etc)"
+check({ name: 123 }, '{ "name": str }'); // Throws ValueError 'Must be plain object like { "name": string } (received etc)"..'
+check({ name: "Dave", age: "123" }, '{ "name": str, "age": int }'); // Throws ValueError 'Must be plain object like { "name": string, "age": integer }'(received etc)"
 ```
 
 Exact prop checkers and normal checkers can be mixed in the same string type. If an exact key is specified it will be favoured.
@@ -568,10 +389,10 @@ Exact prop checkers and normal checkers can be mixed in the same string type. If
 check({ name: "Dave", a: 1, b: 2 }, '{ "name": str, lower: int }');
 
 // Fail.
-check({ name: "Dave", a: 1, b: false }, '{ "name": str, lower: int }'); // Throws ValueError "Must be plain object like { "name": string, lowercase string: integer } (received etc)"
+check({ name: "Dave", a: 1, b: false }, '{ "name": str, lower: int }'); // Throws ValueError 'Must be plain object like { "name": string, lowercase string:'integer } (received etc)"
 ```
 
-### String modifiers - optional type
+### Optional type modifier
 
 Any string type can be made optional by appending a `?` question mark to the type reference. This means the check will also accept `undefined` in addition to the specified type.
 
@@ -583,11 +404,11 @@ check(undefined, "int?"); // No error.
 check([undefined, undefined, 123], ["number?"]); // No error.
 
 // Fail.
-check(123, "str?"); // Throws ValueError "Must be string (received 123)"
-check(null, "str?"); // Throws ValueError "Must be string (received null)"
+check(123, "str?"); // Throws ValueError 'Must be string (received 123)'
+check(null, "str?"); // Throws ValueError 'Must be string (received null)'
 ```
 
-### String modifiers - non-empty type
+### Non-empty type modifier
 
 Any type can be made non-empty by appending a `+` plus sign to the type reference. This means the check will only pass if the value is non-empty. Specifically this works as follows:
 
@@ -605,12 +426,12 @@ check([1], "arr+"); // No error.
 check({ a: 1 }, "obj+"); // No error.
 
 // Fail.
-check(123, "str+"); // Throws ValueError "Must be non-empty string (received "")"
-check([], "arr+"); // Throws ValueError "Must be non-empty plain array (received [])"
-check({}, "obj+"); // Throws ValueError "Must be non-empty plain object (received {})"
+check(123, "str+"); // Throws ValueError 'Must be non-empty string (received "")'
+check([], "arr+"); // Throws ValueError 'Must be non-empty plain array (received [])'
+check({}, "obj+"); // Throws ValueError 'Must be non-empty plain object (received {})'
 ```
 
-### String modifiers - size type
+### Size type modifier
 
 To specify a size for the type, you can prepend minimum/maximum with e.g. `{12}`, `{4,8}`, `{4,}` or `{,8}` (e.g. RegExp style quantifiers). This allows you to specify e.g. a string with 12 characters, an array with between 10 and 20 items, or an integer with a minimum value of 4.
 
@@ -622,13 +443,13 @@ check(["a", "b"], "arr{1,}"); // No error (array with more than 1 item).
 check([1, 2, 3], "num[]{2,4}"); // No error (array of numbers with between 2 and 4 items).
 
 // Fail.
-check("ab", "str{3}"); // Throws ValueError "Must be string with size 3"
-check(4, "num{,4}"); // Throws ValueError "Must be finite number with maximum size 4"
-check(["a", "b"], "arr{1,}"); // Throws ValueError "Must be array with minimum size 1"
-check([1, 2, 3], "num[]{2,4}"); // Throws ValueError "Must be plain array containing finite number with size between 2 and 4"
+check("ab", "str{3}"); // Throws ValueError 'Must be string with size 3'
+check(4, "num{,4}"); // Throws ValueError 'Must be finite number with maximum size 4'
+check(["a", "b"], "arr{1,}"); // Throws ValueError 'Must be array with minimum size 1'
+check([1, 2, 3], "num[]{2,4}"); // Throws ValueError 'Must be plain array containing finite number with size between 2 and 4'
 ```
 
-### String modifiers - inverted type
+### Inverted type modifier
 
 Any string type can inverted by prepending a `!` exclamation mark to the type reference. This means the check will only pass if the _inverse_ of its type is true.
 
@@ -640,12 +461,12 @@ check(123.456, "!integer"); // No error.
 check([undefined, "abc", true, false], ["!number"]); // No error.
 
 // Fail.
-check(123, "!str"); // Throws ValueError "Must be not string (received "abc")"
-check(true, "!bool"); // Throws ValueError "Must be not true or false (received true)"
-check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError "array[3]: Must be not number (received 123)"
+check(123, "!str"); // Throws ValueError 'Must be not string (received "abc")'
+check(true, "!bool"); // Throws ValueError 'Must be not true or false (received true)'
+check([undefined, "abc", true, 123], ["!number"]); // Throws ValueError 'array[3]: Must be not number (received 123)'
 ```
 
-### String modifiers - OR and AND combined types and grouped types
+### OR and AND type modifiers
 
 You can use `&` and `|` to join string types together, to form AND and OR chains of allowed types. This allows you to compose together more complex types like `number | string` or `date | number | null` or `string && custom-checker`
 
@@ -657,23 +478,23 @@ check(123, "str|num"); // No error.
 check("a", "str|num"); // No error.
 
 // Fail.
-check(null, "str|num"); // Throws ValueError "Must be string or number (received null)"
-check(null, "str|num|bool|func|obj"); // Throws ValueError "Must be string or number or boolean or function or object (received null)"
+check(null, "str|num"); // Throws ValueError 'Must be string or number (received null)'
+check(null, "str|num|bool|func|obj"); // Throws ValueError 'Must be string or number or boolean or function or object (received null)'
 ```
 
 `&` is used to create an AND type, meaning the value must pass _all_ of the checks to be valid. This is primarily useful for custom checkers e.g. `lower & username-unique`.
 
 ```js
 // Add a checker that confirms a string contains the word "cat"
-add("catty", v => v.toLowerCase().indexOf("cat") >= 0);
+add("myapp-catty", v => v.toLowerCase().indexOf("cat") >= 0);
 
 // Pass.
-check("this cat is crazy!", "lower & catty"); // No error.
-check("THIS CAT IS CRAZY", "upper & catty"); // No error.
+check("this cat is crazy!", "lower & myapp-catty"); // No error.
+check("THIS CAT IS CRAZY", "upper & myapp-catty"); // No error.
 
 // Fail.
-check("THIS CAT IS CRAZY", "lower & catty"); // Throws ValueError "Must be lowercase string and catty"
-check("THIS DOG IS CRAZY", "string & catty"); // Throws ValueError "Must be string and catty"
+check("THIS CAT IS CRAZY", "lower & myapp-catty"); // Throws ValueError 'Must be lowercase string and catty'
+check("THIS DOG IS CRAZY", "string & myapp-catty"); // Throws ValueError 'Must be string and catty'
 ```
 
 Note: Built in checkers like `lower` or `int+` already check the basic type of a value (e.g. string and number), so there's no need to use `string & lower` or `number & int+` — internally the value will be checked twice. Spaces around the `&` or `|` are optional.
@@ -688,176 +509,6 @@ check("", "(int & truthy) | (str & falsy)"); // No error.
 check(12, "(int & truthy) | (str & falsy)"); // No error.
 ```
 
-### Constructor and constant types
-
-For convenience some constructors (e.g. `String`) and constants (e.g. `null`) can be used as types in `args()` and `check()`. The following built-in objects and constants are supported:
-
-| Type        | Description                  |
-|-------------|------------------------------|
-| `Boolean`   | Same as **'boolean'** type   |
-| `String`    | Same as **'string'** type    |
-| `Number`    | Same as **'number'** type    |
-| `true`      | Same as **'true'** type      |
-| `false`     | Same as **'false'** type     |
-| `null`      | Same as **'null'** type      |
-| `undefined` | Same as **'undefined'** type |
-
-You can pass in _any_ class name, and Blork will check the value using `instanceof` and generate a corresponding error message if the type doesn't match.
-
-Using `Object` and `Array` constructors will work also and will allow any object that is `instanceof Object` or `instanceof Array`. _Note: this is not the same as e.g. the `'object'` and `'array'` string types, which only allow **plain** objects and arrays._
-
-```js
-// Pass.
-check(true, Boolean); // No error.
-check("abc", String); // No error.
-check(123, Number); // No error.
-check(new Date, Date); // No error.
-check(new MyClass, MyClass); // No error.
-check(Promise.resolved(true), Promise); // No error.
-check([true, true, false], [Boolean]); // No error.
-check({ name: 123 }, { name: Number }); // No error.
-
-// Fail.
-check("abc", Boolean); // Throws ValueError "Must be true or false (received "abc")"
-check("abc", String); // Throws ValueError "Must be string (received "abc")"
-check("abc", String, "myVar"); // Throws ValueError "myVar: Must be string (received "abc")"
-check(new MyClass, OtherClass); // Throws ValueError "Must ben instance of OtherClass (received MyClass)"
-check({ name: 123 }, { name: String }); // Throws ValueError "name: Must be string (received 123)"
-check({ name: 123 }, { name: String }, "myObj"); // Throws ValueError "myObj[name]: Must be string (received 123)"
-```
-
-### Object literal type
-
-To check the types of object properties, use a literal object as a type. You can also deeply nest these properties and the types will be checked recursively and will generate useful debuggable error messages.
-
-_Note: it is fine for objects to contain additional properties that don't have a type specified._
-
-```js
-// Pass.
-check({ name: "abc" }, { name: "str" }); // No error.
-check({ name: "abc" }, { name: "str?", age: "num?" }); // No error.
-check({ name: "abc", additional: true }, { name: "str" }); // Throws nothing (additional properties are fine).
-
-// Fail.
-check({ age: "apple" }, { age: "num" }); // Throws ValueError "age: Must be number (received "apple")"
-check({ size: { height: 10, width: "abc" } }, { size: { height: "num", width: "num" } }); // Throws ValueError "size[width]: Must be number (received "abc")"
-```
-
-To check that the type of **any** properties conform to a single type, use the `VALUES` symbol and create a `[VALUES]` key. This allows you to check objects that don't have known keys (e.g. from user generated data). This is similar to how indexer keys work in Flow or Typescript.
-
-```js
-import { check, VALUES } from "blork";
-
-// Pass.
-check(
-	{ a: 1, b: 2, c: 3 },
-	{ [VALUES]: "num" }
-); // No error.
-check(
-	{ name: "Dan", a: 1, b: 2, c: 3 },
-	{ name: "str", [VALUES]: "num" }
-); // No error.
-
-// Fail.
-check(
-	{ a: 1, b: 2, c: "abc" },
-	{ [VALUES]: "num" }
-); // Throws ValueError "c: Must be number..."
-check(
-	{ name: "Dan", a: 1, b: 2, c: 3 },
-	{ name: "str", [VALUES]: "bool" }
-); // Throws ValueError "a: Must be boolean..."
-```
-
-You can use this functionality with the `undefined` type to ensure objects **do not** contain additional properties (object literal types by default are allowed to contain additional properties).
-
-```js
-// Pass.
-check(
-	{ name: "Carl" },
-	{ name: "str", [VALUES]: "undefined" }
-); // No error.
-
-// Fail.
-check(
-	{ name: "Jess", another: 28 },
-	{ name: "str", [VALUES]: "undefined" }
-); // Throws ValueError "another: Must be undefined..."
-```
-
-To check that the keys of any additional properties conform to a single type, use the `KEYS` symbol and create a `[KEYS]` key. This allows you to ensure that keys conform to a specific string type, e.g. **camelCase**, **kebab-case** or **UPPERCASE** (see string types above).
-
-```js
-import { check, VALUES } from "blork";
-
-// Pass.
-check({ MYVAL: 1 }, { [KEYS]: "upper" }); // UPPERCASE keys — no error.
-check({ myVal: 1 }, { [KEYS]: "camel" }); // camelCase keys — no error.
-check({ MyVal: 1 }, { [KEYS]: "pascal" }); // PascalCase keys — no error.
-check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
-
-// Fail.
-check({ MYVAL: 1 }, { [KEYS]: "upper" }); // UPPERCASE keys — no error.
-check({ myVal: 1 }, { [KEYS]: "camel" }); // camelCase keys — no error.
-check({ MyVal: 1 }, { [KEYS]: "pascal" }); // PascalCase keys — no error.
-check({ my-val: 1 }, { [KEYS]: "kebab" }); // kebab-case keys — no error.
-```
-
-Normally object literal types check that the object is a **plain object**. If you wish to allow the object to be a different object (in order to check specific keys on that object at the same time), use the `CLASS` symbol and create a `[CLASS]` key.
-
-```js
-import { check, CLASS } from "blork";
-
-// Make a fancy new class.
-class MyClass {
-	constructor () {
-		this.num = 123;
-	}
-}
-
-// Pass.
-check(
-	new MyClass,
-	{ num: 123, [CLASS]: MyClass }
-); // No error.
-
-// Fail.
-check(
-	{ num: 123, },
-	{ num: 123, [CLASS]: MyClass }
-); // Throws ValueError "Must be instance of MyClass..."
-```
-
-### Array literal type
-
-To check an array where all items conform to a specific type, pass an array as the type. Arrays and objects can be deeply nested to check types recursively.
-
-```js
-// Pass.
-check(["abc", "abc"], ["str"]); // No error.
-check([123, 123], ["num"]); // No error.
-check([{ names: ["Alice", "John"] }], [{ names: ["str"] }]); // No error.
-
-// Fail.
-check(["abc", "abc", 123], ["str"]); // Throws ValueError "Array[2]: Must be number (received 123)"
-check(["abc", "abc", 123], ["number"]); // Throws ValueError "Array[0]: Must be string (received "abc")"
-```
-
-### Array tuple type
-
-Similarly to check the format of tuples pass an array with two or more items as the type. _If two or more types are in an type array, it is considered a tuple type and will be rejected if it does not conform exactly to the tuple._
-
-```js
-// Pass.
-check([123, "abc"], ["num", "str"]); // No error.
-check([123, "abc"], ["num", "str", "str?"]); // No error.
-
-// Fail.
-check([123], ["num", "str"]); // Throws ValueError "Array[1]: Must be string (received undefined)"
-check([123, 123], ["num", "str"]); // Throws ValueError "Array[1]: Must be string (received 123)"
-check([123, "abc", true], ["num", "str"]); // Throws ValueError "Array: Too many items (expected 2 but received 3)"
-```
-
 ## Contributing
 
 Please see (CONTRIBUTING.md)
@@ -865,10 +516,16 @@ Please see (CONTRIBUTING.md)
 ## Roadmap and ideas
 
 - [ ] Support `@decorator` syntax for class methods
-- [ ] Allow `args()` to accept a string type e.g. in the format `"str, num, bool"`
 
 ## Changelog
 
+- 9.0.0
+  - [Significant major changes](https://github.com/dhoulb/blork/releases/tag/8.3.2) primarily to reduce bundle size
+  - Remove ability to use a literal array or object as the type in `check()`
+  - Remove ability to use a literal function (as an `instanceof` check) in `check()`
+  - Remove ability to use constructors (e.g. `Number`) as a type in `check()`
+  - Remove `blork()` function that created an independent instance of Blork
+  - Remove `throws()` function (use third argument of `check()` instead)
 - 8.3.0
   - Add an error string checker, e.g. `check(new TypeError(), "error")`
   - When ValueError auto-prefixes the name of the calling function, it skips anonymous functions in the stack

@@ -1,9 +1,9 @@
-const BlorkError = require("../../lib/errors/BlorkError");
-const { checker } = require("../../lib/exports");
+const { checker, BlorkError } = require("../lib/exports");
 
 // Tests.
-describe("exports.checker()", () => {
+describe("checker()", () => {
 	test("Getting and using a checker works correctly", () => {
+		expect(typeof checker("string")).toBe("function");
 		expect(checker("string")("abc")).toBe(true);
 		expect(checker("string")(123)).toBe(false);
 	});
@@ -13,8 +13,6 @@ describe("exports.checker()", () => {
 	});
 	test("Throw BlorkError if asking for non-existant checker", () => {
 		expect(() => checker("abc")).toThrow(BlorkError);
-		expect(() => checker("abc")).toThrow(/expect\(\):/);
-		expect(() => checker("abc")).toThrow(/Checker not found/);
-		expect(() => checker("abc")).toThrow(/"abc"/);
+		expect(() => checker("abc")).toThrow('checker(): type: Checker not found (received "abc")');
 	});
 });

@@ -1,7 +1,7 @@
-const modify = require("../../lib/helpers/modify");
+const modifyChecker = require("../../lib/helpers/modifyChecker");
 
 // Tests.
-describe("modify()", () => {
+describe("modifyChecker()", () => {
 	test("Checkers with start are created correctly", () => {
 		const callback = jest.fn(() => "Yep");
 		const checker = () => {};
@@ -11,7 +11,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "++abc", checker);
+		const result = modifyChecker(modifiers, "++abc", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
 		expect(result).toBe("Yep");
 	});
@@ -24,7 +24,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "abc??", checker);
+		const result = modifyChecker(modifiers, "abc??", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
 		expect(result).toBe("Yep");
 	});
@@ -38,7 +38,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "{abc}", checker);
+		const result = modifyChecker(modifiers, "{abc}", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
 		expect(result).toBe("Yep");
 	});
@@ -52,7 +52,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "'abc'", checker);
+		const result = modifyChecker(modifiers, "'abc'", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
 		expect(result).toBe("Yep");
 	});
@@ -65,7 +65,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "abc | def", checker);
+		const result = modifyChecker(modifiers, "abc | def", checker);
 		expect(callback).toHaveBeenCalledWith(["abc", "def"], checker);
 		expect(result).toBe("Yep");
 	});
@@ -79,7 +79,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "abc<123>", checker);
+		const result = modifyChecker(modifiers, "abc<123>", checker);
 		expect(callback).toHaveBeenCalledWith("abc<123>".match(match), checker);
 		expect(result).toBe("Yep");
 	});
@@ -91,7 +91,7 @@ describe("modify()", () => {
 				callback
 			}
 		];
-		const result = modify(modifiers, "abc<123>", checker);
+		const result = modifyChecker(modifiers, "abc<123>", checker);
 		expect(result).toBe(undefined);
 	});
 });

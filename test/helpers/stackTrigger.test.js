@@ -1,7 +1,7 @@
-const cause = require("../../lib/helpers/cause");
+const stackTrigger = require("../../lib/helpers/stackTrigger");
 
 // Tests.
-describe("cause()", () => {
+describe("stackTrigger()", () => {
 	describe("Chrome, Node, IE, Edge", () => {
 		test("Correct frame is returned", () => {
 			// Full stack from a random Blork error.
@@ -10,13 +10,13 @@ describe("cause()", () => {
 				"    at throwError (classes/Blorker.js:41:83)",
 				"    at runChecker (classes/Blorker.js:21:77)",
 				"    at Blorker._check (classes/Blorker.js:261:109)",
-				"    at Blorker$check (classes/Blorker.js:118:31)",
+				"    at blorker$check (classes/Blorker.js:118:31)",
 				"    at MyClass.name (MyClass.js:8:4)",
 				"    at myFunc (helpers/myFunc.js:129:432)"
 			];
 
-			// Get the cause stack frame from the frames.
-			const c = cause(stack.join("\n"));
+			// Get the stackTrigger stack frame from the frames.
+			const c = stackTrigger(stack.join("\n"), "blorker$");
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -37,7 +37,7 @@ describe("cause()", () => {
 				"    at throwError (classes/Blorker.js:41:83)",
 				"    at runChecker (classes/Blorker.js:21:77)",
 				"    at Blorker._check (classes/Blorker.js:261:109)",
-				"    at Blorker$check (classes/Blorker.js:118:31)",
+				"    at blorker$check (classes/Blorker.js:118:31)",
 				"    at <anonymous>:1:3", // Anonymous.
 				"    at <anonymous>:1", // Anonymous.
 				"    at <anonymous>", // Anonymous.
@@ -45,8 +45,8 @@ describe("cause()", () => {
 				"    at myFunc (helpers/myFunc.js:129:432)"
 			];
 
-			// Get the cause stack frame from the frames.
-			const c = cause(stack.join("\n"));
+			// Get the stackTrigger stack frame from the frames.
+			const c = stackTrigger(stack.join("\n"), "blorker$");
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -64,7 +64,7 @@ describe("cause()", () => {
 			// Full stack from a random Blork error.
 			const stack = [
 				"Error",
-				"    at Object.test (functions/cause.test.js:8:4)",
+				"    at Object.test (functions/stackTrigger.test.js:8:4)",
 				"    at Object.asyncFn (node_modules/jest-jasmine2/build/jasmine_async.js:129:432)",
 				"    at resolve (node_modules/jest-jasmine2/build/queue_runner.js:51:12)",
 				"    at new Promise (<anonymous>)",
@@ -74,13 +74,13 @@ describe("cause()", () => {
 				"    at process._tickCallback (internal/process/next_tick.js:182:7)"
 			];
 
-			// Get the cause stack frame from the frames.
-			const c = cause(stack.join("\n"));
+			// Get the stackTrigger stack frame from the frames.
+			const c = stackTrigger(stack.join("\n"), "blorker$");
 			expect(c.function).toBe("Object.test()");
-			expect(c.file).toBe("functions/cause.test.js");
+			expect(c.file).toBe("functions/stackTrigger.test.js");
 			expect(c.line).toBe(8);
 			expect(c.column).toBe(4);
-			expect(c.original).toBe("    at Object.test (functions/cause.test.js:8:4)");
+			expect(c.original).toBe("    at Object.test (functions/stackTrigger.test.js:8:4)");
 			expect(c.stack).toBe(stack.join("\n"));
 		});
 	});
@@ -91,13 +91,13 @@ describe("cause()", () => {
 				"throwError@classes/Blorker.js:41:83",
 				"runChecker@classes/Blorker.js:21:77",
 				"Blorker._check@classes/Blorker.js:261:109",
-				"Blorker$check@classes/Blorker.js:118:31",
+				"blorker$check@classes/Blorker.js:118:31",
 				"MyClass.name@MyClass.js:8:4",
 				"myFunc@helpers/myFunc.js:129:432"
 			];
 
-			// Get the cause stack frame from the frames.
-			const c = cause(stack.join("\n"));
+			// Get the stackTrigger stack frame from the frames.
+			const c = stackTrigger(stack.join("\n"), "blorker$");
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -111,15 +111,15 @@ describe("cause()", () => {
 				"throwError@classes/Blorker.js:41:83",
 				"runChecker@classes/Blorker.js:21:77",
 				"Blorker._check@classes/Blorker.js:261:109",
-				"Blorker$check@classes/Blorker.js:118:31",
+				"blorker$check@classes/Blorker.js:118:31",
 				"@file:///C:/example.html:16:13", // Anonymous.
 				"@debugger eval code:21:9", // Anonymous.
 				"MyClass.name@MyClass.js:8:4",
 				"myFunc@helpers/myFunc.js:129:432"
 			];
 
-			// Get the cause stack frame from the frames.
-			const c = cause(stack.join("\n"));
+			// Get the stackTrigger stack frame from the frames.
+			const c = stackTrigger(stack.join("\n"), "blorker$");
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -129,7 +129,7 @@ describe("cause()", () => {
 		});
 	});
 	test("Undefined is returned if stack is not valid", () => {
-		expect(cause(123)).toBe(undefined);
-		expect(cause("")).toBe(undefined);
+		expect(stackTrigger(123)).toBe(undefined);
+		expect(stackTrigger("")).toBe(undefined);
 	});
 });
