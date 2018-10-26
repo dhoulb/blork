@@ -76,8 +76,8 @@ describe("checkers", () => {
 		expect(mockCheck([], "array")).toBe(undefined);
 		expect(mockCheck([], "arr")).toBe(undefined);
 		expect(mockCheck({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined);
-		expect(mockCheck(arguments, "arguments")).toBe(undefined);
-		expect(mockCheck(arguments, "args")).toBe(undefined);
+		expect(mockCheck({ length: 0 }, "arguments")).toBe(undefined);
+		expect(mockCheck({ length: 0 }, "args")).toBe(undefined);
 		expect(mockCheck(new Date(), "date")).toBe(undefined);
 		expect(mockCheck(new Date(2080, 0, 1), "future")).toBe(undefined);
 		expect(mockCheck(new Date(1980, 0, 1), "past")).toBe(undefined);
