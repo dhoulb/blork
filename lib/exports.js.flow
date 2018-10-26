@@ -1,7 +1,7 @@
 // @flow
 
 // Types.
-type BlorkChecker = mixed => boolean;
+type BlorkChecker = any => boolean;
 
 // Errors.
 declare export class ValueError extends TypeError {
