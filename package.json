@@ -6,7 +6,10 @@
 	"author": "Dave Houlbrooke <dave@shax.com>",
 	"main": "lib/exports.js",
 	"engineStrict": true,
-	"engines": { "node": ">=8.0.0" },
+	"engines": {
+		"node": ">=8.0.0",
+		"yarn": ">=1.0.0"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/dhoulb/blork.git"
