@@ -1,6 +1,6 @@
 # Blork! Mini runtime type checking in Javascript
 
-[![Build Status](https://travis-ci.org/dhoulb/blork.svg?branch=master)](https://travis-ci.org/dhoulb/blork)
+[![Travis CI](https://travis-ci.org/dhoulb/blork.svg?branch=master)](https://travis-ci.org/dhoulb/blork)
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![npm](https://img.shields.io/npm/dm/blork.svg)](https://www.npmjs.com/package/blork)
 
