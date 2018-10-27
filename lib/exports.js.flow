@@ -8,7 +8,7 @@ declare export class ValueError extends TypeError {
 	name: string;
 	message: string;
 	value: mixed;
-	constructor(message: string, value?: mixed): void;
+	constructor(message: string, value?: any): void;
 }
 declare export class BlorkError extends ValueError {}
 
