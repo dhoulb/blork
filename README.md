@@ -252,6 +252,12 @@ This section lists all types that are available in Blork. Types are strings made
 | `integer`, `int`                 | Integers (using **Number.isInteger()**)
 | `+integer`, `+int`               | Positive integers including zero
 | `-integer`, `-int`               | Negative integers including zero
+| `int8`, `byte`                   | 8-bit integer (-128 to 127)
+| `uint8`, `octet`                 | unsigned 8-bit integer (0 to 255)
+| `int16`, `short`                 | 16-bit integer (-32768 to 32767)
+| `uint16`, `ushort`               | unsigned 16-bit integer (0 to 65535)
+| `int32`, `long`                  | 32-bit integer (-2147483648 to 2147483647)
+| `uint32`, `ulong`                | unsigned 32-bit integer (0 to 4294967295)
 | `string`, `str`                  | Any strings (using **typeof**)
 | `alphabetic`                     | alphabetic string (non-empty and alphabetic only)
 | `numeric`                        | numeric strings (non-empty and numerals 0-9 only)
@@ -264,6 +270,7 @@ This section lists all types that are available in Blork. Types are strings made
 | `screaming`                      | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)
 | `kebab`, `slug`                  | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)
 | `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
+| `identifier`                     | JavaScript identifier names (string starting with **_**, **$**, or letter)
 | `function`, `func`               | Functions (using **instanceof Function**)
 | `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
 | `objectlike`                     | Any object (using **typeof && !null**)
@@ -281,6 +288,12 @@ This section lists all types that are available in Blork. Types are strings made
 | `past`                           | Instances of **Date** with a value in the past
 | `regex`, `regexp`                | Instances of **RegExp** (regular expressions)
 | `error`, `err`                   | Instances of **Error**
+| `evalerror`                      | Instances of **EvalError**
+| `rangeerror`                     | Instances of **RangeError**
+| `referenceerror`                 | Instances of **ReferenceError**
+| `syntaxerror`                    | Instances of **SyntaxError**
+| `typeerror`                      | Instances of **TypeError**
+| `urierror`                       | Instances of **URIError**
 | `symbol`                         | Value is **Symbol** (using **typeof**)
 | `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else)
 | `any`, `mixed`                   | Allow any value (transparently passes through with no error)

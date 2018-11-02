@@ -48,6 +48,18 @@ describe("checkers", () => {
 		expect(mockCheck(1, "+int")).toBe(undefined);
 		expect(mockCheck(-1, "-integer")).toBe(undefined);
 		expect(mockCheck(-1, "-int")).toBe(undefined);
+		expect(mockCheck(-128, "int8")).toBe(undefined);
+		expect(mockCheck(127, "byte")).toBe(undefined);
+		expect(mockCheck(0, "uint8")).toBe(undefined);
+		expect(mockCheck(255, "octet")).toBe(undefined);
+		expect(mockCheck(-32768, "int16")).toBe(undefined);
+		expect(mockCheck(32767, "short")).toBe(undefined);
+		expect(mockCheck(0, "uint16")).toBe(undefined);
+		expect(mockCheck(65535, "ushort")).toBe(undefined);
+		expect(mockCheck(-2147483648, "int32")).toBe(undefined);
+		expect(mockCheck(2147483647, "long")).toBe(undefined);
+		expect(mockCheck(0, "uint32")).toBe(undefined);
+		expect(mockCheck(4294967295, "ulong")).toBe(undefined);
 
 		// Strings.
 		expect(mockCheck("a", "string")).toBe(undefined);
@@ -64,6 +76,7 @@ describe("checkers", () => {
 		expect(mockCheck("my-var", "kebab")).toBe(undefined);
 		expect(mockCheck("my-var", "slug")).toBe(undefined);
 		expect(mockCheck("My-Var", "train")).toBe(undefined);
+		expect(mockCheck("$name", "identifier")).toBe(undefined);
 
 		// Objects.
 		expect(mockCheck(function() {}, "function")).toBe(undefined);
@@ -90,6 +103,12 @@ describe("checkers", () => {
 		expect(mockCheck(/[abc]+/g, "regex")).toBe(undefined);
 		expect(mockCheck(new Error("abc"), "err")).toBe(undefined);
 		expect(mockCheck(new TypeError("abc"), "error")).toBe(undefined);
+		expect(mockCheck(new EvalError("abc"), "evalerror")).toBe(undefined);
+		expect(mockCheck(new RangeError("abc"), "rangeerror")).toBe(undefined);
+		expect(mockCheck(new ReferenceError("abc"), "referenceerror")).toBe(undefined);
+		expect(mockCheck(new SyntaxError("abc"), "syntaxerror")).toBe(undefined);
+		expect(mockCheck(new TypeError("abc"), "typeerror")).toBe(undefined);
+		expect(mockCheck(new URIError("abc"), "urierror")).toBe(undefined);
 		expect(mockCheck(Symbol(), "symbol")).toBe(undefined);
 
 		// Other.
@@ -147,6 +166,18 @@ describe("checkers", () => {
 		expect(() => mockCheck(-1, "+int")).toThrow(TypeError);
 		expect(() => mockCheck(1, "-integer")).toThrow(TypeError);
 		expect(() => mockCheck(1, "-int")).toThrow(TypeError);
+		expect(() => mockCheck(-129, "int8")).toThrow(TypeError);
+		expect(() => mockCheck(128, "byte")).toThrow(TypeError);
+		expect(() => mockCheck(-1, "uint8")).toThrow(TypeError);
+		expect(() => mockCheck(256, "octet")).toThrow(TypeError);
+		expect(() => mockCheck(-32769, "int16")).toThrow(TypeError);
+		expect(() => mockCheck(32768, "short")).toThrow(TypeError);
+		expect(() => mockCheck(-1, "uint16")).toThrow(TypeError);
+		expect(() => mockCheck(65536, "ushort")).toThrow(TypeError);
+		expect(() => mockCheck(-2147483649, "int32")).toThrow(TypeError);
+		expect(() => mockCheck(2147483648, "long")).toThrow(TypeError);
+		expect(() => mockCheck(-1, "uint32")).toThrow(TypeError);
+		expect(() => mockCheck(4294967296, "ulong")).toThrow(TypeError);
 
 		// Strings.
 		expect(() => mockCheck(1, "string")).toThrow(TypeError);
@@ -163,6 +194,7 @@ describe("checkers", () => {
 		expect(() => mockCheck("MY-VAR", "kebab")).toThrow(TypeError);
 		expect(() => mockCheck("my-VAR", "slug")).toThrow(TypeError);
 		expect(() => mockCheck("my-var", "train")).toThrow(TypeError);
+		expect(() => mockCheck("*name", "identifier")).toThrow(TypeError);
 
 		// Objects.
 		expect(() => mockCheck({}, "function")).toThrow(TypeError);
@@ -189,6 +221,12 @@ describe("checkers", () => {
 		expect(() => mockCheck("/[abc]+/g", "regex")).toThrow(TypeError);
 		expect(() => mockCheck("abc", "err")).toThrow(TypeError);
 		expect(() => mockCheck(false, "error")).toThrow(TypeError);
+		expect(() => mockCheck(new RangeError("abc"), "evalerror")).toThrow(TypeError);
+		expect(() => mockCheck(new EvalError("abc"), "rangeerror")).toThrow(TypeError);
+		expect(() => mockCheck(new SyntaxError("abc"), "referenceerror")).toThrow(TypeError);
+		expect(() => mockCheck(new ReferenceError("abc"), "syntaxerror")).toThrow(TypeError);
+		expect(() => mockCheck(new URIError("abc"), "typeerror")).toThrow(TypeError);
+		expect(() => mockCheck(new TypeError("abc"), "urierror")).toThrow(TypeError);
 		expect(() => mockCheck("symbol", "symbol")).toThrow(TypeError);
 
 		// Other.
