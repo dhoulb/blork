@@ -552,94 +552,14 @@ check("", "(int & truthy) | (str & falsy)"); // No error.
 check(12, "(int & truthy) | (str & falsy)"); // No error.
 ```
 
-## Contributing
-
-Please see (CONTRIBUTING.md)
-
 ## Roadmap and ideas
 
 - [ ] Support `@decorator` syntax for class methods
 
+## Contributing
+
+See (CONTRIBUTING.md)
+
 ## Changelog
 
-- 9.0.0
-  - [Significant major changes](https://github.com/dhoulb/blork/releases/tag/8.3.2) primarily to reduce bundle size
-  - Add prefix string type and remove `prefix` parameter in `check()`, e.g. `check(name, "name: string")`
-  - Remove ability to use a literal array or object as the type in `check()`
-  - Remove ability to use a literal function (as an `instanceof` check) in `check()`
-  - Remove ability to use constructors (e.g. `Number`) as a type in `check()`
-  - Remove `blork()` function that created an independent instance of Blork
-  - Remove `throws()` function (use third argument of `check()` instead)
-  - Add Flow type declarations
-- 8.3.0
-  - Add an error string checker, e.g. `check(new TypeError(), "error")`
-  - When ValueError auto-prefixes the name of the calling function, it skips anonymous functions in the stack
-  - When ValueError auto-prefixes the name of the calling function, it doesn't if the prefix already includes a ': ' colon space.
-  - Add return string type modifier, e.g. `check(123, `return num`)` (changes error message to e.g. `Must return X`)
-- 8.2.0
-  - Add string string type, e.g. `"abc"`
-  - Add number string type, e.g. `1234`
-  - Object string type now accepts multiple props (separated by `,` commas)
-  - Add robust nested parenthesis handling in string types (no longer breaks on nested groups, objects, tuples)
-- 8.1.0
-  - Add min/max size constraints on types via e.g. `{4,8}` suffix
-- 8.0.0
-  - Remove `props()` functionality (bloat)
-  - Prepend function name to `ValueError` errors, e.g. `MyClass.myFunc(): Must be string...`
-  - Add `destack()` method that parses `Error.stack` across major browsers
-- 7.6.0
-  - Allow `prefix` and `error` arguments for `check()` and `args()`
-  - Add `assert()` function
-- 7.5.0
-  - Enable tuple arrays via `[type1, type2]` syntax
-- 7.4.0
-  - Make properties created with `props()` enumerable
-  - Return the original object from `props()` (for chaining)
-- 7.2.0
-  - Add grouping for string types via parentheses, e.g. `(str | num)`
-  - Add `empty` type to detect emptiness in strings, arrays, Map, Set, and objects
-  - Add `alphabetic`, `numeric` and `alphanumeric` string types for specific strings
-- 7.1.0
-  - Add object and array string modifiers (using `type[]`, `{type}` and `{ keyType: type }` syntax)
-- 7.0.0
-  - Add `VALUES`, `KEYS`, and `CLASS` symbol constants
-  - Remove `_any` key and use `VALUES` to provide the same functionality
-  - Add `KEYS` functionality to check type or case of object keys, e.g. camelCase or kebab-case
-  - Add `CLASS` functionality to check the class of an object
-  - Add string case checkers for e.g. variable names (kebab-case, camelCase, snake_case etc)
-  - `upper` and `lower` checkers work differently (all characters must be UPPERCASE/lowercase)
-  - Rename `int+`, `int-` checkers to `+int` and `-int`
-  - Add '+' modifier to check for non-empty values with any checker
-  - Remove hardcoded '+' checkers like `lower+`, `object+`
-  - Remove `uppercase` and `lowercase` checkers for consistency
-- 6.0.0
-  - Remove `prop()` function and add `props()` function instead (`prop()` was impossible to type with Flow)
-- 5.1.0
-  - Add `prop()` function that defines a locked object property that must match a Blork type
-- 5.0.0
-  - Change from symbol `[ANY]` key to `[VALUES]` key for indexer property (for convenience and better Flow compatibility)
-- 4.5.0
-  - Add `checker()` function to return the boolean checker function itself.
-- 4.4.0
-  - Add `json` checker to check for JSON-friendly values (null, true, false, finite numbers, strings, plain objects, plain arrays)
-- 4.3.0
-  - Add `circular` checker to check for objects with circular references
-  - Add `!` modifier to enable invert checking, e.g. `!num` (don't allow numbers) or `!circular` (don't allow circular references)
-- 4.2.2
-  - Use `.` dot notation in error message prefix when recursing into objects
-- 4.2.1
-  - Fix bug where optional types were throwing an incorrect error message
-- 4.2.0
-  - Rename `FormattedError` to `ValueError` (more descriptive and reusable name)
-  - Make `ValueError` the default error thrown by Blork (not ValueError)
-- 4.1.0
-  - Allow custom error to be set for custom checkers via `add()`
-  - Export `debug()` which allows any value to be converted to a string in a clean and clear format
-  - Export `format()` which takes three arguments (message, value, prefix) and returns a consistently and beautifully formatted error message.
-  - Export `FormattedError` which takes the same three arguments and applies `format()` so it always has beautiful errors
-  - Export `BlorkError` (which is thrown when you're using Blork wrong) for the purposes of checking thrown errors against it
-- 4.0.0
-  - Major internal rewrite with API kept _almost_ the same
-  - Add support for combining checkers with `|` and `&` syntax
-  - `check()` and `args()` no longer return anything (previously returned the number of passing values)
-  - Custom checkers should now return `boolean` (message/description for the checker can be passed in as third field to `add()`)
+See [Releases](https://github.com/dhoulb/blork/releases)
