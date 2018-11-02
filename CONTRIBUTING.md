@@ -2,7 +2,7 @@
 
 Contributions welcome! I'm happy to receive pull requests for new checkers (e.g. if you find you're using custom checkers for things you think should be built-in). 
 
-This tooling workflow exists to catch simple code mistakes that we all make and raise overall code quality. Once you learn to code against these tools, programming becomes a lot more fun!
+This tooling workflow exists to catch simple code mistakes (we all make em!) Once you learn to code against these tools programming becomes a lot more fun!
 
 ## Pull request rules
 
