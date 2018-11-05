@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Return types", () => {
 	test("Return types pass correctly", () => {
@@ -15,5 +15,9 @@ describe("Return types", () => {
 	});
 	test("Return type has highest precedence", () => {
 		expect(() => check(123, "return str+ | boolean")).toThrow("Must return (non-empty string) or boolean");
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "return notexist")).toThrow(BlorkError);
+		expect(() => check(1, "return notexist")).toThrow("Checker not found");
 	});
 });

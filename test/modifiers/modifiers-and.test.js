@@ -1,6 +1,6 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
-describe("Combined types", () => {
+describe("AND types", () => {
 	test("AND combined types pass correctly", () => {
 		expect(check(1, "number & integer")).toBe(undefined);
 		expect(check(1, "num & +int")).toBe(undefined);
@@ -24,5 +24,9 @@ describe("Combined types", () => {
 		expect(() => check(1, "string & string | string")).toThrow("Must be string and (string or string)");
 		expect(() => check(1, "string | string & string")).toThrow("Must be (string or string) and string");
 		expect(() => check(1, "{ string } | null")).toThrow("Must be (plain object like { string: string }) or null");
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "notexist & notexist")).toThrow(BlorkError);
+		expect(() => check(1, "notexist & notexist")).toThrow("Checker not found");
 	});
 });

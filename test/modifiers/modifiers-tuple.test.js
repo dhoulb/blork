@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Tuple types", () => {
 	test("Tuple types pass correctly", () => {
@@ -14,5 +14,9 @@ describe("Tuple types", () => {
 	});
 	test("Correct error message", () => {
 		expect(() => check(true, "[num, str]")).toThrow(/Must be plain array tuple like \[finite number, string\]/);
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "[notexist]")).toThrow(BlorkError);
+		expect(() => check(1, "[notexist]")).toThrow("Checker not found");
 	});
 });

@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Array types", () => {
 	test("Array types pass correctly", () => {
@@ -22,5 +22,9 @@ describe("Array types", () => {
 		expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow(
 			"Must be plain array containing ((non-empty string) or (non-empty plain array))"
 		);
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "notexist[]")).toThrow(BlorkError);
+		expect(() => check(1, "notexist[]")).toThrow("Checker not found");
 	});
 });

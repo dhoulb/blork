@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Optional types", () => {
 	test("Optional types pass correctly", () => {
@@ -19,5 +19,9 @@ describe("Optional types", () => {
 		expect(() => check("abc", "boolean?")).toThrow("Must be boolean or empty");
 		expect(() => check([true], "string?[]")).toThrow("Must be plain array containing (string or empty)");
 		expect(() => check([true], "(str | int)?")).toThrow("Must be (string or integer) or empty");
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "notexist?")).toThrow(BlorkError);
+		expect(() => check(1, "notexist?")).toThrow("Checker not found");
 	});
 });

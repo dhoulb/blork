@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Object types", () => {
 	describe("Any checkers", () => {
@@ -63,5 +63,13 @@ describe("Object types", () => {
 				/Must be plain object like { "name": integer, camelCase string: integer }/
 			);
 		});
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "{ string: notexist }")).toThrow(BlorkError);
+		expect(() => check(1, "{ string: notexist }")).toThrow("Checker not found");
+		expect(() => check(1, "{ notexist: number }")).toThrow(BlorkError);
+		expect(() => check(1, "{ notexist: number }")).toThrow("Checker not found");
+		expect(() => check(1, "{ notexist }")).toThrow(BlorkError);
+		expect(() => check(1, "{ notexist }")).toThrow("Checker not found");
 	});
 });

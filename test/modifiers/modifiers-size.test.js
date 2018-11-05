@@ -130,4 +130,8 @@ describe("Size types", () => {
 		expect(() => check(126, "number{a,}")).toThrow(BlorkError);
 		expect(() => check(126, "number{,b}")).toThrow(BlorkError);
 	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "notexist{0,}")).toThrow(BlorkError);
+		expect(() => check(1, "notexist{0,}")).toThrow("Checker not found");
+	});
 });

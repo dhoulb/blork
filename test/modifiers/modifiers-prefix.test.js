@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Prefix types", () => {
 	test("Prefix types pass correctly", () => {
@@ -26,5 +26,9 @@ describe("Prefix types", () => {
 			"age: Must be finite number with size between 121 and 122"
 		);
 		expect(() => check({ real: 123 }, "age: { 'real': 124 }")).toThrow("age: Must be plain object");
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "prefix: notexist")).toThrow(BlorkError);
+		expect(() => check(1, "prefix: notexist")).toThrow("Checker not found");
 	});
 });

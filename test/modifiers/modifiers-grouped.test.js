@@ -1,4 +1,4 @@
-const { check } = require("../../lib/exports");
+const { check, BlorkError } = require("../../lib/exports");
 
 describe("Grouped types", () => {
 	test("Grouped types pass correctly", () => {
@@ -34,5 +34,9 @@ describe("Grouped types", () => {
 		expect(check("abc", "((string))")).toBe(undefined);
 		expect(check(123, "(num | (string))")).toBe(undefined);
 		expect(check("abc", "(num | (string) | num)")).toBe(undefined);
+	});
+	test("Unknown checkers throw BlorkError", () => {
+		expect(() => check(1, "((notexist))")).toThrow(BlorkError);
+		expect(() => check(1, "((notexist))")).toThrow("Checker not found");
 	});
 });
