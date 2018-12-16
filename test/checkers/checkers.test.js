@@ -77,6 +77,11 @@ describe("checkers", () => {
 		expect(mockCheck("my-var", "slug")).toBe(undefined);
 		expect(mockCheck("My-Var", "train")).toBe(undefined);
 		expect(mockCheck("$name", "identifier")).toBe(undefined);
+		expect(mockCheck("abc/def", "path")).toBe(undefined);
+		expect(mockCheck("..\\abc\\def", "rel")).toBe(undefined);
+		expect(mockCheck("../abc/def", "relative")).toBe(undefined);
+		expect(mockCheck("/abc/def", "abs")).toBe(undefined);
+		expect(mockCheck("C:\\abc\\def", "absolute")).toBe(undefined);
 
 		// Objects.
 		expect(mockCheck(function() {}, "function")).toBe(undefined);
@@ -195,6 +200,11 @@ describe("checkers", () => {
 		expect(() => mockCheck("my-VAR", "slug")).toThrow(TypeError);
 		expect(() => mockCheck("my-var", "train")).toThrow(TypeError);
 		expect(() => mockCheck("*name", "identifier")).toThrow(TypeError);
+		expect(() => mockCheck(String.fromCharCode(0), "path")).toThrow(TypeError);
+		expect(() => mockCheck("/abc/def", "rel")).toThrow(TypeError);
+		expect(() => mockCheck("C:\\abc\\def", "relative")).toThrow(TypeError);
+		expect(() => mockCheck("../abc/def", "abs")).toThrow(TypeError);
+		expect(() => mockCheck("..\\abc\\def", "absolute")).toThrow(TypeError);
 
 		// Objects.
 		expect(() => mockCheck({}, "function")).toThrow(TypeError);
