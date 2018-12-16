@@ -7,16 +7,13 @@ describe("stackTrigger()", () => {
 			// Full stack from a random Blork error.
 			const stack = [
 				"ValueError: Must be finite string (received 123)",
-				"    at throwError (classes/Blorker.js:41:83)",
-				"    at runChecker (classes/Blorker.js:21:77)",
-				"    at Blorker._check (classes/Blorker.js:261:109)",
-				"    at blorker$check (classes/Blorker.js:118:31)",
+				"    at check (classes/Blorker.js:118:31)",
 				"    at MyClass.name (MyClass.js:8:4)",
 				"    at myFunc (helpers/myFunc.js:129:432)"
 			];
 
 			// Get the stackTrigger stack frame from the frames.
-			const c = stackTrigger(stack.join("\n"), "blorker$");
+			const c = stackTrigger(stack.join("\n"), ["check()"]);
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -34,10 +31,7 @@ describe("stackTrigger()", () => {
 			// Full stack from a random Blork error.
 			const stack = [
 				"ValueError: Must be finite string (received 123)",
-				"    at throwError (classes/Blorker.js:41:83)",
-				"    at runChecker (classes/Blorker.js:21:77)",
-				"    at Blorker._check (classes/Blorker.js:261:109)",
-				"    at blorker$check (classes/Blorker.js:118:31)",
+				"    at check (classes/Blorker.js:118:31)",
 				"    at <anonymous>:1:3", // Anonymous.
 				"    at <anonymous>:1", // Anonymous.
 				"    at <anonymous>", // Anonymous.
@@ -46,7 +40,7 @@ describe("stackTrigger()", () => {
 			];
 
 			// Get the stackTrigger stack frame from the frames.
-			const c = stackTrigger(stack.join("\n"), "blorker$");
+			const c = stackTrigger(stack.join("\n"), ["check()"]);
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -60,7 +54,7 @@ describe("stackTrigger()", () => {
 				].join("\n")
 			);
 		});
-		test("First frame is returned if no Blorker call is in the stack", () => {
+		test("First frame if no ignore functions are found in stack", () => {
 			// Full stack from a random Blork error.
 			const stack = [
 				"Error",
@@ -75,8 +69,8 @@ describe("stackTrigger()", () => {
 			];
 
 			// Get the stackTrigger stack frame from the frames.
-			const c = stackTrigger(stack.join("\n"), "blorker$");
-			expect(c.function).toBe("Object.test()");
+			const c = stackTrigger(stack.join("\n"), ["notInStack()"]);
+			expect(c.function).toBe("test()");
 			expect(c.file).toBe("functions/stackTrigger.test.js");
 			expect(c.line).toBe(8);
 			expect(c.column).toBe(4);
@@ -88,16 +82,13 @@ describe("stackTrigger()", () => {
 		test("Correct frame is returned", () => {
 			// Full stack from a random Blork error.
 			const stack = [
-				"throwError@classes/Blorker.js:41:83",
-				"runChecker@classes/Blorker.js:21:77",
-				"Blorker._check@classes/Blorker.js:261:109",
-				"blorker$check@classes/Blorker.js:118:31",
+				"check@classes/Blorker.js:118:31",
 				"MyClass.name@MyClass.js:8:4",
 				"myFunc@helpers/myFunc.js:129:432"
 			];
 
 			// Get the stackTrigger stack frame from the frames.
-			const c = stackTrigger(stack.join("\n"), "blorker$");
+			const c = stackTrigger(stack.join("\n"), ["check()"]);
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
@@ -108,10 +99,7 @@ describe("stackTrigger()", () => {
 		test("Anonymous functions are skipped over", () => {
 			// Full stack from a random Blork error.
 			const stack = [
-				"throwError@classes/Blorker.js:41:83",
-				"runChecker@classes/Blorker.js:21:77",
-				"Blorker._check@classes/Blorker.js:261:109",
-				"blorker$check@classes/Blorker.js:118:31",
+				"check@classes/Blorker.js:118:31",
 				"@file:///C:/example.html:16:13", // Anonymous.
 				"@debugger eval code:21:9", // Anonymous.
 				"MyClass.name@MyClass.js:8:4",
@@ -119,7 +107,7 @@ describe("stackTrigger()", () => {
 			];
 
 			// Get the stackTrigger stack frame from the frames.
-			const c = stackTrigger(stack.join("\n"), "blorker$");
+			const c = stackTrigger(stack.join("\n"), ["check()"]);
 			expect(c.function).toBe("MyClass.name()");
 			expect(c.file).toBe("MyClass.js");
 			expect(c.line).toBe(8);
