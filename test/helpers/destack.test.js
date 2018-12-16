@@ -47,7 +47,7 @@ describe("destack()", () => {
 		const stack2 = [
 			"Error",
 			"    at abc (<anonymous>:1:30)",
-			"    at def (<anonymous>:1:18)",
+			"    at Object.def (<anonymous>:1:18)",
 			"    at GHI.ghi (<anonymous>:2:9)",
 			"    at <anonymous>:1:3",
 			"    at <anonymous>:1",
@@ -55,7 +55,7 @@ describe("destack()", () => {
 		];
 		expect(destack(stack2.join("\n"))).toEqual([
 			{ function: "abc()", file: "", line: 1, column: 30, original: "    at abc (<anonymous>:1:30)" },
-			{ function: "def()", file: "", line: 1, column: 18, original: "    at def (<anonymous>:1:18)" },
+			{ function: "def()", file: "", line: 1, column: 18, original: "    at Object.def (<anonymous>:1:18)" },
 			{ function: "GHI.ghi()", file: "", line: 2, column: 9, original: "    at GHI.ghi (<anonymous>:2:9)" },
 			{ function: "", file: "", line: 1, column: 3, original: "    at <anonymous>:1:3" },
 			{ function: "", file: "", line: 1, column: null, original: "    at <anonymous>:1" },
@@ -74,14 +74,14 @@ describe("destack()", () => {
 		];
 		expect(destack(stack3.join("\n"))).toEqual([
 			{
-				function: "Object.test()",
+				function: "test()",
 				file: "/blork/test/functions/destack.test.js",
 				line: 21,
 				column: 15,
 				original: "    at Object.test (/blork/test/functions/destack.test.js:21:15)"
 			},
 			{
-				function: "Object.asyncFn()",
+				function: "asyncFn()",
 				file: "/jest-jasmine2/build/jasmine_async.js",
 				line: 129,
 				column: 432,
@@ -152,6 +152,15 @@ describe("destack()", () => {
 				line: 19,
 				column: null,
 				original: "a@file:///C:/example.html:19"
+			}
+		]);
+		expect(destack("Object.a@file:///C:/example.html:19")).toEqual([
+			{
+				function: "a()",
+				file: "file:///C:/example.html",
+				line: 19,
+				column: null,
+				original: "Object.a@file:///C:/example.html:19"
 			}
 		]);
 		expect(destack("@debugger eval code:21:9")).toEqual([
