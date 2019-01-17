@@ -77,6 +77,11 @@
 			"valid-jsdoc": 2
 		}
 	},
+	"eslintIgnore": [
+		"/node_modules/",
+		"/coverage/",
+		"**/*.js.flow"
+	],
 	"prettier": {
 		"tabWidth": 4,
 		"useTabs": true,
