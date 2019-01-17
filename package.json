@@ -30,7 +30,8 @@
 		"jest": "jest --coverage",
 		"lint": "eslint ./",
 		"fix": "eslint --fix ./",
-		"test": "yarn lint && yarn jest"
+		"test": "yarn lint && yarn jest",
+		"publish": "semantic-release"
 	},
 	"husky": {
 		"hooks": {
