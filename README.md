@@ -10,6 +10,32 @@ A mini type checker for locking down the external edges of your code. Mainly for
 
 Blork is fully unit tested and 100% covered (if you're into that!). Heaps of love has been put into the _niceness_ and consistency of error messages, so hopefully you'll enjoy that too.
 
+## Contents
+
+- [Installation](#installation)
+- [Basic usage](#basic-usage)
+	- [check(): Check individual values](#check-check-individual-values)
+	- [add(): Add a custom checker type](#add-add-a-custom-checker-type)
+	- [checker(): Return a checker function](#checker-return-a-checker-function)
+	- [debug(): Debug any value as a string](#debug-debug-any-value-as-a-string)
+	- [ValueError: extensible TypeError for debugging](#valueerror-extensible-typeerror-for-debugging)
+- [Reference](#reference)
+	- [Type identifiers](#type-identifiers)
+	- [Literal types](#literal-types)
+	- [Type modifiers](#type-modifiers)
+	- [Array type modifier](#array-type-modifier)
+	- [Tuple type modifier](#tuple-type-modifier)
+	- [Object type modifier](#object-type-modifier)
+	- [Optional type modifier](#optional-type-modifier)
+	- [Non-empty type modifier](#non-empty-type-modifier)
+	- [Size type modifier](#size-type-modifier)
+	- [Inverted type modifier](#inverted-type-modifier)
+	- [Prefix and return type modifiers](#prefix-and-return-type-modifiers)
+	- [OR and AND type modifiers](#or-and-and-type-modifiers)
+- [Roadmap and ideas](#roadmap-and-ideas)
+- [Contributing](#contributing)
+- [Changelog](#changelog)
+
 ## Installation
 
 ```sh
@@ -55,7 +81,7 @@ check(null, "number?"); // Throws ValueError 'Must be finite number (received nu
 
 // Inverted types.
 check(123, "!str"); // No error.
-check(123, "!int"); // Throws ValueError 'Must be not integer (received 123)'
+check(123, "!int"); // Throws ValueError 'Must be anything except integer (received 123)'
 
 // Combined OR types.
 check(1234, "int | str"); // No error.
@@ -161,6 +187,8 @@ check("A DOG SAT ON THE MAT", "upper+ & catty"); // Throws ValueError 'Must be n
 
 Retrieve any Blork checker that can be used elsewhere to check the boolean truthyness of a value.
 
+`checker()` accepts one argument: the type string for the checker function you want to return.
+
 ```js
 import { checker } from "blork";
 
@@ -175,9 +203,11 @@ isNonEmptyString(84); // false
 
 ### debug(): Debug any value as a string
 
-Blork exposes its debugger helper function `debug()`, which it uses to format error messages correctly. `debug()` accepts any argument and will return a clear string interpretation of the value. 
+Blork exposes its debugger helper function `debug()`, which it uses to format error messages correctly. `debug()` accepts any argument and will return a clear string interpretation of the value.
 
 `debug()` deals well with large and nested objects/arrays by inserting linebreaks and tabs if line length would be unreasonable. Output is also kept cleanish by only debugging 3 levels deep, truncating long strings, and not recursing into circular references.
+
+`debug()` accepts one argument: the value to be debugged as a string.
 
 ```js
 import { debug } from "blork";
@@ -203,14 +233,14 @@ debug(new MyClass()); // Returns `MyClass {}`
 debug(new class {}()); // Returns `anonymous class {}`
 ```
 
-### ValueError: extensible TypeError designed for debugging
+### ValueError: extensible TypeError for debugging
 
 Internally, when there's a problem with a value, Blork will throw a `ValueError`. This value extends `TypeError` and standardises error message formats, so errors are consistent and provide the detail a developer should need to debug the issue error quickly and easily.
 
-It accepts three values:
+`new ValueError()` accepts two arguments:
 
-1. `message` The error message describing the issue with the value, e.g. `"Must be string"`
-2. `value` The actual value that was incorrect so a debugged version of this value can appear in the error message, e.g. `(received 123)`
+1. `message` The error describing what is wrong with the value, e.g. `"Must be string"`
+2. `value` The invalid value so it can appear in the error message, e.g. `(received 123)`
 
 ```js
 import { ValueError } from "blork";
@@ -228,101 +258,114 @@ myFunc(123); // Throws ValueError 'myFunc(): name: Must be a string (received 12
 
 ## Reference
 
+Types are strings made up of a type identifier (e.g. `"promise"` or `"integer"`) possibly combined with a modifier (e.g. `"?"` or `"!"`).
+
 ### Type identifiers
 
-This section lists all types that are available in Blork. Types are strings made up of a type identifier (e.g. `"promise"` or `"integer"`) possibly combined with a modifier (e.g. `"?"` or `"!"`).
+This section lists all types identifiers that are built into Blork.
 
-| Type string                      | Description
-|----------------------------------|------------
-| `primitive`                      | Any **primitive** value (undefined, null, booleans, strings, finite numbers)
-| `null`                           | Value is **null**
-| `undefined`, `undef`, `void`     | Value is **undefined**
-| `defined`, `def`                 | Value is **not undefined**
-| `boolean`, `bool`                | Value is **true** or **false**
-| `true`                           | Value is **true**
-| `false`                          | Value is **false**
-| `truthy`                         | Any truthy values (i.e. **== true**)
-| `falsy`                          | Any falsy values (i.e. **== false**)
-| `zero`                           | Value is **0**
-| `one`                            | Value is **1**
-| `nan`                            | Value is **NaN**
-| `number`, `num`                  | Any numbers except NaN/Infinity (using **Number.isFinite()**)
-| `+number`, `+num`,               | Numbers more than or equal to zero
-| `-number`, `-num`                | Numbers less than or equal to zero
-| `integer`, `int`                 | Integers (using **Number.isInteger()**)
-| `+integer`, `+int`               | Positive integers including zero
-| `-integer`, `-int`               | Negative integers including zero
-| `int8`, `byte`                   | 8-bit integer (-128 to 127)
-| `uint8`, `octet`                 | unsigned 8-bit integer (0 to 255)
-| `int16`, `short`                 | 16-bit integer (-32768 to 32767)
-| `uint16`, `ushort`               | unsigned 16-bit integer (0 to 65535)
-| `int32`, `long`                  | 32-bit integer (-2147483648 to 2147483647)
-| `uint32`, `ulong`                | unsigned 32-bit integer (0 to 4294967295)
-| `string`, `str`                  | Any strings (using **typeof**)
-| `alphabetic`                     | alphabetic string (non-empty and alphabetic only)
-| `numeric`                        | numeric strings (non-empty and numerals 0-9 only)
-| `alphanumeric`                   | alphanumeric strings (non-empty and alphanumeric only)
-| `lower`                          | lowercase strings (non-empty and lowercase alphabetic only)
-| `upper`                          | UPPERCASE strings (non-empty and UPPERCASE alphabetic only)
-| `camel`                          | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)
-| `pascal`                         | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)
-| `snake`                          | snake_case strings (non-empty alphanumeric lowercase)
-| `screaming`                      | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)
-| `kebab`, `slug`                  | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)
-| `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)
-| `identifier`                     | JavaScript identifier names (string starting with **_**, **$**, or letter)
-| `path`                           | Valid filesystem path (e.g. "abc/def")
-| `absolute`, `abs`                | Valid absolute path (e.g. "/abc/def" or "C:\abd\def")
-| `relative`, `rel`                | Valid relative path (e.g. "../abc/def" or "..\abd\def")
-| `function`, `func`               | Functions (using **instanceof Function**)
-| `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)
-| `objectlike`                     | Any object (using **typeof && !null**)
-| `iterable`                       | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)
-| `circular`                       | Objects with one or more _circular references_ (use `!circular` to disallow circular references)
-| `array`, `arr`                   | Plain arrays (using **instanceof Array** and constructor check)
-| `arraylike`, `arguments`, `args` | Array-like objects (any object with numeric **.length** property, e.g. the **arguments** object)
-| `map`                            | Instances of **Map**
-| `weakmap`                        | Instances of **WeakMap**
-| `set`                            | Instances of **Set**
-| `weakset`                        | Instances of **WeakSet**
-| `promise`                        | Instances of **Promise**
-| `date`                           | Instances of **Date**
-| `future`                         | Instances of **Date** with a value in the future
-| `past`                           | Instances of **Date** with a value in the past
-| `regex`, `regexp`                | Instances of **RegExp** (regular expressions)
-| `error`, `err`                   | Instances of **Error**
-| `evalerror`                      | Instances of **EvalError**
-| `rangeerror`                     | Instances of **RangeError**
-| `referenceerror`                 | Instances of **ReferenceError**
-| `syntaxerror`                    | Instances of **SyntaxError**
-| `typeerror`                      | Instances of **TypeError**
-| `urierror`                       | Instances of **URIError**
-| `symbol`                         | Value is **Symbol** (using **typeof**)
-| `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else)
-| `any`, `mixed`                   | Allow any value (transparently passes through with no error)
-| `json`, `jsonable`               | Values that can be successfully converted to JSON _and back again!_ (null, true, false, finite numbers, strings, plain objects, plain arrays)
+| Type string                      | Description                                                                                                                                   |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `primitive`                      | Value is any **primitive** value (undefined, null, booleans, strings, finite numbers)                                                         |
+| `null`                           | Value is **null**                                                                                                                             |
+| `undefined`, `undef`, `void`     | Value is **undefined**                                                                                                                        |
+| `defined`, `def`                 | Value is **not undefined**                                                                                                                    |
+| `boolean`, `bool`                | Value is **true** or **false**                                                                                                                |
+| `true`                           | Value is **true**                                                                                                                             |
+| `false`                          | Value is **false**                                                                                                                            |
+| `truthy`                         | Any truthy values (i.e. **== true**)                                                                                                          |
+| `falsy`                          | Any falsy values (i.e. **== false**)                                                                                                          |
+| `zero`                           | Value is **0**                                                                                                                                |
+| `one`                            | Value is **1**                                                                                                                                |
+| `nan`                            | Value is **NaN**                                                                                                                              |
+| `number`, `num`                  | Any numbers except NaN/Infinity (using **Number.isFinite()**)                                                                                 |
+| `+number`, `+num`,               | Numbers more than or equal to zero                                                                                                            |
+| `-number`, `-num`                | Numbers less than or equal to zero                                                                                                            |
+| `integer`, `int`                 | Integers (using **Number.isInteger()**)                                                                                                       |
+| `+integer`, `+int`               | Positive integers including zero                                                                                                              |
+| `-integer`, `-int`               | Negative integers including zero                                                                                                              |
+| `int8`, `byte`                   | 8-bit integer (-128 to 127)                                                                                                                   |
+| `uint8`, `octet`                 | unsigned 8-bit integer (0 to 255)                                                                                                             |
+| `int16`, `short`                 | 16-bit integer (-32768 to 32767)                                                                                                              |
+| `uint16`, `ushort`               | unsigned 16-bit integer (0 to 65535)                                                                                                          |
+| `int32`, `long`                  | 32-bit integer (-2147483648 to 2147483647)                                                                                                    |
+| `uint32`, `ulong`                | unsigned 32-bit integer (0 to 4294967295)                                                                                                     |
+| `string`, `str`                  | Any strings (using **typeof**)                                                                                                                |
+| `alphabetic`                     | alphabetic string (non-empty and alphabetic only)                                                                                             |
+| `numeric`                        | numeric strings (non-empty and numerals 0-9 only)                                                                                             |
+| `alphanumeric`                   | alphanumeric strings (non-empty and alphanumeric only)                                                                                        |
+| `lower`                          | lowercase strings (non-empty and lowercase alphabetic only)                                                                                   |
+| `upper`                          | UPPERCASE strings (non-empty and UPPERCASE alphabetic only)                                                                                   |
+| `camel`                          | camelCase strings e.g. variable/function names (non-empty alphanumeric with lowercase first letter)                                           |
+| `pascal`                         | PascalCase strings e.g. class names (non-empty alphanumeric with uppercase first letter)                                                      |
+| `snake`                          | snake_case strings (non-empty alphanumeric lowercase)                                                                                         |
+| `screaming`                      | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)                                                         |
+| `kebab`, `slug`                  | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)                                                                          |
+| `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)                                                                 |
+| `identifier`                     | JavaScript identifier names (string starting with **_**, **$**, or letter)                                                                    |
+| `path`                           | Valid filesystem path (e.g. "abc/def")                                                                                                        |
+| `absolute`, `abs`                | Valid absolute path (e.g. "/abc/def" or "C:\abd\def")                                                                                         |
+| `relative`, `rel`                | Valid relative path (e.g. "../abc/def" or "..\abd\def")                                                                                       |
+| `function`, `func`               | Functions (using **instanceof Function**)                                                                                                     |
+| `object`, `obj`                  | Plain objects (using **typeof && !null** and constructor check)                                                                               |
+| `objectlike`                     | Any object (using **typeof && !null**)                                                                                                        |
+| `iterable`                       | Objects with a **Symbol.iterator** method (that can be used with **for..of** loops)                                                           |
+| `circular`                       | Objects with one or more _circular references_ (use `!circular` to disallow circular references)                                              |
+| `array`, `arr`                   | Plain arrays (using **instanceof Array** and constructor check)                                                                               |
+| `arraylike`, `arguments`, `args` | Array-like objects (any object with numeric **.length** property, e.g. the **arguments** object)                                              |
+| `map`                            | Instances of **Map**                                                                                                                          |
+| `weakmap`                        | Instances of **WeakMap**                                                                                                                      |
+| `set`                            | Instances of **Set**                                                                                                                          |
+| `weakset`                        | Instances of **WeakSet**                                                                                                                      |
+| `promise`                        | Instances of **Promise**                                                                                                                      |
+| `date`                           | Instances of **Date**                                                                                                                         |
+| `future`                         | Instances of **Date** with a value in the future                                                                                              |
+| `past`                           | Instances of **Date** with a value in the past                                                                                                |
+| `regex`, `regexp`                | Instances of **RegExp** (regular expressions)                                                                                                 |
+| `error`, `err`                   | Instances of **Error**                                                                                                                        |
+| `evalerror`                      | Instances of **EvalError**                                                                                                                    |
+| `rangeerror`                     | Instances of **RangeError**                                                                                                                   |
+| `referenceerror`                 | Instances of **ReferenceError**                                                                                                               |
+| `syntaxerror`                    | Instances of **SyntaxError**                                                                                                                  |
+| `typeerror`                      | Instances of **TypeError**                                                                                                                    |
+| `urierror`                       | Instances of **URIError**                                                                                                                     |
+| `symbol`                         | Value is **Symbol** (using **typeof**)                                                                                                        |
+| `empty`                          | Value is empty (e.g. **v.length === 0** (string/array), **v.size === 0** (Map/Set), `Object.keys(v) === 0` (objects), or `!v` (anything else) |
+| `any`, `mixed`                   | Allow any value (transparently passes through with no error)                                                                                  |
+| `json`, `jsonable`               | Values that can be successfully converted to JSON _and back again!_ (null, true, false, finite numbers, strings, plain objects, plain arrays) |
+
+### Literal types
+
+If you want to validate a value against a literal string or number etc, you can use that string or number to make a type string:
+
+e.g. `9|10|11` for a value matching either number 9, 10, or 11; or `0|false|'no'` for a value matching either the number 0, literal false, or the string "no".
+
+| Format              | Description                                                           |
+|---------------------|-----------------------------------------------------------------------|
+| `"abc"`, `'abc'`    | Literal strings, e.g. `"Dave"` or `'Lucy'`                            |
+| `1234`              | Literal numbers, e.g. `1234` or `123.456` or `-12`                    |
+| `true`, `false`     | Literal boolean (note you can use `truthy` and `falsy` for soft equal |
+| `undefined`, `null` | Literal undefined and null                                            |
 
 ### Type modifiers
 
-String modifier types can be applied to any string identifier from the list above to modify that type's behaviour, e.g. `num?` for an optional number (also accepts undefined), `str[]` for an array of strings, or `["abc", 12|13]` for an array tuple containing the string "abc" and the number 12 or 13.
+Modifiers can be applied to any string identifier from the list above to modify that type's behaviour, e.g. `num?` for an optional number (also accepts undefined), `str[]` for an array of strings, or `["abc", 12|13]` for an array tuple containing the string "abc" and the number 12 or 13.
 
-| Format              | Description
-|---------------------|------------
-| `(type)`            | Grouped type, e.g. `(num | str)[]`
-| `type1 & type2`     | AND combined type, e.g. `str & upper`
-| `type1 | type2`     | OR combined type, e.g. `num | str`
-| `type[]`            | Array type (all array entries must match type)
-| `[type1, type2]`    | Tuple type (must match tuple exactly)
-| `{ type }`          | Object value type (all own props must match type
-| `{ keyType: type }` | Object key:value type (keys and own props must match types)
-| `!type`             | Inverted type (opposite is allowed), e.g. `!str`
-| `type?`             | Optional type (allows type or `undefined`), e.g. `str?`
-| `type+`             | Non-empty type, e.g. `str+` or `num[]+`
-| `type{1,2}`         | Size type, e.g. `str{5}` or `arr{1,6}` or `map{12,}` or `set{,6}`
-| `"type"`            | String literal type, e.g. `"Dave"` or `'Lucy'`
-| `1234`              | Number literal type, e.g. `1234` or `123.456`
-| `return type`       | Changes error message from e.g. `Must be true` to `Must return true`
-| `prefix: type`      | Prepend prefix to error message, e.g. `name: Must be string` or `age: Must be integer`
+| Format              | Description                                                                            |
+|---------------------|----------------------------------------------------------------------------------------|
+| `(type)`            | Grouped type, e.g. `(num | str)[]`                                                     |
+| `type1 & type2`     | AND combined type, e.g. `str & upper`                                                  |
+| `type1 | type2`     | OR combined type, e.g. `num | str`                                                     |
+| `type[]`            | Array type (all array entries must match type)                                         |
+| `[type1, type2]`    | Tuple type (must match tuple exactly)                                                  |
+| `{ type }`          | Object value type (all own props must match type                                       |
+| `{ keyType: type }` | Object key:value type (keys and own props must match types)                            |
+| `!type`             | Inverted type (opposite is allowed), e.g. `!str`                                       |
+| `type?`             | Optional type (allows type or `undefined`), e.g. `str?`                                |
+| `type+`             | Non-empty type, e.g. `str+` or `num[]+`                                                |
+| `type{1,2}`         | Size type, e.g. `str{5}` or `arr{1,6}` or `map{12,}` or `set{,6}`                      |
+| `return type`       | Changes error message from e.g. `Must be true` to `Must return true`                   |
+| `prefix: type`      | Prepend prefix to error message, e.g. `name: Must be string` or `age: Must be integer` |
 
 ### Array type modifier
 
