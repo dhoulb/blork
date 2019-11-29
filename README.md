@@ -1,9 +1,9 @@
 # Blork! Mini runtime type checking in Javascript
 
-[![Travis CI](https://travis-ci.com/dhoulb/blork.svg?branch=master)](https://travis-ci.com/dhoulb/blork)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat)](https://github.com/semantic-release/semantic-release)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![GitHub Actions](https://img.shields.io/github/workflow/status/dhoulb/blork/ci/master)](https://github.com/dhoulb/blork/actions)
 [![npm](https://img.shields.io/npm/dm/blork.svg)](https://www.npmjs.com/package/blork)
 
 A mini type checker for locking down the external edges of your code. Mainly for use in modules when you don"t know who'll be using the code. Minimal boilerplate code keeps your functions hyper readable and lets them be their beautiful minimal best selves (...or something?)
