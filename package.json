@@ -7,23 +7,18 @@
 	"main": "lib/exports.js",
 	"engineStrict": true,
 	"engines": {
-		"node": ">=8.0.0",
-		"yarn": ">=1.0.0"
+		"node": ">=8.0.0"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/dhoulb/blork.git"
 	},
-	"dependencies": {},
 	"devDependencies": {
-		"commitlint": "^7.2.1",
 		"eslint": "^5.7.0",
 		"eslint-config-prettier": "^3.1.0",
 		"eslint-plugin-prettier": "^3.0.0",
-		"husky": "^1.1.2",
 		"jest": "^23.6.0",
-		"prettier": "^1.10.2",
-		"semantic-release": "^15.10.5"
+		"prettier": "^1.10.2"
 	},
 	"scripts": {
 		"watch": "jest --watchAll",
@@ -32,12 +27,6 @@
 		"fix": "eslint --fix ./",
 		"test": "yarn lint && yarn jest",
 		"publish": "semantic-release"
-	},
-	"husky": {
-		"hooks": {
-			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-			"pre-commit": "yarn test"
-		}
 	},
 	"eslintConfig": {
 		"parserOptions": {
@@ -85,9 +74,7 @@
 	"prettier": {
 		"tabWidth": 4,
 		"useTabs": true,
-		"printWidth": 120,
-		"parser": "flow",
-		"proseWrap": "never"
+		"printWidth": 120
 	},
 	"jest": {
 		"testURL": "http://localhost",
@@ -100,5 +87,6 @@
 				"statements": 100
 			}
 		}
-	}
+	},
+	"dependencies": {}
 }
