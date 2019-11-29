@@ -39,7 +39,7 @@ Blork is fully unit tested and 100% covered (if you're into that!). Heaps of lov
 ## Installation
 
 ```sh
-yarn install blork
+npm install blork
 ```
 
 ## Basic usage
