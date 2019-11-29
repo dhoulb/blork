@@ -8,7 +8,15 @@ describe("Size types", () => {
 			expect(check("AAAAA", "upper{5}")).toBe(undefined);
 			expect(check({ a: 1, b: 2 }, "obj{2}")).toBe(undefined);
 			expect(check([1, "b", true], "array{3}")).toBe(undefined);
-			expect(check(new Map([[1, 1], [2, 2]]), "map{2}")).toBe(undefined);
+			expect(
+				check(
+					new Map([
+						[1, 1],
+						[2, 2]
+					]),
+					"map{2}"
+				)
+			).toBe(undefined);
 			expect(check(new Set([1, 2, "c", 4]), "set{4}")).toBe(undefined);
 			expect(check(123, "number{123}")).toBe(undefined);
 		});
@@ -23,7 +31,16 @@ describe("Size types", () => {
 			expect(() => check([1, "b"], "array{3}")).toThrow(TypeError);
 			expect(() => check([1, "b", 3, 4], "array{3}")).toThrow(TypeError);
 			expect(() => check(new Map([[1, 1]]), "map{2}")).toThrow(TypeError);
-			expect(() => check(new Map([[1, 1], [2, 2], [3, 3]]), "map{2}")).toThrow(TypeError);
+			expect(() =>
+				check(
+					new Map([
+						[1, 1],
+						[2, 2],
+						[3, 3]
+					]),
+					"map{2}"
+				)
+			).toThrow(TypeError);
 			expect(() => check(new Set([1, 2, 3]), "set{4}")).toThrow(TypeError);
 			expect(() => check(new Set([1, 2, 3, 4, 5]), "set{4}")).toThrow(TypeError);
 			expect(() => check(122, "number{123}")).toThrow(TypeError);
@@ -42,7 +59,15 @@ describe("Size types", () => {
 			expect(check("AAAAA", "upper{5,}")).toBe(undefined);
 			expect(check({ a: 1, b: 2, c: 3 }, "obj{2,}")).toBe(undefined);
 			expect(check([1, "b", true, 4], "array{3,}")).toBe(undefined);
-			expect(check(new Map([[1, 1], [2, 2]]), "map{1,}")).toBe(undefined);
+			expect(
+				check(
+					new Map([
+						[1, 1],
+						[2, 2]
+					]),
+					"map{1,}"
+				)
+			).toBe(undefined);
 			expect(check(new Set([1, 2, "c", 4]), "set{4,}")).toBe(undefined);
 			expect(check(124, "number{123,}")).toBe(undefined);
 		});
@@ -69,7 +94,15 @@ describe("Size types", () => {
 			expect(check("AAAAA", "upper{,5}")).toBe(undefined);
 			expect(check({ a: 1, b: 2, c: 3 }, "obj{,3}")).toBe(undefined);
 			expect(check([1, "b", true, 4], "array{,4}")).toBe(undefined);
-			expect(check(new Map([[1, 1], [2, 2]]), "map{,2}")).toBe(undefined);
+			expect(
+				check(
+					new Map([
+						[1, 1],
+						[2, 2]
+					]),
+					"map{,2}"
+				)
+			).toBe(undefined);
 			expect(check(new Set([1, 2, "c", 4]), "set{,4}")).toBe(undefined);
 			expect(check(124, "number{,124}")).toBe(undefined);
 		});
@@ -96,7 +129,15 @@ describe("Size types", () => {
 			expect(check("AAAAA", "upper{5,6}")).toBe(undefined);
 			expect(check({ a: 1, b: 2, c: 3 }, "obj{2,6}")).toBe(undefined);
 			expect(check([1, "b", true, 4], "array{3,6}")).toBe(undefined);
-			expect(check(new Map([[1, 1], [2, 2]]), "map{1,6}")).toBe(undefined);
+			expect(
+				check(
+					new Map([
+						[1, 1],
+						[2, 2]
+					]),
+					"map{1,6}"
+				)
+			).toBe(undefined);
 			expect(check(new Set([1, 2, "c", 4]), "set{4,6}")).toBe(undefined);
 			expect(check(124, "number{123,125}")).toBe(undefined);
 		});
@@ -110,7 +151,17 @@ describe("Size types", () => {
 			expect(() => check([1, "b"], "array{3,4}")).toThrow(TypeError);
 			expect(() => check([1, "b", 3, 4, 5], "array{3,4}")).toThrow(TypeError);
 			expect(() => check(new Map([["a", 2]]), "map{2,3}")).toThrow(TypeError);
-			expect(() => check(new Map([["a", 2], ["b", 3], ["c", 4], ["d", 5]]), "map{2,3}")).toThrow(TypeError);
+			expect(() =>
+				check(
+					new Map([
+						["a", 2],
+						["b", 3],
+						["c", 4],
+						["d", 5]
+					]),
+					"map{2,3}"
+				)
+			).toThrow(TypeError);
 			expect(() => check(new Set([1]), "set{2,3}")).toThrow(TypeError);
 			expect(() => check(new Set([1, 2, 3, 4]), "set{2,3}")).toThrow(TypeError);
 			expect(() => check(122, "number{123,125}")).toThrow(TypeError);

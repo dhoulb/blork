@@ -71,8 +71,8 @@ describe("debug()", () => {
 		expect(debug(function dog() {})).toBe("dog()");
 	});
 	test("Return correct debug string for class instances", () => {
-		expect(debug(new class MyClass {}())).toBe("MyClass {}");
-		expect(debug(new class {}())).toBe("anonymous object {}");
+		expect(debug(new (class MyClass {})())).toBe("MyClass {}");
+		expect(debug(new (class {})())).toBe("anonymous object {}");
 	});
 	test("Return correct debug string for errors", () => {
 		expect(debug(TypeError("My error message"))).toBe('TypeError "My error message"');
