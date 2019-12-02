@@ -4,7 +4,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![GitHub Actions](https://img.shields.io/github/workflow/status/dhoulb/blork/CI/master)](https://github.com/dhoulb/blork/actions)
-[![npm](https://img.shields.io/npm/dm/blork.svg)](https://www.npmjs.com/package/blork)
+[![npm](https://img.shields.io/npm/dm/blork.svg)](https://www.npmjs.com/package/blork) [![Greenkeeper badge](https://badges.greenkeeper.io/dhoulb/blork.svg)](https://greenkeeper.io/)
 
 A mini type checker for locking down the external edges of your code. Mainly for use in modules when you don"t know who'll be using the code. Minimal boilerplate code keeps your functions hyper readable and lets them be their beautiful minimal best selves (...or something?)
 
