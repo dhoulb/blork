@@ -3,15 +3,15 @@ const { check } = require("../../lib/exports");
 // Tests.
 describe("arraylike/arguments checker", () => {
 	test("Works with empty arguments objects", () => {
-		(function() {
+		(function () {
 			expect(check(arguments, "arraylike")).toBe(undefined);
 		})();
 	});
 	test("Works with non-empty arguments objects", () => {
-		(function() {
+		(function () {
 			expect(check(arguments, "arraylike")).toBe(undefined);
 		})("abc", "abc");
-		(function() {
+		(function () {
 			expect(check(arguments, "arraylike")).toBe(undefined);
 		})("abc", 123, false);
 	});

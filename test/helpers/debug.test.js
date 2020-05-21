@@ -39,7 +39,7 @@ describe("debug()", () => {
 			debug({
 				a: "Cherished charmer much an hand to jest.",
 				b: "Yelp infallibly calmative buff centered.",
-				c: "Accommodatingly swain he for did fast."
+				c: "Accommodatingly swain he for did fast.",
 			})
 		).toBe(`{
 	"a": "Cherished charmer much an hand to jest.",
@@ -53,7 +53,7 @@ describe("debug()", () => {
 			debug([
 				"Cherished charmer much an hand to jest lightly.",
 				"Yelp infallibly calmative buff centered.",
-				"Accommodatingly swain he for did fast."
+				"Accommodatingly swain he for did fast.",
 			])
 		).toBe(`[
 	"Cherished charmer much an hand to jest lightly.",
@@ -67,7 +67,7 @@ describe("debug()", () => {
 		expect(debug([1, [21, 22, 23], 3])).toBe(`[1, [21, 22, 23], 3]`);
 	});
 	test("Return correct debug string for functions", () => {
-		expect(debug(function() {})).toBe("function ()");
+		expect(debug(function () {})).toBe("function ()");
 		expect(debug(function dog() {})).toBe("dog()");
 	});
 	test("Return correct debug string for class instances", () => {
@@ -113,7 +113,7 @@ describe("debug()", () => {
 		expect(debug({ a: { a: { a: { a: { a: 1 } } } } })).toBe('{ "a": { "a": { "a": {…} } } }'); // Attempting more than three levels shows …
 	});
 	test("Return correct debug for arguments objects", () => {
-		(function() {
+		(function () {
 			expect(debug(arguments)).toBe('{ "0": "abc", "1": 123, "2": true }');
 		})("abc", 123, true);
 	});

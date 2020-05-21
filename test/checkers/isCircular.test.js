@@ -18,7 +18,7 @@ describe("isCircular()", () => {
 				null: null,
 				undef: undefined,
 				num: 123,
-				str: "abc"
+				str: "abc",
 			})
 		).toBe(false);
 	});

@@ -9,7 +9,7 @@ describe("stackTrigger()", () => {
 				"ValueError: Must be finite string (received 123)",
 				"    at check (classes/Blorker.js:118:31)",
 				"    at MyClass.name (MyClass.js:8:4)",
-				"    at myFunc (helpers/myFunc.js:129:432)"
+				"    at myFunc (helpers/myFunc.js:129:432)",
 			];
 
 			// Get the stackTrigger stack frame from the frames.
@@ -23,7 +23,7 @@ describe("stackTrigger()", () => {
 				[
 					"ValueError: Must be finite string (received 123)",
 					"    at MyClass.name (MyClass.js:8:4)",
-					"    at myFunc (helpers/myFunc.js:129:432)"
+					"    at myFunc (helpers/myFunc.js:129:432)",
 				].join("\n")
 			);
 		});
@@ -36,7 +36,7 @@ describe("stackTrigger()", () => {
 				"    at <anonymous>:1", // Anonymous.
 				"    at <anonymous>", // Anonymous.
 				"    at MyClass.name (MyClass.js:8:4)",
-				"    at myFunc (helpers/myFunc.js:129:432)"
+				"    at myFunc (helpers/myFunc.js:129:432)",
 			];
 
 			// Get the stackTrigger stack frame from the frames.
@@ -50,7 +50,7 @@ describe("stackTrigger()", () => {
 				[
 					"ValueError: Must be finite string (received 123)",
 					"    at MyClass.name (MyClass.js:8:4)",
-					"    at myFunc (helpers/myFunc.js:129:432)"
+					"    at myFunc (helpers/myFunc.js:129:432)",
 				].join("\n")
 			);
 		});
@@ -65,7 +65,7 @@ describe("stackTrigger()", () => {
 				"    at mapper (node_modules/jest-jasmine2/build/queue_runner.js:40:274)",
 				"    at promise.then (node_modules/jest-jasmine2/build/queue_runner.js:83:39)",
 				"    at <anonymous>",
-				"    at process._tickCallback (internal/process/next_tick.js:182:7)"
+				"    at process._tickCallback (internal/process/next_tick.js:182:7)",
 			];
 
 			// Get the stackTrigger stack frame from the frames.
@@ -84,7 +84,7 @@ describe("stackTrigger()", () => {
 			const stack = [
 				"check@classes/Blorker.js:118:31",
 				"MyClass.name@MyClass.js:8:4",
-				"myFunc@helpers/myFunc.js:129:432"
+				"myFunc@helpers/myFunc.js:129:432",
 			];
 
 			// Get the stackTrigger stack frame from the frames.
@@ -103,7 +103,7 @@ describe("stackTrigger()", () => {
 				"@file:///C:/example.html:16:13", // Anonymous.
 				"@debugger eval code:21:9", // Anonymous.
 				"MyClass.name@MyClass.js:8:4",
-				"myFunc@helpers/myFunc.js:129:432"
+				"myFunc@helpers/myFunc.js:129:432",
 			];
 
 			// Get the stackTrigger stack frame from the frames.

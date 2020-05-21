@@ -17,7 +17,7 @@ describe("add()", () => {
 	});
 	test("Add and run a custom function checker (no description)", () => {
 		// Define a checker called 'a11218'.
-		expect(add("a11218", v => typeof v === "string")).toBeUndefined();
+		expect(add("a11218", (v) => typeof v === "string")).toBeUndefined();
 
 		// Check a passing value.
 		expect(check("abc", "a11218")).toBe(undefined);
@@ -59,7 +59,7 @@ describe("add()", () => {
 	describe("description", () => {
 		test("Add and run a custom function checker with description", () => {
 			// Define a checker called 'e618e0'.
-			expect(add("e618e0", v => typeof v === "string", "exactly correct")).toBeUndefined();
+			expect(add("e618e0", (v) => typeof v === "string", "exactly correct")).toBeUndefined();
 
 			// Check a passing value.
 			expect(check("abc", "e618e0")).toBe(undefined);

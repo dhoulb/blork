@@ -14,11 +14,11 @@
 		"url": "git://github.com/dhoulb/blork.git"
 	},
 	"devDependencies": {
-		"eslint": "^6.7.1",
-		"eslint-config-prettier": "^6.7.0",
+		"eslint": "^7.0.0",
+		"eslint-config-prettier": "^6.11.0",
 		"eslint-plugin-prettier": "^3.0.0",
-		"jest": "^25.1.0",
-		"prettier": "^1.10.2"
+		"jest": "^26.0.1",
+		"prettier": "^2.0.5"
 	},
 	"scripts": {
 		"fix": "eslint --fix ./",

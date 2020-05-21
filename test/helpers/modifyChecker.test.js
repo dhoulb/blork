@@ -8,8 +8,8 @@ describe("modifyChecker()", () => {
 		const modifiers = [
 			{
 				start: "++",
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "++abc", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
@@ -21,8 +21,8 @@ describe("modifyChecker()", () => {
 		const modifiers = [
 			{
 				end: "??",
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "abc??", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
@@ -35,8 +35,8 @@ describe("modifyChecker()", () => {
 			{
 				start: "{",
 				end: "}",
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "{abc}", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
@@ -49,8 +49,8 @@ describe("modifyChecker()", () => {
 			{
 				start: "'",
 				end: "'",
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "'abc'", checker);
 		expect(callback).toHaveBeenCalledWith("abc", checker);
@@ -62,8 +62,8 @@ describe("modifyChecker()", () => {
 		const modifiers = [
 			{
 				split: "|",
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "abc | def", checker);
 		expect(callback).toHaveBeenCalledWith(["abc", "def"], checker);
@@ -76,8 +76,8 @@ describe("modifyChecker()", () => {
 		const modifiers = [
 			{
 				match,
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "abc<123>", checker);
 		expect(callback).toHaveBeenCalledWith("abc<123>".match(match), checker);
@@ -88,8 +88,8 @@ describe("modifyChecker()", () => {
 		const checker = () => {};
 		const modifiers = [
 			{
-				callback
-			}
+				callback,
+			},
 		];
 		const result = modifyChecker(modifiers, "abc<123>", checker);
 		expect(result).toBe(undefined);

@@ -12,7 +12,7 @@ describe("Size types", () => {
 				check(
 					new Map([
 						[1, 1],
-						[2, 2]
+						[2, 2],
 					]),
 					"map{2}"
 				)
@@ -36,7 +36,7 @@ describe("Size types", () => {
 					new Map([
 						[1, 1],
 						[2, 2],
-						[3, 3]
+						[3, 3],
 					]),
 					"map{2}"
 				)
@@ -63,7 +63,7 @@ describe("Size types", () => {
 				check(
 					new Map([
 						[1, 1],
-						[2, 2]
+						[2, 2],
 					]),
 					"map{1,}"
 				)
@@ -98,7 +98,7 @@ describe("Size types", () => {
 				check(
 					new Map([
 						[1, 1],
-						[2, 2]
+						[2, 2],
 					]),
 					"map{,2}"
 				)
@@ -133,7 +133,7 @@ describe("Size types", () => {
 				check(
 					new Map([
 						[1, 1],
-						[2, 2]
+						[2, 2],
 					]),
 					"map{1,6}"
 				)
@@ -157,7 +157,7 @@ describe("Size types", () => {
 						["a", 2],
 						["b", 3],
 						["c", 4],
-						["d", 5]
+						["d", 5],
 					]),
 					"map{2,3}"
 				)
