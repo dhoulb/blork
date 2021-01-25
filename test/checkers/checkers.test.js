@@ -93,7 +93,7 @@ describe("checkers", () => {
 		expect(mockCheck(circular, "circular")).toBe(undefined);
 		expect(mockCheck([], "array")).toBe(undefined);
 		expect(mockCheck([], "arr")).toBe(undefined);
-		expect(mockCheck({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined);
+		expect(mockCheck({ "0": "abc", length: 1 }, "arraylike")).toBe(undefined); // prettier-ignore
 		expect(mockCheck({ length: 0 }, "arguments")).toBe(undefined);
 		expect(mockCheck({ length: 0 }, "args")).toBe(undefined);
 		expect(mockCheck(new Date(), "date")).toBe(undefined);
