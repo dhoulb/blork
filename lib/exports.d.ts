@@ -11,7 +11,7 @@ export declare class ValueError extends TypeError {
 export declare class BlorkError extends ValueError {}
 
 // Functions.
-export declare function check(value: any, type: string, error?: Function): void;
+export declare function check(value: any, type: string, error?: typeof ValueError | { new (message: string): any }): void;
 export declare function checker(type: string): BlorkChecker;
 export declare function add(name: string, checker: string | BlorkChecker, description?: string): void;
 export declare function debug(value: any): string;
