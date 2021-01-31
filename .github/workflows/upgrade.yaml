@@ -1,0 +1,24 @@
+# Run `npm upgrade` and then `npm run fix` every week.
+# If changes were made and the tests pass, commit the changes back.
+name: Upgrade
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "* 2 * * SUN"
+jobs:
+  upgrade:
+    name: Upgrade
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: npm ci
+      - run: npm outdated && echo 'Nothing to upgrade' || npm upgrade
+      - run: npm run fix # Run fix after upgrade so updates to Prettier and ESLint upgrade the codebase too.
+      - run: npm run test
+      - run: |
+          git config user.name "blork-upgrade-bot"
+          git config user.email "<>"
+      - run: "git commit -am 'chore: npm upgrade' && git push origin main || echo 'Nothing to commit'"
