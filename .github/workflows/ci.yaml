@@ -1,7 +1,7 @@
 # Runs tests on any push or pull request.
 # If the tests pass and this is a push to the main branch also run Semantic Release.
 name: CI
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   test:
     name: Test (Node v${{ matrix.node-version }})
