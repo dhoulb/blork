@@ -1,31 +1,31 @@
-# This is a Github Workflow that runs tests on any push or pull request.
-# If the tests pass and this is a push to the master branch it also runs Semantic Release.
+# Runs tests on any push or pull request.
+# If the tests pass and this is a push to the main branch also run Semantic Release.
 name: CI
 on: [push, pull_request]
 jobs:
   test:
     name: Test (Node v${{ matrix.node-version }})
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10, 12]
+        node-version: [10, 12, 14]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm test
   release:
     name: Semantic Release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
       - uses: cycjimmy/semantic-release-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
