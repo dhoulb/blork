@@ -21,4 +21,4 @@ jobs:
       - run: |
           git config user.name "blork-upgrade-bot"
           git config user.email "<>"
-      - run: "git commit -am 'chore: npm upgrade' && git push origin main || echo 'Nothing to commit'"
+      - run: "git commit -am 'chore: npm upgrade' && git push origin master || echo 'Nothing to commit'"
