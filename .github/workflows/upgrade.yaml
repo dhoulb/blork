@@ -35,7 +35,7 @@ jobs:
       - name: npm upgrade
         run: |
           npm ci
-          npm outdated && echo 'Nothing to upgrade' || npm upgrade
+          npm outdated && echo "Nothing to upgrade" || npm upgrade
           npm run fix
           npm run test
-          git commit -am 'chore: npm upgrade' && git push
+          git commit -am "chore: npm upgrade" && git push || echo "Nothing to commit"
