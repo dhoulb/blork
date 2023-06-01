@@ -38,4 +38,4 @@ jobs:
           npm outdated && echo 'Nothing to upgrade' || npm upgrade
           npm run fix
           npm run test
-          git commit -am 'chore: npm upgrade' && git push origin master
+          git commit -am 'chore: npm upgrade' && git push
