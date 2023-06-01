@@ -1,13 +1,10 @@
-# Run `npm upgrade` and then `npm run fix` every week.
+# Run `npm run fix` on any push or pull request.
 # If changes were made and the tests pass, commit the changes back.
-name: Upgrade
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "* 2 * * SUN"
+name: Fix
+on: [push, pull_request, workflow_dispatch]
 jobs:
-  upgrade:
-    name: Upgrade
+  fix:
+    name: Fix
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,10 +29,10 @@ jobs:
           git config --global gpg.format ssh
           git config --global user.signingkey ~/.ssh/git.pub
           git config --global commit.gpgsign true
-      - name: npm upgrade
+      - name: npm run fix
+        shell: bash
         run: |
           npm ci
-          npm outdated && echo 'Nothing to upgrade' || npm upgrade
           npm run fix
           npm run test
-          git commit -am 'chore: npm upgrade' && git push origin main
+          git commit -am 'style: npm run fix' && git push origin main
