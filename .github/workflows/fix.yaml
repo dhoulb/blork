@@ -35,4 +35,4 @@ jobs:
           npm ci
           npm run fix
           npm run test
-          git commit -am 'style: npm run fix' && git push
+          git commit -am 'style: npm run fix' && git push || echo "Nothing to commit"
