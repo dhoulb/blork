@@ -19,12 +19,8 @@ describe("Object types", () => {
 		});
 		test("Correct error message", () => {
 			expect(() => check(true, "{int}")).toThrow("Must be plain object like { string: integer }");
-			expect(() => check({ ABC: true }, "{ upper: int }")).toThrow(
-				"Must be plain object like { UPPERCASE string: integer }"
-			);
-			expect(() => check({ ABC: true }, "{ upper: int | str }")).toThrow(
-				"Must be plain object like { UPPERCASE string: (integer or string) }"
-			);
+			expect(() => check({ ABC: true }, "{ upper: int }")).toThrow("Must be plain object like { UPPERCASE string: integer }");
+			expect(() => check({ ABC: true }, "{ upper: int | str }")).toThrow("Must be plain object like { UPPERCASE string: (integer or string) }");
 		});
 	});
 	describe("Named checkers", () => {
@@ -40,9 +36,7 @@ describe("Object types", () => {
 		});
 		test("Correct error message", () => {
 			expect(() => check(true, '{ "name": str }')).toThrow(/Must be plain object like { "name": string }/);
-			expect(() => check({ ABC: true }, '{ "name": str, "age": int }')).toThrow(
-				/Must be plain object like { "name": string, "age": integer }/
-			);
+			expect(() => check({ ABC: true }, '{ "name": str, "age": int }')).toThrow(/Must be plain object like { "name": string, "age": integer }/);
 		});
 	});
 	describe("Mixed checkers (any checkers and named checkers together)", () => {
@@ -56,12 +50,8 @@ describe("Object types", () => {
 			expect(() => check({ AAA: "abc" }, '{ "name": int, camel: int }')).toThrow(TypeError); // Name is missing.
 		});
 		test("Correct error message", () => {
-			expect(() => check({}, '{ "name": str, upper: int }')).toThrow(
-				/Must be plain object like { "name": string, UPPERCASE string: integer }/
-			);
-			expect(() => check({}, '{ "name": int, camel: int }')).toThrow(
-				/Must be plain object like { "name": integer, camelCase string: integer }/
-			);
+			expect(() => check({}, '{ "name": str, upper: int }')).toThrow(/Must be plain object like { "name": string, UPPERCASE string: integer }/);
+			expect(() => check({}, '{ "name": int, camel: int }')).toThrow(/Must be plain object like { "name": integer, camelCase string: integer }/);
 		});
 	});
 	test("Unknown checkers throw BlorkError", () => {

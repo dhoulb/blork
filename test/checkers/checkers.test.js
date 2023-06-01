@@ -126,8 +126,8 @@ describe("checkers", () => {
 		// Check we called every checker.
 		// Done in this awkward way so we get an error that helps us find the one we're missing.
 		const checkerNames = Object.keys(checkers);
-		checkerNames.forEach((name) => expect(called).toContain(name));
-		called.forEach((name) => expect(checkerNames).toContain(name));
+		checkerNames.forEach(name => expect(called).toContain(name));
+		called.forEach(name => expect(checkerNames).toContain(name));
 		expect(called.length).toBe(checkerNames.length);
 	});
 	test("Every named type fails correctly", () => {
@@ -249,8 +249,8 @@ describe("checkers", () => {
 		// Check we called every checker.
 		// Done in this awkward way so we get an error that helps us find the one we're missing.
 		const checkerNames = Object.keys(checkers);
-		checkerNames.forEach((name) => expect(called).toContain(name));
-		called.forEach((name) => expect(checkerNames).toContain(name));
+		checkerNames.forEach(name => expect(called).toContain(name));
+		called.forEach(name => expect(checkerNames).toContain(name));
 		expect(called.length).toBe(checkerNames.length);
 	});
 });

@@ -19,9 +19,7 @@ describe("Array types", () => {
 		expect(() => check([], "str[]+")).toThrow("Must be non-empty plain array containing string");
 		expect(() => check([], "str[]+|null")).toThrow("Must be (non-empty plain array containing string) or null");
 		expect(() => check(["a", "b", ""], "str+[]")).toThrow("Must be plain array containing non-empty string");
-		expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow(
-			"Must be plain array containing ((non-empty string) or (non-empty plain array))"
-		);
+		expect(() => check(["a", "b", ""], "(str+|arr+)[]")).toThrow("Must be plain array containing ((non-empty string) or (non-empty plain array))");
 	});
 	test("Unknown checkers throw BlorkError", () => {
 		expect(() => check(1, "notexist[]")).toThrow(BlorkError);

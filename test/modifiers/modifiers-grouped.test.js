@@ -17,18 +17,10 @@ describe("Grouped types", () => {
 	});
 	test("Correct error message", () => {
 		expect(() => check(true, "(str | num)")).toThrow(/Must be string or finite number/);
-		expect(() => check(true, "(str & upper) | (num & int)")).toThrow(
-			"Must be (string and UPPERCASE string) or (finite number and integer)"
-		);
-		expect(() => check([1, "a", true], "(str | num)[]")).toThrow(
-			"Must be plain array containing (string or finite number)"
-		);
-		expect(() => check([1, "a", true], "!(str | num)[]")).toThrow(
-			"Must be plain array containing anything except (string or finite number)"
-		);
-		expect(() => check([1, "a", true], "(!str | num)[]")).toThrow(
-			"Must be plain array containing ((anything except string) or finite number)"
-		);
+		expect(() => check(true, "(str & upper) | (num & int)")).toThrow("Must be (string and UPPERCASE string) or (finite number and integer)");
+		expect(() => check([1, "a", true], "(str | num)[]")).toThrow("Must be plain array containing (string or finite number)");
+		expect(() => check([1, "a", true], "!(str | num)[]")).toThrow("Must be plain array containing anything except (string or finite number)");
+		expect(() => check([1, "a", true], "(!str | num)[]")).toThrow("Must be plain array containing ((anything except string) or finite number)");
 	});
 	test("Grouping parentheses can be nested", () => {
 		expect(check("abc", "((string))")).toBe(undefined);

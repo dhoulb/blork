@@ -1,6 +1,6 @@
 # Blork: Contributing
 
-Contributions welcome! I'm happy to receive pull requests for new checkers (e.g. if you find you're using custom checkers for things you think should be built-in). 
+Contributions welcome! I'm happy to receive pull requests for new checkers (e.g. if you find you're using custom checkers for things you think should be built-in).
 
 This tooling workflow exists to catch simple code mistakes (we all make em!) Once you learn to code against these tools programming becomes a lot more fun!
 
@@ -15,7 +15,7 @@ Please follow these (pretty obvious) guidelines:
 
 ## Technical introduction
 
-Blork is written in Javascript, uses ESLint for linting, Prettier for code style, and Jest for unit testing. Blork is deployed to NPM through Travis CI whenever a new tagged release is created on GitHub. 
+Blork is written in Javascript, uses ESLint for linting, Prettier for code style, and Jest for unit testing. Blork is deployed to NPM through Travis CI whenever a new tagged release is created on GitHub.
 
 TravisCI automatically checks (and rejects) pull requests that fail the unit tests or are improperly linted. If the tests pass the code is deployed to [npm](https://www.npmjs.com/) with [semantic-release](https://github.com/semantic-release/semantic-release). Version numbers are automatically bumped based on commit messages following the [Conventional Commits](https://conventionalcommits.org) format.
 

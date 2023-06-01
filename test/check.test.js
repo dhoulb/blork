@@ -35,9 +35,7 @@ describe("check()", () => {
 		});
 		test("BlorkError if error is not function", () => {
 			expect(() => check(123, "str", "notafunction")).toThrow(BlorkError);
-			expect(() => check(123, "str", "notafunction")).toThrow(
-				'check(): error: Must be function (received "notafunction")'
-			);
+			expect(() => check(123, "str", "notafunction")).toThrow('check(): error: Must be function (received "notafunction")');
 		});
 	});
 });

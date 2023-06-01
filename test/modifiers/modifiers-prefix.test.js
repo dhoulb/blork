@@ -22,9 +22,7 @@ describe("Prefix types", () => {
 		expect(() => check(123, "name: return str")).toThrow("name: Must return string (received 123)");
 		expect(() => check("", "name: str+")).toThrow('name: Must be non-empty string (received "")');
 		expect(() => check(123, "age: 124")).toThrow("age: Must be 124 (received 123)");
-		expect(() => check(123, "age: num{121,122}")).toThrow(
-			"age: Must be finite number with size between 121 and 122"
-		);
+		expect(() => check(123, "age: num{121,122}")).toThrow("age: Must be finite number with size between 121 and 122");
 		expect(() => check({ real: 123 }, "age: { 'real': 124 }")).toThrow("age: Must be plain object");
 	});
 	test("Unknown checkers throw BlorkError", () => {

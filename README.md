@@ -14,24 +14,24 @@ Blork is fully unit tested and 100% covered (if you're into that!). Heaps of lov
 
 - [Installation](#installation)
 - [Basic usage](#basic-usage)
-	- [check(): Check individual values](#check-check-individual-values)
-	- [add(): Add a custom checker type](#add-add-a-custom-checker-type)
-	- [checker(): Return a checker function](#checker-return-a-checker-function)
-	- [debug(): Debug any value as a string](#debug-debug-any-value-as-a-string)
-	- [ValueError: extensible TypeError for debugging](#valueerror-extensible-typeerror-for-debugging)
+  - [check(): Check individual values](#check-check-individual-values)
+  - [add(): Add a custom checker type](#add-add-a-custom-checker-type)
+  - [checker(): Return a checker function](#checker-return-a-checker-function)
+  - [debug(): Debug any value as a string](#debug-debug-any-value-as-a-string)
+  - [ValueError: extensible TypeError for debugging](#valueerror-extensible-typeerror-for-debugging)
 - [Reference](#reference)
-	- [Type identifiers](#type-identifiers)
-	- [Literal types](#literal-types)
-	- [Type modifiers](#type-modifiers)
-	- [Array type modifier](#array-type-modifier)
-	- [Tuple type modifier](#tuple-type-modifier)
-	- [Object type modifier](#object-type-modifier)
-	- [Optional type modifier](#optional-type-modifier)
-	- [Non-empty type modifier](#non-empty-type-modifier)
-	- [Size type modifier](#size-type-modifier)
-	- [Inverted type modifier](#inverted-type-modifier)
-	- [Prefix and return type modifiers](#prefix-and-return-type-modifiers)
-	- [OR and AND type modifiers](#or-and-and-type-modifiers)
+  - [Type identifiers](#type-identifiers)
+  - [Literal types](#literal-types)
+  - [Type modifiers](#type-modifiers)
+  - [Array type modifier](#array-type-modifier)
+  - [Tuple type modifier](#tuple-type-modifier)
+  - [Object type modifier](#object-type-modifier)
+  - [Optional type modifier](#optional-type-modifier)
+  - [Non-empty type modifier](#non-empty-type-modifier)
+  - [Size type modifier](#size-type-modifier)
+  - [Inverted type modifier](#inverted-type-modifier)
+  - [Prefix and return type modifiers](#prefix-and-return-type-modifiers)
+  - [OR and AND type modifiers](#or-and-and-type-modifiers)
 - [Roadmap and ideas](#roadmap-and-ideas)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
@@ -111,7 +111,7 @@ check([1, false], "[int, str]"); // Throws ValueError 'Must be plain array tuple
 
 // Object types.
 check({ a: 1 }, "{ camel: integer }"); // No error.
-check({ "$": 1 }, "{ camel: integer }"); // Throws ValueError 'Must be plain object like { camelCase string: integer } (received { "$": 1 })'
+check({ $: 1 }, "{ camel: integer }"); // Throws ValueError 'Must be plain object like { camelCase string: integer } (received { "$": 1 })'
 
 // String literal types.
 check("abc", "'abc'"); // No error.
@@ -122,7 +122,9 @@ check(1234, "1234"); // No error.
 check(5678, "1234"); // Throws ValueError 'Must be 1234 (received 5678)'
 
 // Return type.
-function get123() { return 123; }
+function get123() {
+  return 123;
+}
 check(get123(), "return string"); // Throws ValueError 'Must return string (received 123)'
 
 // Prefix type.
@@ -160,13 +162,13 @@ import { add, check } from "blork";
 
 // Register your new fussy checker.
 add(
-	// Name of checker.
-	"myapp-catty",
-	// Checker to validate a string containing "cat".
-	(v) => typeof v === "string" && v.strToLower().indexOf("cat") >= 0,
-	// Description of what the variable _should_ contain.
-	// Gets shown in the error message.
-	"string containing 'cat'"
+  // Name of checker.
+  "myapp-catty",
+  // Checker to validate a string containing "cat".
+  v => typeof v === "string" && v.strToLower().indexOf("cat") >= 0,
+  // Description of what the variable _should_ contain.
+  // Gets shown in the error message.
+  "string containing 'cat'",
 );
 
 // Pass.
@@ -223,14 +225,14 @@ debug(Symbol("abc")); // Returns `Symbol("abc")`
 
 // Debug functions.
 debug(function dog() {}); // Returns `dog()`
-debug(function() {}); // Returns `anonymous function()`
+debug(function () {}); // Returns `anonymous function()`
 
 // Debug objects.
 debug({}); // Returns `{}`
 debug({ a: 123 }); // Returns `{ "a": 123 }`
 debug(new Promise()); // Returns `Promise {}`
 debug(new MyClass()); // Returns `MyClass {}`
-debug(new class {}()); // Returns `anonymous class {}`
+debug(new (class {})()); // Returns `anonymous class {}`
 ```
 
 ### ValueError: extensible TypeError for debugging
@@ -247,9 +249,9 @@ import { ValueError } from "blork";
 
 // Function that checks its argument.
 function myFunc(name) {
-	// If name isn't a string, throw a ValueError.
-	// (This is essentially what check() does behind the scenes.)
-	if (typeof name !== "string") throw new ValueError("Must be string", name, "myFunc(): name");
+  // If name isn't a string, throw a ValueError.
+  // (This is essentially what check() does behind the scenes.)
+  if (typeof name !== "string") throw new ValueError("Must be string", name, "myFunc(): name");
 }
 
 // Call with incorrect name.
@@ -265,7 +267,7 @@ Types are strings made up of a type identifier (e.g. `"promise"` or `"integer"`)
 This section lists all types identifiers that are built into Blork.
 
 | Type string                      | Description                                                                                                                                   |
-|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `primitive`                      | Value is any **primitive** value (undefined, null, booleans, strings, finite numbers)                                                         |
 | `null`                           | Value is **null**                                                                                                                             |
 | `undefined`, `undef`, `void`     | Value is **undefined**                                                                                                                        |
@@ -302,7 +304,7 @@ This section lists all types identifiers that are built into Blork.
 | `screaming`                      | SCREAMING_SNAKE_CASE strings e.g. environment vars (non-empty uppercase alphanumeric)                                                         |
 | `kebab`, `slug`                  | kebab-case strings e.g. URL slugs (non-empty alphanumeric lowercase)                                                                          |
 | `train`                          | Train-Case strings e.g. HTTP-Headers (non-empty with uppercase first letters)                                                                 |
-| `identifier`                     | JavaScript identifier names (string starting with **_**, **$**, or letter)                                                                    |
+| `identifier`                     | JavaScript identifier names (string starting with **\_**, **$**, or letter)                                                                   |
 | `path`                           | Valid filesystem path (e.g. "abc/def")                                                                                                        |
 | `absolute`, `abs`                | Valid absolute path (e.g. "/abc/def" or "C:\abd\def")                                                                                         |
 | `relative`, `rel`                | Valid relative path (e.g. "../abc/def" or "..\abd\def")                                                                                       |
@@ -341,7 +343,7 @@ If you want to validate a value against a literal string or number etc, you can 
 e.g. `9|10|11` for a value matching either number 9, 10, or 11; or `0|false|'no'` for a value matching either the number 0, literal false, or the string "no".
 
 | Format              | Description                                                           |
-|---------------------|-----------------------------------------------------------------------|
+| ------------------- | --------------------------------------------------------------------- |
 | `"abc"`, `'abc'`    | Literal strings, e.g. `"Dave"` or `'Lucy'`                            |
 | `1234`              | Literal numbers, e.g. `1234` or `123.456` or `-12`                    |
 | `true`, `false`     | Literal boolean (note you can use `truthy` and `falsy` for soft equal |
@@ -352,10 +354,10 @@ e.g. `9|10|11` for a value matching either number 9, 10, or 11; or `0|false|'no'
 Modifiers can be applied to any string identifier from the list above to modify that type's behaviour, e.g. `num?` for an optional number (also accepts undefined), `str[]` for an array of strings, or `["abc", 12|13]` for an array tuple containing the string "abc" and the number 12 or 13.
 
 | Format              | Description                                                                            |
-|---------------------|----------------------------------------------------------------------------------------|
-| `(type)`            | Grouped type, e.g. `(num | str)[]`                                                     |
+| ------------------- | -------------------------------------------------------------------------------------- | --------------------------- | ---- |
+| `(type)`            | Grouped type, e.g. `(num                                                               | str)[]`                     |
 | `type1 & type2`     | AND combined type, e.g. `str & upper`                                                  |
-| `type1 | type2`     | OR combined type, e.g. `num | str`                                                     |
+| `type1              | type2`                                                                                 | OR combined type, e.g. `num | str` |
 | `type[]`            | Array type (all array entries must match type)                                         |
 | `[type1, type2]`    | Tuple type (must match tuple exactly)                                                  |
 | `{ type }`          | Object value type (all own props must match type                                       |
@@ -390,14 +392,14 @@ Array tuples can be specified by surrounding types in `[]` brackets.
 
 ```js
 // Pass.
-check([true, false], "[bool, bool]") // No error.
-check(["a", "b"], "[str, str]") // No error.
+check([true, false], "[bool, bool]"); // No error.
+check(["a", "b"], "[str, str]"); // No error.
 check([1, 2, 3], "[num, num, num]"); // No error.
 
 // Fail.
-check([true, true], "[str, str]") // Throws ValueError 'Must be plain array tuple like [string, string] (received [true, true])'
-check([true], "[bool, bool]") // Throws ValueError 'Must be plain array tuple like [boolean, boolean] (received [true])'
-check(["a", "b", "c"], "[str, str]") // Throws ValueError 'Must be plain array tuple like [string, string] (received ["a", "b", "c"])'
+check([true, true], "[str, str]"); // Throws ValueError 'Must be plain array tuple like [string, string] (received [true, true])'
+check([true], "[bool, bool]"); // Throws ValueError 'Must be plain array tuple like [boolean, boolean] (received [true])'
+check(["a", "b", "c"], "[str, str]"); // Throws ValueError 'Must be plain array tuple like [string, string] (received ["a", "b", "c"])'
 ```
 
 ### Object type modifier
@@ -424,12 +426,12 @@ A type for the keys can also be specified by using `{ key: value }` format. Agai
 // Pass.
 check({ myVar: 123 }, "{ camel: int }"); // No error (key is camelCase).
 check({ "my-var": 123 }, "{ kebab: int }"); // No error (key is kebab-case).
-check({ "YAS": 123 }, "{ upper: bool }"); // No error (key is UPPERCASE).
+check({ YAS: 123 }, "{ upper: bool }"); // No error (key is UPPERCASE).
 check({ a: 1, B: true }, "{ lower: int, upper: bool }"); // No error (a is lowercase and integer, B is UPPERCASE and boolean).
 
 // Fail.
-check({ "myVar": 123 }, "{ kebab: int }"); // Throws ValueError 'Must be plain object like { kebab-case string: integer } (received { "myVar": 123 })'
-check({ "nope": true }, "{ upper: bool }"); // Throws ValueError 'Must be plain object like { UPPERCASE string: boolean } (received { "nope": true })'
+check({ myVar: 123 }, "{ kebab: int }"); // Throws ValueError 'Must be plain object like { kebab-case string: integer } (received { "myVar": 123 })'
+check({ nope: true }, "{ upper: bool }"); // Throws ValueError 'Must be plain object like { UPPERCASE string: boolean } (received { "nope": true })'
 ```
 
 Exact props can be specified by wrapping the key string in quotes (single or double).
@@ -539,12 +541,12 @@ The `return X` return type will change the error message from `Must be X` to `Mu
 ```js
 // Create a function that uses both prefix and return type modifiers to check the return type of a callback.
 function myFunc(callback) {
-	// Check initial args.
-	check(callback, "callback: func");
+  // Check initial args.
+  check(callback, "callback: func");
 
-	// Call the callback and check the returned value.
-	const result = callback();
-	check(result, "callback: return false");
+  // Call the callback and check the returned value.
+  const result = callback();
+  check(result, "callback: return false");
 }
 
 // Pass.

@@ -5,12 +5,7 @@ describe("stackTrigger()", () => {
 	describe("Chrome, Node, IE, Edge", () => {
 		test("Correct frame is returned", () => {
 			// Full stack from a random Blork error.
-			const stack = [
-				"ValueError: Must be finite string (received 123)",
-				"    at check (classes/Blorker.js:118:31)",
-				"    at MyClass.name (MyClass.js:8:4)",
-				"    at myFunc (helpers/myFunc.js:129:432)",
-			];
+			const stack = ["ValueError: Must be finite string (received 123)", "    at check (classes/Blorker.js:118:31)", "    at MyClass.name (MyClass.js:8:4)", "    at myFunc (helpers/myFunc.js:129:432)"];
 
 			// Get the stackTrigger stack frame from the frames.
 			const c = stackTrigger(stack.join("\n"), ["check()"]);
@@ -19,13 +14,7 @@ describe("stackTrigger()", () => {
 			expect(c.line).toBe(8);
 			expect(c.column).toBe(4);
 			expect(c.original).toBe("    at MyClass.name (MyClass.js:8:4)");
-			expect(c.stack).toBe(
-				[
-					"ValueError: Must be finite string (received 123)",
-					"    at MyClass.name (MyClass.js:8:4)",
-					"    at myFunc (helpers/myFunc.js:129:432)",
-				].join("\n")
-			);
+			expect(c.stack).toBe(["ValueError: Must be finite string (received 123)", "    at MyClass.name (MyClass.js:8:4)", "    at myFunc (helpers/myFunc.js:129:432)"].join("\n"));
 		});
 		test("Anonymous functions are skipped over", () => {
 			// Full stack from a random Blork error.
@@ -46,13 +35,7 @@ describe("stackTrigger()", () => {
 			expect(c.line).toBe(8);
 			expect(c.column).toBe(4);
 			expect(c.original).toBe("    at MyClass.name (MyClass.js:8:4)");
-			expect(c.stack).toBe(
-				[
-					"ValueError: Must be finite string (received 123)",
-					"    at MyClass.name (MyClass.js:8:4)",
-					"    at myFunc (helpers/myFunc.js:129:432)",
-				].join("\n")
-			);
+			expect(c.stack).toBe(["ValueError: Must be finite string (received 123)", "    at MyClass.name (MyClass.js:8:4)", "    at myFunc (helpers/myFunc.js:129:432)"].join("\n"));
 		});
 		test("First frame if no ignore functions are found in stack", () => {
 			// Full stack from a random Blork error.
@@ -81,11 +64,7 @@ describe("stackTrigger()", () => {
 	describe("Firefox, Safari", () => {
 		test("Correct frame is returned", () => {
 			// Full stack from a random Blork error.
-			const stack = [
-				"check@classes/Blorker.js:118:31",
-				"MyClass.name@MyClass.js:8:4",
-				"myFunc@helpers/myFunc.js:129:432",
-			];
+			const stack = ["check@classes/Blorker.js:118:31", "MyClass.name@MyClass.js:8:4", "myFunc@helpers/myFunc.js:129:432"];
 
 			// Get the stackTrigger stack frame from the frames.
 			const c = stackTrigger(stack.join("\n"), ["check()"]);

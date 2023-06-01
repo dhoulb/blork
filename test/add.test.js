@@ -17,7 +17,7 @@ describe("add()", () => {
 	});
 	test("Add and run a custom function checker (no description)", () => {
 		// Define a checker called 'a11218'.
-		expect(add("a11218", (v) => typeof v === "string")).toBeUndefined();
+		expect(add("a11218", v => typeof v === "string")).toBeUndefined();
 
 		// Check a passing value.
 		expect(check("abc", "a11218")).toBe(undefined);
@@ -33,9 +33,7 @@ describe("add()", () => {
 			expect(() => add("", func, "func")).toThrow(BlorkError);
 			expect(() => add("name_name", func, "func")).toThrow(BlorkError);
 			expect(() => add("UPPER", func, "func")).toThrow(BlorkError);
-			expect(() => add("UPPER", func, "func")).toThrow(
-				'add(): name: Must be kebab-case string (received "UPPER")'
-			);
+			expect(() => add("UPPER", func, "func")).toThrow('add(): name: Must be kebab-case string (received "UPPER")');
 		});
 		test("BlorkError if same name as existing", () => {
 			const func = () => {};
@@ -59,7 +57,7 @@ describe("add()", () => {
 	describe("description", () => {
 		test("Add and run a custom function checker with description", () => {
 			// Define a checker called 'e618e0'.
-			expect(add("e618e0", (v) => typeof v === "string", "exactly correct")).toBeUndefined();
+			expect(add("e618e0", v => typeof v === "string", "exactly correct")).toBeUndefined();
 
 			// Check a passing value.
 			expect(check("abc", "e618e0")).toBe(undefined);
@@ -71,9 +69,7 @@ describe("add()", () => {
 		test("BlorkError if description is not non-empty string", () => {
 			const func = () => {};
 			expect(() => add("b89441", func, 123)).toThrow(BlorkError);
-			expect(() => add("b89441", func, 123)).toThrow(
-				"add(): description: Must be non-empty string (received 123)"
-			);
+			expect(() => add("b89441", func, 123)).toThrow("add(): description: Must be non-empty string (received 123)");
 		});
 	});
 });

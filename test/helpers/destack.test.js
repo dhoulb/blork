@@ -8,15 +8,9 @@ describe("destack()", () => {
 		expect(destack(true)).toEqual([]);
 	});
 	test("Chrome, Node, IE, Edge", () => {
-		expect(destack("Error\n    at abc (file.js:1:2)")).toEqual([
-			{ function: "abc()", file: "file.js", line: 1, column: 2, original: "    at abc (file.js:1:2)" },
-		]);
-		expect(destack("Error\n    at abc (file.js:1)")).toEqual([
-			{ function: "abc()", file: "file.js", line: 1, column: null, original: "    at abc (file.js:1)" },
-		]);
-		expect(destack("Error\n    at abc (file.js)")).toEqual([
-			{ function: "abc()", file: "file.js", line: null, column: null, original: "    at abc (file.js)" },
-		]);
+		expect(destack("Error\n    at abc (file.js:1:2)")).toEqual([{ function: "abc()", file: "file.js", line: 1, column: 2, original: "    at abc (file.js:1:2)" }]);
+		expect(destack("Error\n    at abc (file.js:1)")).toEqual([{ function: "abc()", file: "file.js", line: 1, column: null, original: "    at abc (file.js:1)" }]);
+		expect(destack("Error\n    at abc (file.js)")).toEqual([{ function: "abc()", file: "file.js", line: null, column: null, original: "    at abc (file.js)" }]);
 		expect(destack("Error\n    at <anonymous> (file.js:1:2)")).toEqual([
 			{
 				function: "",
@@ -26,33 +20,13 @@ describe("destack()", () => {
 				original: "    at <anonymous> (file.js:1:2)",
 			},
 		]);
-		expect(destack("Error\n    at file.js:1:2")).toEqual([
-			{ function: "", file: "file.js", line: 1, column: 2, original: "    at file.js:1:2" },
-		]);
-		expect(destack("Error\n    at file.js:1")).toEqual([
-			{ function: "", file: "file.js", line: 1, column: null, original: "    at file.js:1" },
-		]);
-		expect(destack("Error\n    at file.js")).toEqual([
-			{ function: "", file: "file.js", line: null, column: null, original: "    at file.js" },
-		]);
-		expect(destack("Error\n    at <anonymous>:1:2")).toEqual([
-			{ function: "", file: "", line: 1, column: 2, original: "    at <anonymous>:1:2" },
-		]);
-		expect(destack("Error\n    at <anonymous>:1")).toEqual([
-			{ function: "", file: "", line: 1, column: null, original: "    at <anonymous>:1" },
-		]);
-		expect(destack("Error\n    at <anonymous>")).toEqual([
-			{ function: "", file: "", line: null, column: null, original: "    at <anonymous>" },
-		]);
-		const stack2 = [
-			"Error",
-			"    at abc (<anonymous>:1:30)",
-			"    at Object.def (<anonymous>:1:18)",
-			"    at GHI.ghi (<anonymous>:2:9)",
-			"    at <anonymous>:1:3",
-			"    at <anonymous>:1",
-			"    at <anonymous>",
-		];
+		expect(destack("Error\n    at file.js:1:2")).toEqual([{ function: "", file: "file.js", line: 1, column: 2, original: "    at file.js:1:2" }]);
+		expect(destack("Error\n    at file.js:1")).toEqual([{ function: "", file: "file.js", line: 1, column: null, original: "    at file.js:1" }]);
+		expect(destack("Error\n    at file.js")).toEqual([{ function: "", file: "file.js", line: null, column: null, original: "    at file.js" }]);
+		expect(destack("Error\n    at <anonymous>:1:2")).toEqual([{ function: "", file: "", line: 1, column: 2, original: "    at <anonymous>:1:2" }]);
+		expect(destack("Error\n    at <anonymous>:1")).toEqual([{ function: "", file: "", line: 1, column: null, original: "    at <anonymous>:1" }]);
+		expect(destack("Error\n    at <anonymous>")).toEqual([{ function: "", file: "", line: null, column: null, original: "    at <anonymous>" }]);
+		const stack2 = ["Error", "    at abc (<anonymous>:1:30)", "    at Object.def (<anonymous>:1:18)", "    at GHI.ghi (<anonymous>:2:9)", "    at <anonymous>:1:3", "    at <anonymous>:1", "    at <anonymous>"];
 		expect(destack(stack2.join("\n"))).toEqual([
 			{ function: "abc()", file: "", line: 1, column: 30, original: "    at abc (<anonymous>:1:30)" },
 			{ function: "def()", file: "", line: 1, column: 18, original: "    at Object.def (<anonymous>:1:18)" },
@@ -163,9 +137,7 @@ describe("destack()", () => {
 				original: "Object.a@file:///C:/example.html:19",
 			},
 		]);
-		expect(destack("@debugger eval code:21:9")).toEqual([
-			{ function: "", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" },
-		]);
+		expect(destack("@debugger eval code:21:9")).toEqual([{ function: "", file: "", line: 21, column: 9, original: "@debugger eval code:21:9" }]);
 		const stack1 = [
 			"trace@file:///C:/example.html:9:17",
 			"@file:///C:/example.html:16:13",
@@ -198,13 +170,7 @@ describe("destack()", () => {
 		]);
 		// Safari.
 		expect(destack("def")).toEqual([{ function: "def()", file: "", line: null, column: null, original: "def" }]);
-		const stack2 = [
-			"def",
-			"global code",
-			"evaluateWithScopeExtension@[native code]",
-			"_evaluateOn",
-			"_evaluateAndWrap",
-		];
+		const stack2 = ["def", "global code", "evaluateWithScopeExtension@[native code]", "_evaluateOn", "_evaluateAndWrap"];
 		expect(destack(stack2.join("\n"))).toEqual([
 			{ function: "def()", file: "", line: null, column: null, original: "def" },
 			{ function: "", file: "", line: null, column: null, original: "global code" },

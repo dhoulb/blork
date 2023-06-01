@@ -19,7 +19,7 @@ describe("isCircular()", () => {
 				undef: undefined,
 				num: 123,
 				str: "abc",
-			})
+			}),
 		).toBe(false);
 	});
 	test("Circular references in objects return true", () => {

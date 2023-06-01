@@ -40,7 +40,7 @@ describe("debug()", () => {
 				a: "Cherished charmer much an hand to jest.",
 				b: "Yelp infallibly calmative buff centered.",
 				c: "Accommodatingly swain he for did fast.",
-			})
+			}),
 		).toBe(`{
 	"a": "Cherished charmer much an hand to jest.",
 	"b": "Yelp infallibly calmative buff centered.",
@@ -49,13 +49,7 @@ describe("debug()", () => {
 	});
 	test("Return correct multiline debug string for array", () => {
 		// Multiline because over 72 chars in total.
-		expect(
-			debug([
-				"Cherished charmer much an hand to jest lightly.",
-				"Yelp infallibly calmative buff centered.",
-				"Accommodatingly swain he for did fast.",
-			])
-		).toBe(`[
+		expect(debug(["Cherished charmer much an hand to jest lightly.", "Yelp infallibly calmative buff centered.", "Accommodatingly swain he for did fast."])).toBe(`[
 	"Cherished charmer much an hand to jest lightly.",
 	"Yelp infallibly calmative buff centered.",
 	"Accommodatingly swain he for did fast."
