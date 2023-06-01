@@ -1,0 +1,31 @@
+{
+	"tabWidth": 4,
+	"useTabs": true,
+	"printWidth": 240,
+	"trailingComma": "all",
+	"endOfLine": "lf",
+	"quoteProps": "consistent",
+	"arrowParens": "avoid",
+	"overrides": [
+		{
+			"files": ["*.html"],
+			"options": {
+				"printWidth": 2000
+			}
+		},
+		{
+			"files": ["*.yml", "*.yaml", ".*.yml", ".*.yaml"],
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		},
+		{
+			"files": ["*.md"],
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		}
+	]
+}
