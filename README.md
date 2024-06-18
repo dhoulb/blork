@@ -355,7 +355,7 @@ Modifiers can be applied to any string identifier from the list above to modify 
 
 | Format              | Description                                                                            |
 | ------------------- | -------------------------------------------------------------------------------------- | --------------------------- | ---- |
-| `(type)`            | Grouped type, e.g. `(num|str)[]`
+| `(type)`            | Grouped type, e.g. `(num                                                               | str)[]`                     |
 | `type1 & type2`     | AND combined type, e.g. `str & upper`                                                  |
 | `type1              | type2`                                                                                 | OR combined type, e.g. `num | str` |
 | `type[]`            | Array type (all array entries must match type)                                         |
